@@ -80,21 +80,6 @@
       "Bash(docker logs:*)",
       "Bash(docker inspect:*)"
     ],
-    "ask": [
-      "Bash(git commit --amend:*)",
-      "Bash(git rebase:*)",
-      "Bash(git cherry-pick:*)",
-      "Bash(git push --force:*)",
-      "Bash(git push -f:*)",
-      "Bash(git branch -D:*)",
-      "Bash(docker run:*)",
-      "Bash(docker start:*)",
-      "Bash(docker stop:*)",
-      "Bash(docker-compose up:*)",
-      "Bash(docker-compose down:*)",
-      "Bash(tar -czf:*)",
-      "Bash(zip:*)"
-    ],
     "deny": [
       "Read(.env*)",
       "Write(.env*)",
@@ -148,9 +133,30 @@
       "Bash(sudo su:*)",
       "Bash(sudo -i:*)",
       "Bash(sudo bash:*)"
+    ],
+    "ask": [
+      "Bash(git commit --amend:*)",
+      "Bash(git rebase:*)",
+      "Bash(git cherry-pick:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git branch -D:*)",
+      "Bash(docker run:*)",
+      "Bash(docker start:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker-compose down:*)",
+      "Bash(tar -czf:*)",
+      "Bash(zip:*)"
     ]
   },
   "enableAllProjectMcpServers": false,
-  "enabledMcpjsonServers": ["github", "memory"],
-  "disabledMcpjsonServers": ["filesystem"]
+  "enabledMcpjsonServers": [
+    "github",
+    "memory"
+  ],
+  "disabledMcpjsonServers": [
+    "filesystem"
+  ],
+  "alwaysThinkingEnabled": true
 }
