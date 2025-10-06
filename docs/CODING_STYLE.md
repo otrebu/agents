@@ -31,18 +31,22 @@
 
 - any tests: prefer to use parameterized tests, think carefully about what input and output look like so that the tests exercise the system and explain the code to the future traveller
 
-## Import aliase (Absolute, Readable, Consistent)s
+## Import aliases (Absolute, Readable, Consistent)
 
 Goal: Make imports readable and stable by using import aliases and absolute paths from the project root or src/.
 Scope: Applies only to languages/toolchains that support aliases (e.g., TS/JS, Python, Go). Never rewrite node_modules (third-party) imports.
 
 Examples:
 ✅ Good (with aliases):
-typescriptimport { UserService } from '@/services/UserService'
+```typescript
+import { UserService } from '@/services/UserService'
 import { Button } from '@/components/ui/Button'
 import { formatDate } from '@/utils/dates'
+```
 ❌ Avoid (relative paths):
-typescriptimport { UserService } from '../../../services/UserService'
+```typescript
+import { UserService } from '../../../services/UserService'
 import { Button } from '../../components/ui/Button'
+```
 
 IMPORTANT: Path aliases must be configured in multiple tools for your project to work correctly. Each tool needs its own configuration. Be aware and prompt the user to configure the aliases if not configured in tsconfig.json, vite.config.ts, etc.
