@@ -44,9 +44,7 @@ pnpm install --frozen-lockfile        # Install without updating lockfile (CI)
 
 Monorepo management tool for pnpm.
 Use pnpm workspaces to manage dependencies between packages in the monorepo.
-This is better than lerna, because it's faster and easier to use.
-It's also better than yarn workspaces, because it's faster and easier to use.
-It's also better than npm workspaces, because it's faster and easier to use.
+Preferred over lerna/yarn/npm workspaces for speed and developer ergonomics.
 
 TypeScript monorepo with pnpm workspaces
 
@@ -531,6 +529,105 @@ import "dotenv/config";
 const apiKey = process.env.API_KEY;
 ```
 
+## semantic-release
+
+Automated versioning and package publishing based on conventional commits.
+
+```bash
+# Install semantic-release and plugins
+pnpm add -D semantic-release \
+  @semantic-release/commit-analyzer \
+  @semantic-release/release-notes-generator \
+  @semantic-release/npm \
+  @semantic-release/changelog \
+  @semantic-release/git \
+  @semantic-release/github
 ```
 
+Configuration file: `release.config.js`
+
+```typescript
+export default {
+  branches: ["main"],
+  plugins: [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        preset: "angular",
+        releaseRules: [
+          { breaking: true, release: "major" },
+          { type: "feat", release: "minor" },
+          { type: "fix", release: "patch" },
+          { type: "docs", scope: "README", release: "patch" },
+          { type: "chore", release: "patch" },
+        ],
+        parserOpts: {
+          noteKeywords: ["BREAKING CHANGE", "BREAKING CHANGES", "BREAKING"],
+        },
+      },
+    ],
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/npm",
+    ["@semantic-release/changelog", { changelogFile: "CHANGELOG.md" }],
+    [
+      "@semantic-release/git",
+      {
+        assets: ["CHANGELOG.md", "package.json"],
+        message:
+          // eslint-disable-next-line no-template-curly-in-string
+          "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
+      },
+    ],
+    "@semantic-release/github",
+  ],
+};
 ```
+
+Run in CI:
+
+```bash
+pnpm exec semantic-release
+```
+
+## husky with commitlint
+
+Git hooks for pre-commit and pre-push.
+
+```bash
+# Install husky
+pnpm add -D husky
+
+# Initialize husky
+pnpm exec husky init
+
+# Add commit-msg hook
+echo "pnpm commitlint --edit \$1" > .husky/commit-msg
+```
+
+## husky to run tests
+
+```bash
+# Add pre-commit hook
+echo "pnpm lint && pnpm format && pnpm test" > .husky/pre-commit
+```
+
+## package.json scripts
+
+### Naming convention
+
+- Use base script names with colon-suffixed variants for specific actions.
+- Use `:fix` for auto-fixing variants and `:check` for no-write verification.
+- Keep names lowercase and consistent across packages.
+
+### Basic commands
+
+- **Linting**
+  - `lint`: Run ESLint
+  - `lint:fix`: Fix linting issues
+- **Testing**
+  - `test`: Run all tests
+- **Building**
+  - `build`: Build all packages
+- **Formatting**
+  - `format`: Format code with Prettier
+  - `format:check`: Check formatting without changes

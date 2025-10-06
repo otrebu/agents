@@ -9,7 +9,7 @@
 - Vite as build tool
 - Xstate as state management
 - Vitest as testing framework
-- Eslint as linter
+- Eslint as linter with the config from: https://www.npmjs.com/package/uba-eslint-config
 - Prettier as formatter
 - React as UI library
 - Tailwind as CSS framework
@@ -25,3 +25,6 @@
 - ora as CLI tool
 - date-fns as date library
 - dotenv as environment variable library
+- husky as git hooks
+- commitlint as commit message linting
+- semantic release as release management
