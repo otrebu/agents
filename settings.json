@@ -76,6 +76,11 @@
       "Bash(htop)",
       "Bash(which:*)",
       "Bash(echo:*)",
+      "Bash(xargs cat:*)",
+      "Bash(xargs head:*)",
+      "Bash(xargs tail:*)",
+      "Bash(xargs ls:*)",
+      "Bash(xargs wc:*)",
       "Bash(docker ps:*)",
       "Bash(docker logs:*)",
       "Bash(docker inspect:*)"
@@ -158,5 +163,5 @@
   "disabledMcpjsonServers": [
     "filesystem"
   ],
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": false
 }
