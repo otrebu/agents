@@ -75,6 +75,8 @@
       "Bash(top)",
       "Bash(htop)",
       "Bash(which:*)",
+      "Bash(test:*)",
+      "Bash([:*)",
       "Bash(echo:*)",
       "Bash(xargs cat:*)",
       "Bash(xargs head:*)",
@@ -163,5 +165,5 @@
   "disabledMcpjsonServers": [
     "filesystem"
   ],
-  "alwaysThinkingEnabled": false
+  "alwaysThinkingEnabled": true
 }
