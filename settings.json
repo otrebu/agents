@@ -85,7 +85,9 @@
       "Bash(xargs wc:*)",
       "Bash(docker ps:*)",
       "Bash(docker logs:*)",
-      "Bash(docker inspect:*)"
+      "Bash(docker inspect:*)",
+      "Bash(cloc:*)",
+      "SlashCommand(*)"
     ],
     "deny": [
       "Read(.env*)",
