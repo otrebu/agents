@@ -1,6 +1,6 @@
 ---
-allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*), Bash(git diff:*), Bash(git log:*), Bash(git branch:*)
-argument-hint: [optional commit message]
+allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*), Bash(git diff:*), Bash(git log:*), Bash(git branch:*), Bash(git push:*)
+argument-hint: [optional instructions like "and push"]
 description: Create a git commit following conventional commits
 ---
 
@@ -27,7 +27,7 @@ Create a single git commit following these rules:
    - Keep the summary line concise (50-72 chars)
    - Use imperative mood ("add", not "added" or "adds")
    - Include body with details if needed
-   - If user provided message via $ARGUMENTS, use it as guidance but ensure it follows conventional commits format
+   - Always auto-generate the commit message based on changes (never use $ARGUMENTS as commit message)
 
 3. **What to commit**:
    - Review the git status and diff above
@@ -39,6 +39,14 @@ Create a single git commit following these rules:
    - NEVER add Claude's signature or co-authorship
    - User wants full credit for commits
    - Keep commits focused and atomic
+
+5. **Additional instructions** (via $ARGUMENTS):
+   - Check $ARGUMENTS for post-commit instructions
+   - Common instructions: "and push", "and push origin <branch>"
+   - Execute instructions after successful commit
+   - Examples:
+     - `/commit and push` → commit then push to remote
+     - `/commit` → commit only, no push
 
 ## Example format
 
