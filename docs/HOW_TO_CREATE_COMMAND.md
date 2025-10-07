@@ -1,31 +1,45 @@
 # How to Create a Command
 
-**Goal:** Generate a complete command suite following the DRY pattern: centralized documentation, optional agent version, and slash command version.
+**Goal:** Generate a command suite with optional documentation: standalone command/agent OR command + agent with shared documentation.
 
-## The Three-Artifact Pattern
+## The Flexible Pattern
 
-1. **Documentation** (`docs/HOW_TO_*.md`)
-   - Central source of truth
+You can create commands in two ways:
+
+### Pattern A: Standalone (No shared documentation)
+Use for simple, self-contained commands or agents.
+
+1. **Agent** (`agents/*.md`) — OR —
+2. **Command** (`commands/*.md`)
+   - Frontmatter: `allowed-tools`, `description`, optional `argument-hint`
+   - Contains all instructions inline
+   - Can include dynamic context via `!`command`` syntax
+   - Can run specific bash commands (agents cannot)
+
+### Pattern B: Shared Documentation (Complex commands)
+Use when both agent and command versions share the same logic and need detailed, reusable instructions.
+
+1. **Documentation** (`docs/HOW_TO_*.md`) — Optional
+   - Central source of truth for complex commands
    - Detailed instructions, examples, constraints
    - Referenced by both agent and command versions
 
-2. **Agent** (`agents/*.md`) — Optional
+2. **Agent** (`agents/*.md`)
    - Frontmatter: `name`, `description`, `tools`, `model`
    - References doc with `@docs/HOW_TO_*.md`
    - Adds specific output behavior (e.g., save to file)
    - Tools typically: `Read, Grep, Glob, Bash`
 
-3. **Command** (`commands/*.md`) — Always included
+3. **Command** (`commands/*.md`)
    - Frontmatter: `allowed-tools`, `description`, optional `argument-hint`
    - References doc with `@docs/HOW_TO_*.md`
    - Can include dynamic context via `!`command`` syntax
-   - Can run specific bash commands (agents cannot)
 
 ## When to Create Each Artifact
 
 | Artifact | When to Create |
 |----------|----------------|
-| **Doc** | Always — it's the source of truth |
+| **Doc** | Only when both agent and command need to share complex instructions (DRY principle) |
 | **Agent** | When task needs: file I/O, complex analysis, report generation, background work |
 | **Command** | When user wants: quick invocation, bash execution, context injection, arguments |
 
@@ -34,7 +48,7 @@
 ### Required for all:
 - **Command name** (kebab-case, e.g., `code-review`)
 - **Description** (one sentence, imperative mood)
-- **Documentation content** (instructions, format, examples)
+- **Instructions** (inline or in separate doc, depending on complexity)
 
 ### For Agent (if applicable):
 - **Tools needed** (default: `Read, Grep, Glob, Bash`)
@@ -48,7 +62,26 @@
 
 ## File Structure Templates
 
-### Documentation Template
+### Standalone Command Template
+```markdown
+---
+allowed-tools: [list specific bash patterns]
+description: [One-sentence description]
+argument-hint: [optional hint for CLI usage]
+---
+
+[Complete instructions inline — role, priorities, process, output format, constraints]
+
+## Context (optional)
+
+- Context item 1: !`bash command here`
+
+## Your task
+
+[Detailed task description referencing $ARGUMENTS if applicable]
+```
+
+### Documentation Template (for Pattern B only)
 ```markdown
 **Role:** [Define the role and goal]
 
@@ -68,7 +101,7 @@
 **Constraints:** [Any limitations or rules]
 ```
 
-### Agent Template
+### Agent Template (Pattern B with shared doc)
 ```markdown
 ---
 name: [command-name]
@@ -83,17 +116,7 @@ model: inherit
 Output a [FILENAME].md file in the project's root folder, then confirm that you have created the file.
 ```
 
-### Command Template (Simple)
-```markdown
----
-allowed-tools: [list specific bash patterns]
-description: [One-sentence description]
----
-
-See @docs/HOW_TO_[COMMAND_NAME].md for the complete checklist and output format.
-```
-
-### Command Template (With Context)
+### Command Template (Pattern B - references shared doc)
 ```markdown
 ---
 allowed-tools: [list specific bash patterns]
@@ -115,34 +138,39 @@ See @docs/HOW_TO_[COMMAND_NAME].md for detailed guidelines.
 
 ## Examples
 
-### Simple Command (code-review pattern)
+### Pattern A: Standalone Command (analyze-size)
+- **Command only**: Self-contained instructions, runs cloc and analyzes output
+- **No doc**: Instructions are simple enough to be inline
+- **No agent**: Direct command execution, no background work needed
+
+### Pattern B: Shared Documentation (code-review)
 - **Doc**: Full review checklist
 - **Agent**: Reviews code, saves to `CODE_REVIEW.md`
-- **Command**: Just references doc, no bash needed
+- **Command**: References doc, provides context
+- **Why shared doc?**: Both agent and command use the same detailed review criteria
 
-### Command with Context (commit pattern)
-- **Doc**: Commit message guidelines
-- **No agent**: Commands like git are synchronous, no agent needed
-- **Command**: Includes git context, runs git commands, accepts arguments
-
-### Analysis Command (hypothetical `analyze-bundle`)
-- **Doc**: Bundle analysis criteria, thresholds, recommendations
-- **Agent**: Runs webpack-bundle-analyzer, generates report
-- **Command**: Simple invocation with optional `--target` argument
+### Pattern A: Command with Context (commit - hypothetical without doc)
+- **Command only**: Includes git context, commit guidelines inline, runs git commands
+- **No agent**: Git commands are synchronous, no agent needed
+- **No doc**: If guidelines are concise enough to be inline
 
 ## Best Practices
 
-1. **Keep docs DRY**: Never duplicate instructions between files
-2. **Use `@references`**: Let the system expand documentation
-3. **Bash in commands only**: Agents read/analyze; commands can run bash
-4. **Dynamic context**: Use `!`command`` for fresh data in command context
-5. **Argument handling**: Reference `$ARGUMENTS` in command task descriptions
-6. **Descriptive names**: Use imperative mood, domain-specific terminology
+1. **Choose the right pattern**: Use Pattern A (standalone) for simple commands; Pattern B (shared doc) only when both agent and command need the same complex instructions
+2. **Keep it DRY**: Never duplicate instructions between files
+3. **Use `@references`**: Let the system expand documentation when using Pattern B
+4. **Bash in commands only**: Agents read/analyze; commands can run bash
+5. **Dynamic context**: Use `!`command`` for fresh data in command context
+6. **Argument handling**: Reference `$ARGUMENTS` in command task descriptions
+7. **Descriptive names**: Use imperative mood, domain-specific terminology
+8. **Inline when simple**: If instructions fit in one screen, keep them inline (Pattern A)
 
 ## Process
 
 1. Define the command's purpose and scope
-2. Write the documentation first (source of truth)
-3. Decide if an agent is needed (complex analysis/output)
-4. Create command version with appropriate tools and context
-5. Test all three artifacts together
+2. Decide the pattern:
+   - Pattern A if: single artifact (command OR agent), or simple instructions
+   - Pattern B if: both agent and command needed, with complex shared logic
+3. Write the instructions (inline or in doc)
+4. Create the command/agent file(s)
+5. Test the artifacts together
