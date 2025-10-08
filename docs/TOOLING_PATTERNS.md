@@ -589,10 +589,12 @@ export const log = {
   warn: (obj: object, msg?: string) => pinoInstance.warn(obj, msg),
   error: (obj: object, msg?: string) => pinoInstance.error(obj, msg),
   fatal: (obj: object, msg?: string) => pinoInstance.fatal(obj, msg),
+  child: (bindings: object) => pinoInstance.child(bindings),
 };
 
 // Usage
 log.info({ userId: "123" }, "User logged in");
+const requestLog = log.child({ requestId: "abc-123" });
 ```
 
 ### Environment-Based Configuration
@@ -630,7 +632,61 @@ const logger = pino({
 logger.info({ username: "john", password: "secret123" }, "User data");
 ```
 
-**See `docs/HOW_TO_LOGGING.md` for comprehensive logging best practices.**
+### Best Practices
+
+**DO:**
+- ✅ Use structured logging: `log.info({ userId, orderId }, "Order created")`
+- ✅ Include context: requestId, userId, timestamps
+- ✅ Use child loggers for scoped context
+- ✅ Log errors with `err` key: `log.error({ err, userId }, "Failed")`
+- ✅ Configure redaction for sensitive data
+- ✅ Use environment variables for log level control
+
+**DON'T:**
+- ❌ Log passwords, tokens, API keys, or PII without redaction
+- ❌ Log large objects/arrays (log counts instead)
+- ❌ Log inside tight loops (sample or aggregate instead)
+- ❌ Use string interpolation: `log.info(`User ${id} did ${action}`)` ← loses structure
+
+**Common Anti-Patterns:**
+
+```typescript
+// ❌ DON'T use error level for validation failures
+log.error({ email: "invalid" }, "Invalid email"); // User error, not system error
+
+// ✅ DO use debug/info for expected validation
+log.debug({ email: "invalid" }, "Validation failed");
+
+// ❌ DON'T use info for errors
+log.info({ err }, "Payment failed"); // This is an error!
+
+// ✅ DO use error level for system failures
+log.error({ err, userId }, "Payment failed");
+
+// ❌ DON'T log business events at debug level
+log.debug({ orderId }, "Order created"); // Lost in production!
+
+// ✅ DO use info for business events
+log.info({ orderId }, "Order created");
+```
+
+**Key principle**: Log level reflects **system severity**, not business outcomes. Failed login = `info`/`debug`, not `error`.
+
+### Production Integration
+
+For production, ship JSON logs to aggregators (Elasticsearch, Grafana Loki, Datadog, CloudWatch):
+
+```typescript
+// Pino outputs JSON to stdout by default - perfect for containers
+// Use Docker logging drivers or log shippers (Filebeat, Promtail, etc.)
+
+// Example: conditional pretty-printing in dev only
+const logger = pino(
+  process.env.NODE_ENV === "development"
+    ? { transport: { target: "pino-pretty" } }
+    : {} // JSON to stdout in production
+);
+```
 
 ## date-fns
 

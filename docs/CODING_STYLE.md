@@ -29,12 +29,17 @@
 
 ## Logging
 
-- Use structured logging with Pino (see `@docs/TOOLING_PATTERNS.md` for setup)
-- Always log as objects first, message last: `log.info({ userId, orderId }, "Order created")`
-- Never use `console.log` in production code (except for CLI output)
-- Never log sensitive data (passwords, tokens, PII) - use redaction
-- Use appropriate log levels: debug/info/warn/error/fatal
-- For comprehensive guidelines, see `@docs/HOW_TO_LOGGING.md`
+- Use structured logging (data as structured fields, not string interpolation)
+- Never use basic print/console statements in production code (except for CLI output)
+- Never log sensitive data (passwords, tokens, PII) - configure redaction
+- Use appropriate log levels to reflect system severity:
+  - **debug**: Detailed diagnostic info (usually disabled in production)
+  - **info**: Normal operations and significant business events
+  - **warn**: Unexpected situations that don't prevent operation
+  - **error**: Errors affecting functionality but not crashing the app
+  - **fatal**: Critical errors requiring immediate shutdown
+- Include contextual data (requestId, userId, etc.) for traceability
+- See `@docs/TOOLING_PATTERNS.md` for implementation patterns and tools
 
 ## Testing
 
