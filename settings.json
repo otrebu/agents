@@ -92,6 +92,7 @@
       "Bash(docker logs:*)",
       "Bash(docker inspect:*)",
       "Bash(cloc:*)",
+      "Bash(caffeinate:*)",
       "Bash(chmod +x ./*)",
       "Bash(./*.sh)",
       "Bash(./*.js)",
