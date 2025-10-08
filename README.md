@@ -23,6 +23,8 @@ All configuration can be linked to your global Claude config (`~/.claude`) or in
 │   ├── commit.md                # Conventional commits
 │   ├── code-review.md           # Code review
 │   ├── analyze-size.md          # Codebase size analysis
+│   ├── fix-eslint.md            # Fix ESLint errors via agent
+│   ├── spawn-eslint-fixers.md   # Orchestrate parallel ESLint fixers
 │   ├── create-command.md        # Meta-command for creating commands
 │   ├── start-feature.md         # Feature branch workflow
 │   └── explore-codebase.md      # Multi-agent codebase exploration
@@ -140,6 +142,7 @@ lrwxr-xr-x  settings.json -> ../settings.json
 ### Agents (`/agents`)
 Reusable agent definitions for specialized tasks:
 - **code-review** - Expert code review specialist
+- **fix-eslint** - Automatically fix ESLint errors in specified files/directory
 - **create-command** - Create new command suites following DRY pattern
 - **start-feature** - Create feature branches based on description
 - **explore-codebase** - Orchestrate comprehensive codebase exploration
@@ -155,6 +158,8 @@ Custom slash commands for common workflows:
 - `/commit [message]` - Create conventional commits
 - `/code-review` - Comprehensive code review
 - `/analyze-size` - Analyze codebase size and language distribution using cloc
+- `/fix-eslint [pattern]` - Fix ESLint errors via agent orchestration
+- `/spawn-eslint-fixers [pattern]` - Orchestrate parallel ESLint fixers by directory (main assistant controls spawning)
 - `/create-command <description>` - Create new command suite (doc + agent + command)
 - `/start-feature <description>` - Create or switch to a feature branch
 - `/explore-codebase` - Run comprehensive multi-agent codebase exploration
