@@ -355,6 +355,8 @@ import { ubaEslintConfig } from "uba-eslint-config";
 export default [...ubaEslintConfig];
 ```
 
+**IMPORTANT: ESLint rules must NOT be disabled or modified without explicit approval. The likelihood of approval is extremely low. Do not use eslint-disable comments, rule overrides, or config modifications to bypass lint errors. Fix the code to comply with the rules instead.**
+
 ## Prettier
 
 Opinionated code formatter, always use the default settings. So `.prettierrc` should be just {}.
@@ -532,6 +534,8 @@ const apiKey = process.env.API_KEY;
 ## semantic-release
 
 Automated versioning and package publishing based on conventional commits.
+
+**IMPORTANT: CHANGELOG.md files are ONLY created and updated by semantic-release. NEVER create or modify CHANGELOG files manually. All release notes and version history are generated automatically from conventional commit messages.**
 
 ```bash
 # Install semantic-release and plugins
