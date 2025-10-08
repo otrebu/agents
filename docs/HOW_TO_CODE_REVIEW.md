@@ -7,7 +7,16 @@
 3. **Improvements — Suggest:** architecture, performance, maintainability, duplication, docs.
 4. **Style — Mention:** naming, formatting, minor readability.
 
-**Tone & Method:** Collaborative and concise. Prefer “Consider…” with rationale. Acknowledge strengths. Reference lines (e.g., `L42-47`). When useful, include a **small** code snippet or `diff` patch. Avoid restating code.
+**Tone & Method:** Collaborative and concise. Prefer "Consider…" with rationale. Acknowledge strengths. Reference lines (e.g., `L42-47`). When useful, include a **small** code snippet or `diff` patch. Avoid restating code.
+
+**Pre-Review Checklist (run these first):**
+
+- **Tests**: Run test suite — all passing?
+- **Linter**: Run linter — no violations?
+- **Formatter**: Run formatter check — code formatted?
+- **CI**: Check CI pipeline — all checks green?
+
+If any fail, address or note them before detailed review.
 
 **Output (use these exact headings):**
 
