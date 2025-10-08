@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# scripts/wt-clean
+# Usage: scripts/wt-clean <feature-slug> <n>
+set -euo pipefail
+
+feature="${1:?feature slug}"
+n="${2:?number of trees}"
+
+for i in $(seq 1 "$n"); do
+  dir="trees/${feature}-${i}"
+  if [ -d "$dir" ]; then
+    git worktree remove "$dir" || true    # detaches and removes metadata
+  fi
+done
+
+git worktree prune                        # remove stale metadata
+rm -rf "trees/${feature}-"*/ || true      # wipe any leftover dirs
+echo "✓ cleaned worktrees for $feature"

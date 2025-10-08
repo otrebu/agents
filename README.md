@@ -5,6 +5,7 @@ A centralized configuration repository for Claude Code featuring:
 - ⚡ **Custom slash commands** for common workflows (commits, branches, code review)
 - 🔧 **Meta-command system** to create new commands following DRY principles
 - 📊 **Multi-agent orchestration** for comprehensive codebase exploration
+- 🧪 **Parallel worktree experimentation** for running multiple AI agents on the same feature
 - 📚 **Personal coding standards** (FP-first style, development workflow, tech stack preferences)
 - 🔗 **Symlink-based setup** for easy sharing across projects
 
@@ -25,7 +26,9 @@ All configuration can be linked to your global Claude config (`~/.claude`) or in
 │   ├── analyze-size.md          # Codebase size analysis
 │   ├── create-command.md        # Meta-command for creating commands
 │   ├── start-feature.md         # Feature branch workflow
-│   └── explore-codebase.md      # Multi-agent codebase exploration
+│   ├── explore-codebase.md      # Multi-agent codebase exploration
+│   ├── parallel-init.md         # Initialize parallel worktrees
+│   └── parallel-exec.md         # Execute plan in worktree
 ├── docs/                         # Project documentation and coding standards
 │   ├── CODING_STYLE.md
 │   ├── DEVELOPMENT_WORKFLOW.md
@@ -34,7 +37,11 @@ All configuration can be linked to your global Claude config (`~/.claude`) or in
 │   ├── HOW_TO_CREATE_COMMAND.md
 │   ├── HOW_TO_START_FEATURE.md
 │   ├── HOW_TO_CODE_REVIEW.md
+│   ├── HOW_TO_PARALLEL_WORKTREE.md
 │   └── codebase-exploration/    # Exploration methodology docs
+├── scripts/                      # Utility scripts
+│   ├── wt-parallel              # Create N parallel worktrees
+│   └── wt-clean                 # Clean up parallel worktrees
 ├── CLAUDE.md                     # Global Claude instructions
 ├── settings.json                 # Claude Code settings
 ├── setup.sh                      # Automated setup script
@@ -158,6 +165,8 @@ Custom slash commands for common workflows:
 - `/create-command <description>` - Create new command suite (doc + agent + command)
 - `/start-feature <description>` - Create or switch to a feature branch
 - `/explore-codebase` - Run comprehensive multi-agent codebase exploration
+- `/parallel-init <feature-slug> <count>` - Initialize N parallel worktrees for experimentation
+- `/parallel-exec <plan-path> <worktree-id>` - Execute feature plan in a worktree
 
 ### Documentation (`/docs`)
 - **CODING_STYLE.md** - Functional programming patterns, naming conventions, import aliases
@@ -167,6 +176,7 @@ Custom slash commands for common workflows:
 - **HOW_TO_CREATE_COMMAND.md** - Pattern system for creating custom commands
 - **HOW_TO_START_FEATURE.md** - Feature branch workflow and naming conventions
 - **HOW_TO_CODE_REVIEW.md** - Code review process and guidelines
+- **HOW_TO_PARALLEL_WORKTREE.md** - Parallel worktree experimentation workflow
 - **codebase-exploration/** - Comprehensive codebase exploration methodology
 
 ### Settings (`/settings.json`)
@@ -200,6 +210,24 @@ Generates persistent documentation in `01-DISCOVERY.md`, `02-ARCHITECTURE.md`, `
 
 ### Feature Branch Workflow
 The `/start-feature` command creates feature branches following your project's naming conventions and development workflow guidelines.
+
+### Parallel Worktree Experimentation
+The parallel worktree system enables running multiple AI agents on the same feature specification simultaneously, then comparing and merging the best result.
+
+**Workflow:**
+1. Create a feature spec in `specs/<feature>.md`
+2. Run `/parallel-init <feature-slug> <count>` to create N isolated worktrees
+3. Open Claude Code sessions in each `trees/<feature>-N/` directory
+4. Run `/parallel-exec <spec-path> <N>` in each session
+5. Compare results in `RESULTS.md` files
+6. Merge the winner, clean up with `scripts/wt-clean`
+
+**Use cases:**
+- Exploratory design (API surfaces, UX approaches) → 3-5 variants
+- Algorithm optimization → 2-3 implementations with benchmarks
+- Architecture experiments → multiple approaches to the same problem
+
+See `docs/HOW_TO_PARALLEL_WORKTREE.md` for detailed workflow and examples.
 
 ## Updating Configuration
 

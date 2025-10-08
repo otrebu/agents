@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# scripts/wt-parallel
+# Usage: scripts/wt-parallel <feature-slug> <n>
+set -euo pipefail
+
+feature="${1:?feature name (kebab-case)}"
+n="${2:?number of trees}"
+
+# 1) create container dir for experiments
+mkdir -p trees
+
+# 2) create N worktrees with dedicated branches
+for i in $(seq 1 "$n"); do
+  dir="trees/${feature}-${i}"
+  branch="${feature}-${i}"
+
+  # create worktree on a new branch derived from current HEAD
+  git worktree add "$dir" -b "$branch"  # creates directory + branch
+  # optional: seed environment + results file
+  [ -f .env ] && cp .env "$dir/.env" || true
+  printf "# Results for %s\n\n- Notes:\n- Diffs:\n" "$branch" > "$dir/RESULTS.md"
+  echo "✓ created $dir on branch $branch"
+done
+
+# 3) show an at-a-glance checklist for the user
+echo
+echo "Next steps:"
+echo "- Open a Claude Code session in each worktree directory."
+echo "- Run your custom slash command to execute the plan."
+echo
+git worktree list

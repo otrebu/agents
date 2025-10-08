@@ -37,3 +37,9 @@ coverage/
 # Temporary files
 *.tmp
 .cache/
+
+# Parallel worktree experiments
+trees/
+
+# Feature specs (uncomment if you want to track specs in git)
+# specs/
