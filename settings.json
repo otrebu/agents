@@ -99,6 +99,7 @@
       "Bash(chmod +x ./*)",
       "Bash(./*.sh)",
       "Bash(./*.js)",
+      "Bash(pnpm lint 2>&1 | grep -E \"^\\s*/\" | sed 's/\\s*[0-9]*:[0-9]*.*//' | sort -u | xargs -n1 dirname | sort | uniq -c)",
       "SlashCommand(*)"
     ],
     "deny": [
