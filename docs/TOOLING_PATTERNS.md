@@ -350,7 +350,7 @@ Using the config from: https://www.npmjs.com/package/uba-eslint-config.
 eslint.config.js:
 
 ```typescript
-import { ubaEslintConfig } from "@uba/eslint-config";
+import { ubaEslintConfig } from "uba-eslint-config";
 
 export default [...ubaEslintConfig];
 ```
@@ -362,7 +362,7 @@ If installed, use the config from: https://www.npmjs.com/package/uba-eslint-conf
 Which exports:
 
 ```typescript
-import { ubaPrettierConfig } from "@uba/eslint-config";
+import { ubaPrettierConfig } from "uba-eslint-config";
 
 export default ubaPrettierConfig;
 ```
