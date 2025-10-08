@@ -355,7 +355,13 @@ import { ubaEslintConfig } from "uba-eslint-config";
 export default [...ubaEslintConfig];
 ```
 
-**IMPORTANT: ESLint rules must NOT be disabled or modified without explicit approval. The likelihood of approval is extremely low. Do not use eslint-disable comments, rule overrides, or config modifications to bypass lint errors. Fix the code to comply with the rules instead.**
+**ESLint rules must NOT be disabled or modified.** Do not use eslint-disable comments, rule overrides, or config modifications. Fix the code to comply with the rules.
+
+### Exception: no-console Rule for CLI Projects
+
+**For CLI tools ONLY**, the `no-console` rule must be disabled since console.log/console.error are the correct way to output to terminals.
+
+**This is the ONLY ESLint rule that can be disabled, and ONLY for CLI projects.** If your project is a service, API, or web application, do NOT disable this rule.
 
 ## Prettier
 
@@ -510,9 +516,103 @@ const spinner = ora("Loading...").start();
 spinner.succeed("Done!");
 ```
 
-## pino
+## CLI Logging (For CLI Tools Only)
+
+For CLI applications, use native console methods with terminal styling.
+
+**✅ Use for:** CLI tools, terminal applications, interactive commands
+**❌ Don't use for:** Services, APIs, web servers, background workers
+
+**DO NOT use pino, winston, or JSON loggers for CLI tools.** Those are for services that ship logs to aggregators. CLIs output text for humans reading terminals.
+
+### Installation
+
+```bash
+pnpm add chalk
+pnpm add ora  # Optional: for spinners
+```
+
+### Basic Usage
+
+```typescript
+import chalk from "chalk";
+
+// Standard output
+console.log(chalk.blue("ℹ"), "Starting process...");
+console.log(chalk.green("✔"), "Build successful!");
+
+// Error output
+console.error(chalk.red("✖"), "Build failed:", error.message);
+console.error(chalk.dim(error.stack));
+```
+
+### With Ora Spinners
+
+```typescript
+import ora from "ora";
+import chalk from "chalk";
+
+const spinner = ora("Building project...").start();
+
+try {
+  await build();
+  spinner.succeed(chalk.green("Build complete!"));
+} catch (error) {
+  spinner.fail(chalk.red("Build failed"));
+  console.error(chalk.dim(error.stack));
+}
+```
+
+### Conditional Verbosity
+
+```typescript
+const verbose = options.verbose;
+
+// Always show to user
+console.log(chalk.green("✔"), "Done!");
+console.error(chalk.red("✖"), "Failed");
+
+// Show only in verbose mode
+if (verbose) {
+  console.log(chalk.dim("Debug: processing file.ts"));
+}
+```
+
+### Best Practices
+
+**DO:**
+
+- ✅ Use `console.log()` for stdout (normal output)
+- ✅ Use `console.error()` for stderr (errors, warnings)
+- ✅ Use chalk or picocolors for colors
+- ✅ Use ora for spinners and progress indicators
+- ✅ Keep messages concise and human-readable
+- ✅ Respect `--quiet` and `--verbose` flags
+
+**DON'T:**
+
+- ❌ Output JSON (unless explicit `--json` flag)
+- ❌ Use structured logging libraries (pino/winston)
+- ❌ Log to files directly (use stdout/stderr)
+
+### Real-World Examples
+
+Major TypeScript CLIs all use console + styling libraries:
+
+- **npm, pnpm, yarn** → Custom console wrappers
+- **Firebase CLI, Vercel CLI** → chalk + console
+- **TypeScript (tsc)** → Custom ts.sys.write wrapper
+- **ESLint, Prettier** → Formatters with chalk
+- **Vite** → picocolors + custom console wrapper
+
+None use pino/winston. CLIs output for humans, not log aggregators.
+
+## pino (For Services/APIs Only - NOT for CLI Tools)
 
 Super fast, all-natural JSON logger for Node.js.
+
+**✅ Use pino for:** Services, APIs, web servers, background workers, daemons
+**❌ Don't use for:** CLI tools, terminal applications, interactive commands
 
 Pino is a low-overhead structured logging library that outputs JSON by default, making it ideal for production systems with log aggregators.
 
@@ -635,6 +735,7 @@ logger.info({ username: "john", password: "secret123" }, "User data");
 ### Best Practices
 
 **DO:**
+
 - ✅ Use structured logging: `log.info({ userId, orderId }, "Order created")`
 - ✅ Include context: requestId, userId, timestamps
 - ✅ Use child loggers for scoped context
@@ -643,6 +744,7 @@ logger.info({ username: "john", password: "secret123" }, "User data");
 - ✅ Use environment variables for log level control
 
 **DON'T:**
+
 - ❌ Log passwords, tokens, API keys, or PII without redaction
 - ❌ Log large objects/arrays (log counts instead)
 - ❌ Log inside tight loops (sample or aggregate instead)
