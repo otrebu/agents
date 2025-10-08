@@ -92,6 +92,9 @@
       "Bash(docker logs:*)",
       "Bash(docker inspect:*)",
       "Bash(cloc:*)",
+      "Bash(chmod +x ./*)",
+      "Bash(./*.sh)",
+      "Bash(./*.js)",
       "SlashCommand(*)"
     ],
     "deny": [
