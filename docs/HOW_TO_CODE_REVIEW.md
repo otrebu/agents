@@ -15,6 +15,7 @@
 - **Linter**: Run linter — no violations?
 - **Formatter**: Run formatter check — code formatted?
 - **CI**: Check CI pipeline — all checks green?
+- **ESLint integrity**: No `eslint-disable` comments or rule overrides in config files?
 
 If any fail, address or note them before detailed review.
 
