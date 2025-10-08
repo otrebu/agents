@@ -510,6 +510,128 @@ const spinner = ora("Loading...").start();
 spinner.succeed("Done!");
 ```
 
+## pino
+
+Super fast, all-natural JSON logger for Node.js.
+
+Pino is a low-overhead structured logging library that outputs JSON by default, making it ideal for production systems with log aggregators.
+
+```bash
+# Install pino
+pnpm add pino
+
+# Optional: pretty printing for development
+pnpm add -D pino-pretty
+```
+
+### Basic Usage
+
+```typescript
+import pino from "pino";
+
+// Production: fast JSON output
+const logger = pino();
+
+// Development: pretty printing
+const logger = pino({
+  transport: {
+    target: "pino-pretty",
+    options: {
+      colorize: true,
+    },
+  },
+});
+
+logger.info("Application started");
+logger.error({ err: new Error("Failed") }, "Operation failed");
+```
+
+### Structured Logging
+
+```typescript
+// Log with structured data
+logger.info(
+  {
+    userId: "123",
+    requestId: "abc-def",
+    duration: 150,
+  },
+  "Request completed"
+);
+
+// Output: {"level":30,"time":1234567890,"userId":"123","requestId":"abc-def","duration":150,"msg":"Request completed"}
+```
+
+### Child Loggers (Contextual Logging)
+
+```typescript
+// Create child logger with bound context
+const requestLogger = logger.child({ requestId: "abc-def" });
+
+requestLogger.info("Processing request"); // requestId automatically included
+requestLogger.error("Request failed"); // requestId automatically included
+```
+
+### Functional Wrapper Pattern
+
+Following FP style, avoid using the logger instance directly everywhere. Create a functional wrapper:
+
+```typescript
+import pino from "pino";
+
+// Create logger instance once
+const pinoInstance = pino();
+
+// Export functional logging interface
+export const log = {
+  debug: (obj: object, msg?: string) => pinoInstance.debug(obj, msg),
+  info: (obj: object, msg?: string) => pinoInstance.info(obj, msg),
+  warn: (obj: object, msg?: string) => pinoInstance.warn(obj, msg),
+  error: (obj: object, msg?: string) => pinoInstance.error(obj, msg),
+  fatal: (obj: object, msg?: string) => pinoInstance.fatal(obj, msg),
+};
+
+// Usage
+log.info({ userId: "123" }, "User logged in");
+```
+
+### Environment-Based Configuration
+
+```typescript
+import pino from "pino";
+
+const isDevelopment = process.env.NODE_ENV === "development";
+
+const logger = pino(
+  isDevelopment
+    ? {
+        transport: {
+          target: "pino-pretty",
+          options: { colorize: true },
+        },
+      }
+    : {
+        level: process.env.LOG_LEVEL || "info",
+      }
+);
+```
+
+### Redacting Sensitive Data
+
+```typescript
+const logger = pino({
+  redact: {
+    paths: ["password", "token", "apiKey", "*.password", "*.token"],
+    remove: true,
+  },
+});
+
+// "password" field will be removed from output
+logger.info({ username: "john", password: "secret123" }, "User data");
+```
+
+**See `docs/HOW_TO_LOGGING.md` for comprehensive logging best practices.**
+
 ## date-fns
 
 Modern date utility library.

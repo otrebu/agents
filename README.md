@@ -167,6 +167,7 @@ Custom slash commands for common workflows:
 - **HOW_TO_CREATE_COMMAND.md** - Pattern system for creating custom commands
 - **HOW_TO_START_FEATURE.md** - Feature branch workflow and naming conventions
 - **HOW_TO_CODE_REVIEW.md** - Code review process and guidelines
+- **HOW_TO_LOGGING.md** - Comprehensive logging best practices with Pino
 - **codebase-exploration/** - Comprehensive codebase exploration methodology
 
 ### Settings (`/settings.json`)

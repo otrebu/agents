@@ -27,6 +27,15 @@
 
 - Error handling: Prefer explicit error handling with typed errors
 
+## Logging
+
+- Use structured logging with Pino (see `@docs/TOOLING_PATTERNS.md` for setup)
+- Always log as objects first, message last: `log.info({ userId, orderId }, "Order created")`
+- Never use `console.log` in production code (except for CLI output)
+- Never log sensitive data (passwords, tokens, PII) - use redaction
+- Use appropriate log levels: debug/info/warn/error/fatal
+- For comprehensive guidelines, see `@docs/HOW_TO_LOGGING.md`
+
 ## Testing
 
 - any tests: prefer to use parameterized tests, think carefully about what input and output look like so that the tests exercise the system and explain the code to the future traveller
