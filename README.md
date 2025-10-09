@@ -141,6 +141,7 @@ lrwxr-xr-x  settings.json -> ../settings.json
 
 ### Agents (`/agents`)
 Reusable agent definitions for specialized tasks:
+- **gather-local-context** - Gather relevant local file context based on a topic for pre-implementation analysis
 - **code-review** - Expert code review specialist
 - **fix-eslint** - Automatically fix ESLint errors in specified files/directory
 - **create-command** - Create new command suites following DRY pattern
