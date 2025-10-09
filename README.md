@@ -163,6 +163,7 @@ Custom slash commands for common workflows:
 - `/create-command <description>` - Create new command suite (doc + agent + command)
 - `/start-feature <description>` - Create or switch to a feature branch
 - `/explore-codebase` - Run comprehensive multi-agent codebase exploration
+- `/deep-research <topic>` - Orchestrate parallel web research agents from multiple angles
 
 ### Documentation (`/docs`)
 - **CODING_STYLE.md** - Functional programming patterns, naming conventions, import aliases
@@ -170,6 +171,8 @@ Custom slash commands for common workflows:
 - **TECH_STACK_PREFERENCES.md** - Preferred tech stack choices
 - **TOOLING_PATTERNS.md** - Common tools and their usage patterns
 - **HOW_TO_CREATE_COMMAND.md** - Pattern system for creating custom commands
+- **HOW_TO_ORCHESTRATE_AGENTS.md** - Patterns for parallel and sequential agent orchestration
+- **HOW_TO_RESEARCH_DEEP.md** - Deep web research methodology
 - **HOW_TO_START_FEATURE.md** - Feature branch workflow and naming conventions
 - **HOW_TO_CODE_REVIEW.md** - Code review process and guidelines
 - **codebase-exploration/** - Comprehensive codebase exploration methodology

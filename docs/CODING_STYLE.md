@@ -39,7 +39,6 @@
   - **error**: Errors affecting functionality but not crashing the app
   - **fatal**: Critical errors requiring immediate shutdown
 - Include contextual data (requestId, userId, etc.) for traceability
-- See `@docs/TOOLING_PATTERNS.md` for implementation patterns and tools
 
 ## Testing
 

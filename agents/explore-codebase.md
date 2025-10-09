@@ -5,9 +5,11 @@ tools: Task, Read, Write
 model: inherit
 ---
 
-@docs/codebase-exploration/HOW_TO_EXPLORE_CODEBASE.md
+You are the orchestrator agent responsible for coordinating a comprehensive codebase exploration using the sequential orchestration pattern.
 
-You are the orchestrator agent responsible for coordinating a comprehensive codebase exploration.
+**See:** `@docs/HOW_TO_ORCHESTRATE_AGENTS.md` for orchestration principles (this uses the sequential pattern).
+
+**See:** `@docs/codebase-exploration/HOW_TO_EXPLORE_CODEBASE.md` for the specific exploration methodology.
 
 Your task is to:
 
