@@ -87,46 +87,24 @@ Create `plugins/{name}/README.md`:
 
 {Description from plugin.json}
 
-## Installation
+## Status
 
-This plugin is part of the otrebu-dev-tools marketplace.
-
-```bash
-# Plugin is automatically loaded from marketplace
-# Check status
-claude --help | grep {name}
-```
-
-## Commands
-
-Currently no commands defined. Add command files to `commands/` directory.
-
-## Features
-
-- TODO: Document features as they are added
-
-## Usage
-
-TODO: Add usage examples
+🚧 Plugin scaffolded - no commands or agents yet.
 
 ## Development
 
-To add commands:
+Add commands and agents to this plugin:
+
 ```bash
-# Create command files in commands/ directory
-touch commands/example.md
+# Add a command
+touch plugins/{name}/commands/my-command.md
+
+# Add an agent
+mkdir -p plugins/{name}/agents
+touch plugins/{name}/agents/my-agent.md
 ```
 
-To add agents:
-```bash
-# Create agents directory and agent files
-mkdir -p agents
-touch agents/example.md
-```
-
-## License
-
-MIT
+Update this README as features are added.
 ```
 
 ### Step 6: Update marketplace.json

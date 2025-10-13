@@ -1,0 +1,17 @@
+{
+  "name": "feature-development",
+  "version": "1.0.0",
+  "description": "Software feature development tools with agents and commands for effective delivery",
+  "author": {
+    "name": "otrebu",
+    "email": "dev@uberto.me"
+  },
+  "license": "MIT",
+  "keywords": [
+    "feature",
+    "development",
+    "agents",
+    "commands",
+    "delivery"
+  ]
+}

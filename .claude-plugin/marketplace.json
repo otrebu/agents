@@ -17,6 +17,12 @@
       "source": "./plugins/meta-work",
       "description": "Tools for managing and creating Claude Code configurations, commands, agents, and plugins",
       "version": "1.0.0"
+    },
+    {
+      "name": "feature-development",
+      "source": "./plugins/feature-development",
+      "description": "Software feature development tools with agents and commands for effective delivery",
+      "version": "1.0.0"
     }
   ]
 }
