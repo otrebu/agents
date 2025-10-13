@@ -2,7 +2,10 @@
   "name": "codebase-explorer",
   "version": "1.0.0",
   "description": "Comprehensive codebase exploration through specialized analysis agents. Orchestrates 6 specialized agents to create detailed documentation covering discovery, architecture, features, technical implementation, security, and history.",
-  "author": "otrebu",
+  "author": {
+    "name": "otrebu",
+    "email": "dev@uberto.me"
+  },
   "license": "MIT",
   "keywords": [
     "codebase",

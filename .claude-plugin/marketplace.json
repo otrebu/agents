@@ -1,4 +1,5 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "otrebu-dev-tools",
   "owner": {
     "name": "otrebu",
