@@ -180,9 +180,5 @@
   "disabledMcpjsonServers": [
     "filesystem"
   ],
-  "enabledPlugins": {
-    "codebase-explorer@otrebu-dev-tools": true,
-    "meta-work@otrebu-dev-tools": true
-  },
   "alwaysThinkingEnabled": true
 }
