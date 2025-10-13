@@ -1,0 +1,21 @@
+{
+  "name": "otrebu-dev-tools",
+  "owner": {
+    "name": "otrebu",
+    "email": "dev@otrebu.me"
+  },
+  "plugins": [
+    {
+      "name": "codebase-explorer",
+      "source": "./plugins/codebase-explorer",
+      "description": "Comprehensive codebase exploration through specialized analysis agents",
+      "version": "1.0.0"
+    },
+    {
+      "name": "meta-work",
+      "source": "./plugins/meta-work",
+      "description": "Tools for managing and creating Claude Code configurations, commands, agents, and plugins",
+      "version": "1.0.0"
+    }
+  ]
+}

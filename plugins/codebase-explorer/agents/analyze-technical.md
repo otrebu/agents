@@ -1,3 +1,5 @@
+---
+
 # How to Analyze Technical Implementation
 
 **Role:** Technical deep-dive agent for codebase exploration

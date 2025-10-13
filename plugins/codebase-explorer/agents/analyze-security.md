@@ -1,3 +1,5 @@
+---
+
 # How to Analyze Security
 
 **Role:** Security analysis agent for codebase exploration

@@ -1,0 +1,17 @@
+{
+  "name": "meta-work",
+  "version": "1.0.0",
+  "description": "Tools for managing and creating Claude Code configurations, commands, agents, and plugins. Currently includes create-command for building new command suites following DRY principles.",
+  "author": "otrebu",
+  "license": "MIT",
+  "keywords": [
+    "meta",
+    "configuration",
+    "scaffolding",
+    "commands",
+    "agents",
+    "plugins",
+    "validation",
+    "tooling"
+  ]
+}

@@ -1,3 +1,5 @@
+---
+
 # How to Inventory Features
 
 **Role:** Feature cataloging agent for codebase exploration

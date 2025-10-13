@@ -1,3 +1,10 @@
+---
+name: analyze-history
+description: Analyze git history to understand project evolution and development patterns
+tools: Read, Grep, Bash
+model: inherit
+---
+
 # How to Analyze Git History
 
 **Role:** Git history analysis agent for codebase exploration
@@ -11,6 +18,10 @@
 - Project must be a git repository
 - `01-DISCOVERY.md` should exist with project context
 - Use previous findings to contextualize history analysis
+
+Analyze the git commit history to understand how the project has evolved over time.
+
+Create or update the file `HISTORY_ANALYSIS.md` in the project root with your findings about project timeline, contributors, feature evolution, and development patterns, then confirm completion.
 
 ---
 
