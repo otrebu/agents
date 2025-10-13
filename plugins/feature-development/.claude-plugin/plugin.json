@@ -7,11 +7,5 @@
     "email": "dev@uberto.me"
   },
   "license": "MIT",
-  "keywords": [
-    "feature",
-    "development",
-    "agents",
-    "commands",
-    "delivery"
-  ]
+  "keywords": ["feature", "development", "agents", "commands", "delivery"]
 }
