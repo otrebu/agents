@@ -1,10 +1,10 @@
 ---
-allowed-tools: Read, Write, Glob, Grep, Bash(ls:*)
-description: Create slash command(s) and optional agent/doc
-argument-hint: [and agent] <what the command should do>
+allowed-tools: Read, Write, Glob, Grep, Bash(ls:*), Bash(test:*)
+description: Create slash command with optional documentation
+argument-hint: [for plugin <name>] [for doc <name>] <what the command should do>
 ---
 
-# Create Command Suite
+# Create Command
 
 You are an expert at creating Claude Code slash commands following best practices.
 
@@ -12,42 +12,73 @@ You are an expert at creating Claude Code slash commands following best practice
 
 Parse `$ARGUMENTS` to determine creation mode:
 
-- **Pattern B** (command + agent + doc): If `$ARGUMENTS` contains "and agent" or "and an agent"
-  - Example: `/create-command and agent that analyzes code security`
-- **Pattern A** (command only): Otherwise
+- **Pattern C** (plugin command): If `$ARGUMENTS` contains "for plugin" followed by plugin name
+  - Example: `/create-command analyzes deployment logs for plugin feature-development`
+  - Extract plugin name and validate it exists
+  - Can be combined with Pattern D: `/create-command for plugin meta-work for doc VALIDATE_REFERENCES`
+- **Pattern D** (reference doc): If `$ARGUMENTS` contains "for doc {name}"
+  - Example: `/create-command for doc CODE_REVIEW`
+  - Reference existing HOW_TO doc
+- **Pattern A** (inline command): Otherwise
   - Example: `/create-command analyzes code size with cloc`
-  - Example: `/create-command only analyzes code size`
 
 ## Context
 
 Current state of the codebase:
-- Existing commands: !`ls commands/*.md 2>/dev/null || echo "none"`
-- Existing agents: !`ls agents/*.md 2>/dev/null || echo "none"`
-- Existing docs: !`ls docs/HOW_TO_*.md 2>/dev/null || echo "none"`
+- Project commands: !`ls commands/*.md 2>/dev/null | xargs -n1 basename | sed 's/.md$//' || echo "none"`
+- Existing docs: !`ls docs/HOW_TO_*.md 2>/dev/null | xargs -n1 basename | sed 's/HOW_TO_//' | sed 's/.md$//' || echo "none"`
+- Available plugins: !`cat .claude-plugin/marketplace.json 2>/dev/null | grep '"name"' | cut -d'"' -f4 | paste -sd ',' - || echo "none"`
 
 ## Your Task
 
-### Step 1: Gather Information
+### Step 1: Parse Arguments
 
-From `$ARGUMENTS`, derive:
-1. **Command name** (kebab-case, e.g., `analyze-security`)
-   - Remove "and agent", "only", "that", "to", etc.
+From `$ARGUMENTS`, extract:
+
+1. **Plugin scope** (optional): Look for "for plugin {name}"
+   - Extract plugin name
+   - Remove "for plugin {name}" from remaining arguments
+2. **Doc mode** (optional): Look for "for doc {name}"
+   - Extract doc name in SCREAMING_SNAKE_CASE
+   - Remove "for doc {name}" from remaining arguments
+3. **Command name** (kebab-case, derived from description)
+   - Remove filler words: "that", "to", "for", "with", "which", etc.
    - Convert to kebab-case
-2. **Purpose** (one-sentence description, imperative mood)
-3. **Tools needed**
-   - Commands: specific bash patterns like `Bash(git status:*)`, `Bash(cloc:*)`
-   - Agents: typically `Read, Grep, Glob, Bash`
-4. **Arguments** (if the command should accept parameters)
+   - Example: "analyzes code size" → "analyze-size"
+4. **Description** (one-sentence, what the command does)
+   - Keep concise, imperative mood
+   - Example: "Analyze codebase size using cloc"
+5. **Tools needed**
+   - Specific bash patterns: `Bash(git status:*)`, `Bash(cloc:*)`
+   - Other tools: `Read, Write, Grep, Glob` as needed
+6. **Arguments** (if command should accept parameters)
+   - Example: file pattern, optional flags
 
-### Step 2: Check for Conflicts
+### Step 2: Validate
 
-Verify the derived name doesn't conflict with existing commands/agents listed in Context.
+**Check plugin exists (if plugin-scoped):**
+- Validate in marketplace: !`cat .claude-plugin/marketplace.json | grep '"name": "{plugin-name}"' && echo "exists" || echo "missing"`
+- Check directory: !`test -d plugins/{plugin-name} && echo "exists" || echo "missing"`
+- If missing: **STOP** and inform user to run `/create-plugin` first
 
-### Step 3: Generate Files
+**Check doc exists (if "for doc" mode):**
+- Validate doc file: !`test -f docs/HOW_TO_{DOC_NAME}.md && echo "exists" || echo "missing"`
+- If missing: **STOP** and suggest creating doc first with `/create-doc`
 
-#### Pattern A: Standalone Command
+**Check for name conflicts:**
+- Project scope: !`test -f commands/{name}.md && echo "conflict" || echo "available"`
+- Plugin scope: !`test -f plugins/{plugin}/commands/{name}.md && echo "conflict" || echo "available"`
+- If conflict: Ask user for alternative name
 
-Create **one file**: `commands/{name}.md`
+### Step 3: Generate Command Structure
+
+**Determine output location:**
+- Project scope: `commands/{name}.md`
+- Plugin scope: `plugins/{plugin}/commands/{name}.md`
+
+#### Pattern A: Inline Command
+
+Create command with complete inline instructions:
 
 ```markdown
 ---
@@ -55,8 +86,6 @@ allowed-tools: [specific bash patterns]
 description: [One-sentence description]
 argument-hint: [optional, e.g., "[file-pattern]" or "<required-arg>"]
 ---
-
-[Complete instructions inline]
 
 **Role:** [Define what this command does]
 
@@ -78,100 +107,131 @@ argument-hint: [optional, e.g., "[file-pattern]" or "<required-arg>"]
 [Detailed instructions. Use $ARGUMENTS if argument-hint is provided]
 ```
 
-#### Pattern B: Command + Agent + Doc
+#### Pattern D: Reference Documentation
 
-Create **three files**:
+Create command that references existing HOW_TO doc:
 
-**1. `docs/HOW_TO_{NAME}.md`** (shared instructions)
-```markdown
-# How to {Task Name}
-
-**Role:** [Define the role and goal]
-
-**Priorities (in order):**
-1. [Critical item]
-2. [Important item]
-3. [Nice-to-have]
-
-**Process:**
-1. [Step one]
-2. [Step two]
-3. [Step three]
-
-**Output Format:**
-- [Section 1]
-- [Section 2]
-
-**Constraints:**
-- [Limitation 1]
-- [Limitation 2]
-```
-
-**2. `agents/{name}.md`**
-```markdown
----
-name: {name}
-description: [One-sentence description]
-tools: Read, Grep, Glob, Bash
-model: inherit
----
-
-@docs/HOW_TO_{NAME}.md
-
-Output a {FILENAME}.md file in the project root, then confirm creation.
-```
-
-**3. `commands/{name}.md`**
 ```markdown
 ---
 allowed-tools: [specific bash patterns]
-argument-hint: [optional]
 description: [One-sentence description]
+argument-hint: [optional]
 ---
 
 ## Context
 
-- Relevant data: !`[bash command]`
+- Relevant data: !`[bash command for dynamic context]`
 
 ## Your Task
 
-[Task description referencing $ARGUMENTS if applicable]
+[Brief task description. Use $ARGUMENTS if argument-hint is provided]
 
-See @docs/HOW_TO_{NAME}.md for detailed guidelines.
+See @docs/HOW_TO_{DOC_NAME}.md for detailed guidelines.
 ```
 
-### Step 4: Validate
+### Step 4: Validate Structure
 
-Before creating files, check:
-- ✅ Frontmatter is complete
+Before creating files, verify:
+- ✅ Frontmatter is valid YAML
 - ✅ Description is imperative mood, concise
-- ✅ No duplicate names
-- ✅ Bash tools are specific patterns (not wildcards)
-- ✅ References work correctly (Pattern B only)
-- ✅ Dynamic context uses valid commands (commands only)
+- ✅ No name conflicts (in project or plugin namespace)
+- ✅ Bash tools are specific patterns (e.g., `Bash(git status:*)`, not `Bash(*)`)
+- ✅ Doc reference is correct (Pattern D only)
+- ✅ Dynamic context uses valid commands
+- ✅ Output path is correct (project or plugin)
 
-### Step 5: Create Files
+### Step 5: Create File
 
-Use the Write tool to create the file(s).
+Use Write tool to create the command file.
 
 ### Step 6: Confirm
 
 Report what was created:
-- Pattern A: "Created `commands/{name}.md`"
-- Pattern B: "Created command suite: `commands/{name}.md`, `agents/{name}.md`, `docs/HOW_TO_{NAME}.md`"
+
+**Pattern A (project):**
+```
+Created command: {name}
+Location: commands/{name}.md
+
+This command has inline instructions and can be invoked with:
+/{name}
+```
+
+**Pattern A (plugin):**
+```
+Created plugin command: {name}
+Plugin: {plugin-name}
+Location: plugins/{plugin}/commands/{name}.md
+
+This command can be invoked with:
+/{name}
+```
+
+**Pattern D (project):**
+```
+Created command: {name}
+Location: commands/{name}.md
+References: docs/HOW_TO_{DOC_NAME}.md
+
+This command references existing documentation and can be invoked with:
+/{name}
+```
+
+**Pattern D (plugin):**
+```
+Created plugin command: {name}
+Plugin: {plugin-name}
+Location: plugins/{plugin}/commands/{name}.md
+References: docs/HOW_TO_{DOC_NAME}.md
+
+This command can be invoked with:
+/{name}
+```
 
 ## Examples
 
-### Example 1: Pattern A
+### Example 1: Pattern A (Inline)
 **Input:** `/create-command analyzes codebase size using cloc`
-**Output:** `commands/analyze-size.md` with inline instructions for running cloc and analyzing output
-
-### Example 2: Pattern B
-**Input:** `/create-command and agent that reviews code quality and security`
 **Output:**
-- `docs/HOW_TO_REVIEW_CODE.md` (review checklist)
-- `agents/review-code.md` (references doc, saves to file)
-- `commands/review-code.md` (references doc, provides git context)
+- Command name: `analyze-size`
+- File: `commands/analyze-size.md`
+- Complete inline instructions for running cloc
+- Invocation: `/analyze-size`
+
+### Example 2: Pattern D (Reference Doc)
+**Input:** `/create-command for doc CODE_REVIEW`
+**Prerequisites:** `docs/HOW_TO_CODE_REVIEW.md` must exist
+**Output:**
+- Command name: `code-review`
+- File: `commands/code-review.md`
+- References existing HOW_TO doc
+- Invocation: `/code-review`
+
+### Example 3: Pattern A + Plugin
+**Input:** `/create-command analyzes deployment logs for plugin feature-development`
+**Output:**
+- Command name: `analyze-logs`
+- File: `plugins/feature-development/commands/analyze-logs.md`
+- Inline instructions for log analysis
+- Plugin namespace
+
+### Example 4: Pattern D + Plugin
+**Input:** `/create-command for plugin meta-work for doc VALIDATE_REFERENCES`
+**Prerequisites:** Plugin exists, doc exists
+**Output:**
+- Command name: `validate-references`
+- File: `plugins/meta-work/commands/validate-references.md`
+- References doc in project root
+- Plugin namespace
+
+### Example 5: With Arguments
+**Input:** `/create-command fixes eslint errors in specified files`
+**Output:**
+- Command name: `fix-eslint`
+- File: `commands/fix-eslint.md`
+- Frontmatter includes: `argument-hint: "[file-pattern]"`
+- Instructions reference `$ARGUMENTS`
+- Invocation: `/fix-eslint src/**/*.ts`
 
 ## Best Practices
 
@@ -179,6 +239,28 @@ Report what was created:
 2. **Use specific tool permissions**: `Bash(git status:*)` not `Bash(*)`
 3. **Imperative mood**: "Analyze code" not "Analyzes code"
 4. **No emojis**: Keep professional, clean formatting
-5. **Dynamic context**: Use `!`command`` for fresh data in commands
-6. **DRY with Pattern B**: Share complex instructions via docs
-7. **Arguments**: Reference `$ARGUMENTS` when `argument-hint` is provided
+5. **Dynamic context**: Use `` !`command` `` for fresh data
+6. **Arguments**: Reference `$ARGUMENTS` when `argument-hint` is provided
+7. **DRY with Pattern D**: Reference shared HOW_TO docs for complex workflows
+8. **Plugin scoping**: Use "for plugin {name}" for plugin-scoped commands
+9. **Validate first**: Check for conflicts and prerequisites before creating
+10. **Clear description**: One sentence explaining what the command does
+
+## When to Use Each Pattern
+
+**Pattern A (Inline):**
+- Simple, self-contained commands
+- Command-specific logic that won't be reused
+- Quick utility commands
+- Example: `/analyze-size`, `/start-feature`
+
+**Pattern D (Reference Doc):**
+- Complex workflows shared between command and agent
+- Standardized processes (code review, security audit)
+- When multiple commands might use the same guidelines
+- Example: `/code-review`, `/fix-eslint`
+
+**For composition, use separate commands:**
+- Need command + agent? Create command with `/create-command`, then agent with `/create-agent`
+- Need shared doc? Create doc first with `/create-doc`, then reference it
+- This keeps each command atomic and focused
