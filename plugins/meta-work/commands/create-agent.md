@@ -1,5 +1,5 @@
 ---
-allowed-tools: Read, Write, Glob, Bash(ls:*), Bash(test:*)
+allowed-tools: Read, Write, Glob, Bash(ls:*), Bash(test:*), Bash(cat:*), Bash(sed:*), Bash(grep:*), Bash(cut:*), Bash(paste:*)
 description: Create agent with optional documentation
 argument-hint: [for plugin <name>] [with doc | for doc <name>] <what the agent does>
 ---
@@ -30,8 +30,8 @@ Parse `$ARGUMENTS` to determine creation mode:
 ## Context
 
 Current state of the codebase:
-- Project agents: !`ls agents/*.md 2>/dev/null | xargs -n1 basename | sed 's/.md$//' || echo "none"`
-- Existing docs: !`ls docs/HOW_TO_*.md 2>/dev/null | xargs -n1 basename | sed 's/HOW_TO_//' | sed 's/.md$//' || echo "none"`
+- Project agents: !`ls agents/*.md 2>/dev/null | sed 's|.*/||; s|\.md$||' || echo "none"`
+- Existing docs: !`ls docs/HOW_TO_*.md 2>/dev/null | sed 's|.*/||; s|HOW_TO_||; s|\.md$||' || echo "none"`
 - Available plugins: !`cat .claude-plugin/marketplace.json 2>/dev/null | grep '"name"' | cut -d'"' -f4 | paste -sd ',' - || echo "none"`
 
 ## Your Task
