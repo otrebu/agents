@@ -1,7 +1,7 @@
 {
   "name": "meta-work",
   "version": "1.0.0",
-  "description": "Tools for managing and creating Claude Code configurations, commands, agents, and plugins. Currently includes create-command for building new command suites following DRY principles.",
+  "description": "Tools for managing and creating Claude Code configurations, commands, agents, and plugins. Includes create-command for building command suites and create-plugin for scaffolding new plugins.",
   "author": {
     "name": "otrebu",
     "email": "dev@uberto.me"

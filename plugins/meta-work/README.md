@@ -44,23 +44,42 @@ Create a complete command suite (documentation + agent + command) following DRY 
 
 ---
 
+### `/create-plugin <description>`
+
+Scaffold a complete plugin structure with manifest, folders, and README.
+
+**Usage:**
+```bash
+/create-plugin manages database migrations and schema changes
+```
+
+**What it does:**
+- Derives kebab-case plugin name from description
+- Creates plugin directory structure (`.claude-plugin/`, `commands/`, README)
+- Generates `plugin.json` manifest with proper metadata
+- Automatically updates `.claude-plugin/marketplace.json`
+- Validates for naming conflicts
+- Provides next steps for adding commands, agents, hooks, or MCP servers
+
+**Created structure:**
+```
+plugins/{name}/
+├── .claude-plugin/
+│   └── plugin.json
+├── commands/
+└── README.md
+```
+
+**Use case:** "I want to create a new plugin for database migrations"
+
+**See also:**
+- Command: `commands/create-plugin.md`
+
+---
+
 ## Future Planned Features
 
 The following features are planned for future releases. They represent the full vision of meta-work capabilities but are not yet implemented.
-
-### `/create-plugin <description>` [Planned]
-
-**Purpose:** Scaffold a complete plugin structure with manifest, folders, and README.
-
-**Planned functionality:**
-- Interactive gathering: plugin name, description, author, version
-- Create `.claude-plugin/plugin.json` manifest
-- Scaffold directory structure: `commands/`, `agents/`, `docs/`, `hooks/`
-- Generate README.md template with plugin documentation
-- Add entry to marketplace.json (if in agents repo)
-- Validate plugin structure after creation
-
-**Use case:** "I want to create a new plugin for database migrations"
 
 ---
 
