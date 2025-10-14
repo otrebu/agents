@@ -62,6 +62,41 @@ Orchestrates parallel generation of 3-5 diverse implementation approaches with t
 - Generates comparison matrix with complexity, time, risk, dependencies
 - Creates separate detailed plans for each implementation approach
 
+### plan-refiner
+Refines existing high-level implementation plans based on user feedback, generating variants and hybrids while maintaining structure and updating trade-off analysis.
+
+**Usage:**
+```
+# Single refinement
+@feature-development:plan-refiner refine docs/plans/{feature-slug}/option-2.md to use Redis instead of PostgreSQL
+
+# Generate variants
+@feature-development:plan-refiner show me 3 caching strategies for docs/plans/{feature-slug}/option-1.md
+
+# Create hybrid
+@feature-development:plan-refiner combine auth from option-1.md with data layer from option-3.md in docs/plans/{feature-slug}/
+```
+
+**Tools:** Read, Write, Edit, Glob, Grep
+
+**Output:** Versioned plan files (e.g., `option-2-redis.md`, `option-1-v2.md`, `option-hybrid-*.md`)
+
+**Documentation:** References `@docs/HOW_TO_WRITE_EFFECTIVE_PROMPTS.md` for prompting best practices
+
+**Key Features:**
+- Applies specific modifications to existing plans (technology swaps, scope changes)
+- Generates multiple variants from a single base plan
+- Creates hybrids by combining elements from different options
+- Maintains original plan structure and detail level
+- Updates trade-off analysis, complexity, and time estimates
+- Preserves original files, creates new versioned outputs
+
+**Common Use Cases:**
+- "Use X instead of Y" - Technology substitutions
+- "Reduce to MVP scope" - Scope adjustments
+- "Show me N variants with different {aspect}" - Exploration
+- "Combine {aspect} from option X with {aspect} from option Y" - Hybrid approaches
+
 ### commit-planner
 Transforms high-level plans into atomic commit-level implementations with dependency tracking.
 
@@ -93,8 +128,9 @@ Transforms high-level plans into atomic commit-level implementations with depend
 
 1. **Deep Context Gathering** - Use `deep-context-gatherer` to research a topic with web + codebase analysis
 2. **High-Level Planning** - Use `high-level-planner` to generate multiple implementation approaches
-3. **Commit Planning** - Use `commit-planner` to create atomic commit-level plans with dependency tracking
-4. **Choose & Implement** - Review comparison matrix, select best option, and follow commit-by-commit plans
+3. **Review & Refine** (Optional) - Use `plan-refiner` to iterate on options, generate variants, or create hybrids
+4. **Commit Planning** - Use `commit-planner` to create atomic commit-level plans with dependency tracking
+5. **Choose & Implement** - Review comparison matrix, select best option, and follow commit-by-commit plans
 
 ### Parallel Processing
 
@@ -115,9 +151,14 @@ All agents use parallel execution where possible:
 # Step 2: Generate implementation options
 @feature-development:high-level-planner design solutions using docs/reports/react-state-management-with-xstate.md
 
-# Step 3: Review comparison and choose option
+# Step 3: Review comparison
 # Open docs/plans/{feature-slug}/COMPARISON.md
 # Open docs/plans/{feature-slug}/option-N.md for detailed plan
+
+# Step 3.5 (Optional): Refine or create variants
+@feature-development:plan-refiner refine docs/plans/{feature-slug}/option-2.md to use Redis instead of PostgreSQL
+# OR generate variants:
+@feature-development:plan-refiner show me 3 authentication strategies for docs/plans/{feature-slug}/option-1.md
 
 # Step 4: Create commit-level implementation plan
 @feature-development:commit-planner plan commits using docs/plans/{feature-slug}/option-1.md
