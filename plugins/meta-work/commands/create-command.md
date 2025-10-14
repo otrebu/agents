@@ -1,5 +1,5 @@
 ---
-allowed-tools: Read, Write, Glob, Grep, Bash(ls:*), Bash(test:*)
+allowed-tools: Read, Write, Glob, Grep, Bash(ls:*), Bash(test:*), Bash(cat:*), Bash(grep:*), Bash(sed:*), Bash(cut:*), Bash(paste:*), Bash(xargs -n1 basename:*), Bash(echo:*)
 description: Create slash command with optional documentation
 argument-hint: [for plugin <name>] [for doc <name>] <what the command should do>
 ---
@@ -100,7 +100,8 @@ argument-hint: [optional, e.g., "[file-pattern]" or "<required-arg>"]
 
 ## Context (if needed)
 
-- Relevant data: !`[bash command for dynamic context]`
+<!-- Use the !\`actual-command\` syntax with real bash commands for dynamic context -->
+- Example: Use !\`ls commands/*.md 2>/dev/null | wc -l\` for dynamic data
 
 ## Your Task
 
@@ -120,7 +121,8 @@ argument-hint: [optional]
 
 ## Context
 
-- Relevant data: !`[bash command for dynamic context]`
+<!-- Use the !\`actual-command\` syntax with real bash commands for dynamic context -->
+- Example: Use !\`ls commands/*.md 2>/dev/null | wc -l\` for dynamic data
 
 ## Your Task
 
@@ -239,7 +241,7 @@ This command can be invoked with:
 2. **Use specific tool permissions**: `Bash(git status:*)` not `Bash(*)`
 3. **Imperative mood**: "Analyze code" not "Analyzes code"
 4. **No emojis**: Keep professional, clean formatting
-5. **Dynamic context**: Use `` !`command` `` for fresh data
+5. **Dynamic context**: Use the `!\`command\`` syntax for fresh data
 6. **Arguments**: Reference `$ARGUMENTS` when `argument-hint` is provided
 7. **DRY with Pattern D**: Reference shared HOW_TO docs for complex workflows
 8. **Plugin scoping**: Use "for plugin {name}" for plugin-scoped commands
