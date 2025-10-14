@@ -296,14 +296,21 @@ Tools for managing and creating Claude Code configurations:
 **Usage**: Install the plugin and run `/create-command <description>`
 
 #### Feature Development (`plugins/feature-development/`)
-Software feature development tools with research and planning agents:
+Software feature development tools with research, planning, and implementation agents:
 - **deep-research** - Parallel web research with optional report generation
 - **deep-context-gatherer** - Web + codebase analysis for comprehensive context (outputs to `docs/reports/`)
-- **solution-architect** - Generates 3-5 diverse implementation approaches with trade-off analysis (outputs to `docs/plans/`)
+- **high-level-planner** - Generates 3-5 diverse implementation approaches with trade-off analysis (outputs to `docs/plans/`)
+- **commit-planner** - Atomic commit-level planning with dependency tracking and wave-based parallelization (outputs to `docs/implementation/`)
 
-**Key workflow**: Use `deep-context-gatherer` to research a topic, then `solution-architect` to generate multiple implementation options with comparison matrix. The architect automatically detects and reuses context reports to avoid redundant analysis.
+**Key workflow**:
+1. `deep-context-gatherer` → research topic
+2. `high-level-planner` → generate implementation options with comparison matrix
+3. `commit-planner` → create commit-level plans with dependency tracking
+4. Implement following atomic commit plans with pre-commit checklists
 
-**Usage**: Install the plugin and use agents like `@feature-development:deep-context-gatherer gather context for <topic>`
+The workflow automatically chains outputs: architect detects and reuses context reports, planner detects and uses architect plans.
+
+**Usage**: `@feature-development:commit-planner plan commits using docs/plans/{feature}/option-1.md`
 
 ### Creating Your Own Plugins
 To create a new plugin:

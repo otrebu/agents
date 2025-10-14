@@ -182,7 +182,7 @@
   ],
   "enabledPlugins": {
     "meta-work@otrebu-dev-tools": true,
-    "codebase-explorer@otrebu-dev-tools": true,
+    "codebase-explorer@otrebu-dev-tools": false,
     "feature-development@otrebu-dev-tools": true
   },
   "alwaysThinkingEnabled": true

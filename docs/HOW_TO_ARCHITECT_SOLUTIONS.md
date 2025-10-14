@@ -1,6 +1,6 @@
-# How to Architect Solutions
+# How to Architect Solutions (High-Level Planning)
 
-**Role:** Solution orchestrator that spawns parallel architects to generate diverse implementation approaches
+**Role:** High-level planning orchestrator that spawns parallel architects to generate diverse implementation approaches with acceptance criteria and trade-off analysis
 
 **Priorities (in order):**
 1. Detect input source and avoid redundant work
@@ -87,7 +87,7 @@
 
 **Sub-Agent Prompt Template:**
 ```
-You are a solution architect designing ONE implementation approach for this feature.
+You are a technical planner designing ONE implementation approach for this feature.
 
 CONTEXT:
 {extracted context from Phase 2}
@@ -99,7 +99,7 @@ DIVERSITY CONSTRAINT:
 {assigned constraint - e.g., "Minimal dependencies"}
 
 YOUR TASK:
-Design a complete implementation plan following your assigned constraint. Output to: docs/plans/{feature-slug}/option-{N}.md
+Design a complete high-level implementation plan following your assigned constraint. Output to: docs/plans/{feature-slug}/option-{N}.md
 
 STRUCTURE YOUR PLAN:
 # Option {N}: {Approach Name}
@@ -108,44 +108,84 @@ STRUCTURE YOUR PLAN:
 [2-3 sentence summary of this approach]
 
 ## Architecture
-[High-level architecture description, component diagram in markdown]
+[High-level architecture description, key components, integration points]
+[Optional: Simple markdown diagram or component list]
 
 ## Why This Approach
 [Explain the philosophy and why it fits the constraint]
 
-## Implementation Steps
-1. [Concrete step with file references]
-2. [Concrete step with file references]
-...
+## High-Level Implementation Phases
+**Note:** Keep phases high-level - detailed planning happens in a separate step
+
+Phase 1: {Phase Name} ({time estimate})
+- {Key deliverable 1}
+- {Key deliverable 2}
+- Done when: {completion criteria}
+
+Phase 2: {Phase Name} ({time estimate})
+- {Key deliverable 1}
+- {Key deliverable 2}
+- Done when: {completion criteria}
+
+Phase 3: {Phase Name} ({time estimate})
+- {Key deliverable 1}
+- {Key deliverable 2}
+- Done when: {completion criteria}
+
+## Acceptance Criteria
+**Functional Requirements:**
+- [ ] {Specific, measurable criterion - e.g., "User can authenticate in < 2 seconds"}
+- [ ] {Testable condition with pass/fail outcome}
+- [ ] {Include edge cases and error conditions}
+
+**Non-Functional Requirements:**
+- [ ] Performance: {Specific metric - e.g., "API response time < 200ms (p95)"}
+- [ ] Security: {Specific requirement - e.g., "All data encrypted at rest"}
+- [ ] Scalability: {Specific target - e.g., "Supports 10k concurrent users"}
+- [ ] Observability: {Logging/monitoring requirements}
+
+## Success Metrics
+How we measure if this implementation succeeded:
+- {Metric 1 with target value}
+- {Metric 2 with target value}
+- {Metric 3 with target value}
 
 ## Dependencies & Tools
 - Existing: [what's already available]
 - New: [what needs to be added]
 
 ## Estimated Effort
-- Complexity: [Low/Medium/High]
-- Time estimate: [hours or days]
+- Complexity: [Low/Medium/High with justification]
+- Time estimate: [hours or days with breakdown]
+- Team size: [number of developers if relevant]
 
 ## Trade-offs
 **Pros:**
-- [Advantage 1]
-- [Advantage 2]
+- [Specific advantage with context]
+- [Why this matters for the constraint]
 
 **Cons:**
-- [Disadvantage 1]
-- [Disadvantage 2]
+- [Specific drawback with impact]
+- [What we're sacrificing and why]
 
-## Risks
-- [Risk 1 and mitigation]
-- [Risk 2 and mitigation]
+**Best for:** {When this option makes sense: team size, timeline, context}
+
+## Risks & Mitigation
+
+| Risk | Impact | Probability | Mitigation Strategy |
+|------|--------|-------------|---------------------|
+| {Risk description} | {High/Med/Low} | {High/Med/Low} | {Concrete mitigation plan} |
+| {Risk description} | {High/Med/Low} | {High/Med/Low} | {Concrete mitigation plan} |
 
 ## Maintenance Considerations
-[Long-term maintenance burden and evolution path]
+[Long-term maintenance burden, evolution path, technical debt implications]
 
 CONSTRAINTS:
-- Be specific with file paths and code references
+- Be specific with file paths and code references where relevant
 - Focus on your assigned diversity constraint
-- Provide actionable, concrete steps
+- Keep implementation phases high-level (detailed planning happens separately)
+- Acceptance criteria must be testable with clear pass/fail conditions
+- Include specific numbers in metrics (not "fast" but "< 200ms")
 - Be honest about trade-offs and risks
 ```
 
@@ -170,10 +210,43 @@ CONSTRAINTS:
 **COMPARISON.md Structure:**
 
 ```markdown
-# Feature Implementation Options: {Feature Name}
+# RFC: {Feature Name} - Implementation Options
 
-Generated: {date}
-Options: {N}
+**Generated:** {date}
+**Options Analyzed:** {N}
+**Status:** Proposed
+
+---
+
+## Problem Statement
+
+{1-2 paragraphs: What problem are we solving? Why does this matter? What happens if we don't solve it?}
+
+## Context & Constraints
+
+**Must-Haves (Deal Breakers):**
+- {Critical requirement 1 - e.g., "Must support 10k concurrent users"}
+- {Critical requirement 2 - e.g., "Must integrate with existing auth system"}
+- {Critical requirement 3 - e.g., "Must comply with GDPR"}
+
+**Nice-to-Haves (Differentiators):**
+- {Optional feature 1}
+- {Optional feature 2}
+
+**Technical Constraints:**
+- Current stack: {languages, frameworks, infrastructure}
+- Team size: {number of developers}
+- Timeline: {deadline or urgency level}
+- Budget: {if relevant}
+
+## Success Criteria
+
+How we'll measure if this implementation succeeded:
+- {Metric 1 with target - e.g., "API response time < 200ms (p95)"}
+- {Metric 2 with target - e.g., "Zero critical security issues in first 3 months"}
+- {Metric 3 with target - e.g., "Deploy to production 2x/day"}
+
+---
 
 ## Quick Comparison
 
@@ -181,54 +254,109 @@ Options: {N}
 |--------|----------|------------|------|------|----------|-------------|
 | [1](./option-1.md) | {name} | {Low/Med/High} | {estimate} | {Low/Med/High} | {count} | {Low/Med/High} |
 | [2](./option-2.md) | {name} | {Low/Med/High} | {estimate} | {Low/Med/High} | {count} | {Low/Med/High} |
-| ... | ... | ... | ... | ... | ... | ... |
+| [3](./option-3.md) | {name} | {Low/Med/High} | {estimate} | {Low/Med/High} | {count} | {Low/Med/High} |
 
 ## Option Summaries
 
 ### Option 1: {Approach Name}
 **Constraint:** {diversity constraint}
+**Philosophy:** {Why this approach}
 
 {1-2 paragraph summary extracted from option-1.md}
 
-**Best for:** {when to choose this option}
+**Key Trade-offs:**
+- Pros: {Top 2-3 advantages}
+- Cons: {Top 2-3 drawbacks}
 
-[View detailed plan](./option-1.md)
+**Best for:** {Specific scenarios - e.g., "Small teams, tight deadlines, low risk tolerance"}
+
+[📄 View detailed plan](./option-1.md)
 
 ---
 
 ### Option 2: {Approach Name}
 **Constraint:** {diversity constraint}
+**Philosophy:** {Why this approach}
 
 {1-2 paragraph summary extracted from option-2.md}
 
-**Best for:** {when to choose this option}
+**Key Trade-offs:**
+- Pros: {Top 2-3 advantages}
+- Cons: {Top 2-3 drawbacks}
 
-[View detailed plan](./option-2.md)
+**Best for:** {Specific scenarios}
+
+[📄 View detailed plan](./option-2.md)
 
 ---
 
-... (repeat for all options)
+### Option 3: {Approach Name}
+**Constraint:** {diversity constraint}
+**Philosophy:** {Why this approach}
+
+{1-2 paragraph summary extracted from option-3.md}
+
+**Key Trade-offs:**
+- Pros: {Top 2-3 advantages}
+- Cons: {Top 2-3 drawbacks}
+
+**Best for:** {Specific scenarios}
+
+[📄 View detailed plan](./option-3.md)
+
+---
 
 ## Decision Matrix
 
 Choose based on your priorities:
 
-- **Speed matters most:** Option {N} ({time estimate})
-- **Minimize risk:** Option {N} ({risk level})
-- **Keep dependencies low:** Option {N} ({dep count})
-- **Long-term maintenance:** Option {N} ({maintenance burden})
-- **Latest tech:** Option {N} (Modern stack approach)
+| Priority | Recommended Option | Rationale |
+|----------|-------------------|-----------|
+| **Speed to market** | Option {N} | {Time estimate + why fastest} |
+| **Minimize risk** | Option {N} | {Risk level + why safest} |
+| **Keep dependencies low** | Option {N} | {Dep count + sustainability} |
+| **Long-term maintenance** | Option {N} | {Maintenance burden + evolution} |
+| **Latest technology** | Option {N} | {Modern stack rationale} |
+| **Team expertise** | Option {N} | {Familiarity + learning curve} |
+
+## Weighted Decision Matrix (Optional)
+
+If specific priorities are known, use weighted scoring:
+
+| Criteria | Weight | Option 1 | Option 2 | Option 3 |
+|----------|--------|----------|----------|----------|
+| {Criterion 1} | {%} | {score/10} | {score/10} | {score/10} |
+| {Criterion 2} | {%} | {score/10} | {score/10} | {score/10} |
+| {Criterion 3} | {%} | {score/10} | {score/10} | {score/10} |
+| **Weighted Score** | | **{X.XX}** | **{X.XX}** | **{X.XX}** |
 
 ## Recommendation
 
-{Provide nuanced recommendation based on typical scenarios, or explain when to use each}
+{Provide nuanced recommendation based on typical scenarios, or explain when to use each. Don't just pick a winner - explain the context where each option shines.}
+
+**Suggested approach:**
+- If {scenario 1}: Choose Option {N}
+- If {scenario 2}: Choose Option {N}
+- If {scenario 3}: Consider hybrid of Options {N} and {M}
+
+## Open Questions
+
+{List any unresolved questions that need answers before making final decision:}
+- {Question 1}
+- {Question 2}
 
 ## Next Steps
 
 1. Review detailed plans for options that match your constraints
-2. Consider hybrid approaches combining elements from multiple options
-3. Validate assumptions with team/stakeholders
-4. Choose option and proceed with implementation
+2. Validate assumptions with team/stakeholders
+3. Consider hybrid approaches combining elements from multiple options
+4. Run proof-of-concept for top 1-2 options if uncertainty is high
+5. Make decision and document in ADR (Architecture Decision Record)
+6. Proceed with detailed implementation planning
+
+---
+
+**Note:** This is a planning document (RFC-style). Once a decision is made, create an ADR to record the choice and rationale for future reference.
 ```
 
 **Report:** "Comparison complete. Generated [N] options with diversity: [list constraints]. Location: docs/plans/{feature-slug}/COMPARISON.md"

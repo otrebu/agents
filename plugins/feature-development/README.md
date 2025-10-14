@@ -40,14 +40,14 @@ Multi-phase research agent combining parallel web searches with local codebase a
 
 **Output:** `docs/reports/{topic}.md`
 
-### solution-architect
-Orchestrates parallel generation of 3-5 diverse implementation approaches with trade-off analysis.
+### high-level-planner
+Orchestrates parallel generation of 3-5 diverse implementation approaches with trade-off analysis and acceptance criteria.
 
 **Usage:**
 ```
-@feature-development:solution-architect design solutions for {feature}
+@feature-development:high-level-planner design solutions for {feature}
 # With deep-context-gatherer report:
-@feature-development:solution-architect design solutions using docs/reports/{topic}.md
+@feature-development:high-level-planner design solutions using docs/reports/{topic}.md
 ```
 
 **Tools:** Read, Grep, Glob, Bash, Write, Task
@@ -62,20 +62,47 @@ Orchestrates parallel generation of 3-5 diverse implementation approaches with t
 - Generates comparison matrix with complexity, time, risk, dependencies
 - Creates separate detailed plans for each implementation approach
 
+### commit-planner
+Transforms high-level plans into atomic commit-level implementations with dependency tracking.
+
+**Usage:**
+```
+@feature-development:commit-planner plan commits for {feature}
+# With high-level-planner plan:
+@feature-development:commit-planner plan commits using docs/plans/{feature-slug}/option-N.md
+```
+
+**Tools:** Read, Grep, Glob, Bash, Write, Task
+
+**Output:** `docs/implementation/{feature-slug}/00-overview.md` + individual commit files
+
+**Documentation:** See `@docs/HOW_TO_PLAN_COMMITS.md` for detailed process
+
+**Key Features:**
+- Repository-aware tooling detection (package manager, tests, git hooks)
+- Atomic commit decomposition (smallest meaningful changes)
+- Wave-based parallelization (DAG with dependency tracking)
+- Conventional commits enforced (non-negotiable)
+- Sub-agent coordination (parallel detailed planning per commit)
+- Per-commit implementation plans with pre-commit checklists
+- Mermaid dependency graphs for visualization
+
 ## Features
 
 ### Research & Planning Workflow
 
 1. **Deep Context Gathering** - Use `deep-context-gatherer` to research a topic with web + codebase analysis
-2. **Solution Architecture** - Use `solution-architect` to generate multiple implementation approaches
-3. **Choose & Implement** - Review comparison matrix and select best option for your constraints
+2. **High-Level Planning** - Use `high-level-planner` to generate multiple implementation approaches
+3. **Commit Planning** - Use `commit-planner` to create atomic commit-level plans with dependency tracking
+4. **Choose & Implement** - Review comparison matrix, select best option, and follow commit-by-commit plans
 
 ### Parallel Processing
 
 All agents use parallel execution where possible:
 - `deep-research`: Parallel web searches
 - `deep-context-gatherer`: Parallel web searches across phases
-- `solution-architect`: Parallel sub-agent spawning for solution generation
+- `high-level-planner`: Parallel sub-agent spawning for solution generation
+- `commit-planner`: Parallel sub-agent spawning for per-commit detailed planning
 
 ## Usage
 
@@ -86,14 +113,19 @@ All agents use parallel execution where possible:
 @feature-development:deep-context-gatherer gather context for React state management with XState
 
 # Step 2: Generate implementation options
-@feature-development:solution-architect design solutions using docs/reports/react-state-management-with-xstate.md
+@feature-development:high-level-planner design solutions using docs/reports/react-state-management-with-xstate.md
 
 # Step 3: Review comparison and choose option
 # Open docs/plans/{feature-slug}/COMPARISON.md
 # Open docs/plans/{feature-slug}/option-N.md for detailed plan
 
-# Step 4: Implement chosen solution
-# Follow implementation steps from selected option
+# Step 4: Create commit-level implementation plan
+@feature-development:commit-planner plan commits using docs/plans/{feature-slug}/option-1.md
+
+# Step 5: Review commit plan and implement
+# Open docs/implementation/{feature-slug}/00-overview.md
+# Review dependency graph and wave structure
+# Follow commit plans starting with Wave 1
 ```
 
 ## Development
