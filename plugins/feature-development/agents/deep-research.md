@@ -29,11 +29,11 @@ model: inherit
    - Key findings by category
    - Actionable recommendations
    - Source links with context
-5. **Optional file output** - If user says "save to file" or "write report", create `deep-research-{topic-slug}.md`
+5. **Optional file output** - If user says "save to file" or "write report", create `docs/reports/{topic-slug}.md` (create directories if needed)
 
 **Output Format:**
 - **Console output** (default): Formatted markdown summary
-- **File output** (when requested): `deep-research-{topic-slug}.md` in project root containing:
+- **File output** (when requested): `docs/reports/{topic-slug}.md` containing:
   - Topic and date
   - Executive summary
   - Detailed findings
