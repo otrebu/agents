@@ -295,6 +295,16 @@ Tools for managing and creating Claude Code configurations:
 
 **Usage**: Install the plugin and run `/create-command <description>`
 
+#### Feature Development (`plugins/feature-development/`)
+Software feature development tools with research and planning agents:
+- **deep-research** - Parallel web research with optional report generation
+- **deep-context-gatherer** - Web + codebase analysis for comprehensive context (outputs to `docs/reports/`)
+- **solution-architect** - Generates 3-5 diverse implementation approaches with trade-off analysis (outputs to `docs/plans/`)
+
+**Key workflow**: Use `deep-context-gatherer` to research a topic, then `solution-architect` to generate multiple implementation options with comparison matrix. The architect automatically detects and reuses context reports to avoid redundant analysis.
+
+**Usage**: Install the plugin and use agents like `@feature-development:deep-context-gatherer gather context for <topic>`
+
 ### Creating Your Own Plugins
 To create a new plugin:
 1. Create a directory under `plugins/`
