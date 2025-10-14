@@ -62,6 +62,7 @@
       "Bash(pwd)",
       "Bash(cd:*)",
       "Bash(cat:*)",
+      "Bash(cat > /tmp/:*)",
       "Bash(head:*)",
       "Bash(tail:*)",
       "Bash(tree:*)",
