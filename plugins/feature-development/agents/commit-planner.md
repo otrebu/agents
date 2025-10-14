@@ -245,6 +245,11 @@ CRITICAL CONSTRAINTS:
 - Conventional format: {type}({scope}): {description}
 - Tests must pass before commit
 - Use detected package manager commands
+- **FILE CREATION: Use Write tool to create your output markdown file**
+  - Your output file path is specified above
+  - Use Write tool directly with that path
+  - DO NOT use bash heredocs (cat << EOF > file)
+  - DO NOT use cat with output redirection
 - **CODE DETAIL LEVEL: Show function signatures and structure, NOT full implementations**
   - DO: Function signatures, types, key algorithm choices, high-level approach
   - DON'T: Complete function bodies, every conditional/loop, line-by-line code
