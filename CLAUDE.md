@@ -6,5 +6,5 @@ This is my personal AI assistant documentation, this is how I would code.
 
 - Coding Style: @docs/CODING_STYLE.md
 - Development Workflow: @docs/DEVELOPMENT_WORKFLOW.md
-- Tech Stack: @docs/TECH_STACK.md
+- Tech Stack: @docs/TECH_STACK_PREFERENCES.md
 - Tooling Patterns: @docs/TOOLING_PATTERNS.md

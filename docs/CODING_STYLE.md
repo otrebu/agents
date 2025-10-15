@@ -32,11 +32,13 @@
 ### Application Type Determines Logging Strategy
 
 **Services/APIs/Web Servers:**
+
 - Use structured logging with data as fields, not string interpolation
 - Output machine-parseable format (e.g., JSON) for log aggregation
 - Never use basic print/console statements
 
 **CLI Tools:**
+
 - Use human-readable terminal output
 - Direct output to stdout (normal) and stderr (errors)
 - Use colored/formatted text for better UX
@@ -52,6 +54,7 @@
   - **fatal**: Critical errors requiring immediate shutdown
 - Include contextual data (requestId, userId, etc.) for traceability
 - Log level reflects **system severity**, not business outcomes (failed login = info/debug, not error)
+- Add a good amount of logs, to the point of being annoying, but not too much that it's overwhelming, so that we can trace the code execution.
 
 ## Testing
 
@@ -64,15 +67,18 @@ Scope: Applies only to languages/toolchains that support aliases (e.g., TS/JS, P
 
 Examples:
 ✅ Good (with aliases):
+
 ```typescript
-import { UserService } from '@/services/UserService'
-import { Button } from '@/components/ui/Button'
-import { formatDate } from '@/utils/dates'
+import { UserService } from "@/services/UserService";
+import { Button } from "@/components/ui/Button";
+import { formatDate } from "@/utils/dates";
 ```
+
 ❌ Avoid (relative paths):
+
 ```typescript
-import { UserService } from '../../../services/UserService'
-import { Button } from '../../components/ui/Button'
+import { UserService } from "../../../services/UserService";
+import { Button } from "../../components/ui/Button";
 ```
 
 IMPORTANT: Path aliases must be configured in multiple tools for your project to work correctly. Each tool needs its own configuration. Be aware and prompt the user to configure the aliases if not configured in tsconfig.json, vite.config.ts, etc.
