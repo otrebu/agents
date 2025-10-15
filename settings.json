@@ -181,6 +181,10 @@
   "disabledMcpjsonServers": [
     "filesystem"
   ],
+  "statusLine": {
+    "type": "command",
+    "command": "/Users/Uberto.Rapizzi/.claude/statusline-command.sh"
+  },
   "enabledPlugins": {
     "meta-work@otrebu-dev-tools": true,
     "codebase-explorer@otrebu-dev-tools": false,
