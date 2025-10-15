@@ -291,13 +291,100 @@ Location: plugins/{plugin}/agents/{name}.md
 9. **Clear role**: Define what the agent analyzes or researches
 10. **Structured output**: Specify exact format for reports
 
-## Tool Usage Notes
+## Tool Configuration
 
-- **Read**: For reading specific files
-- **Grep**: For searching content across files
-- **Glob**: For finding files by pattern
-- **Bash**: For running analysis commands (git, cloc, npm, etc.)
-- **Write**: Implied for creating report files (don't list in frontmatter)
+### Why Tools Are Required
+
+Unlike the official Claude Code documentation (which makes tools optional), this command **requires tools to be explicitly specified** for clarity and security. Always define which tools an agent can access.
+
+### Default Tool Set
+
+Most agents use this standard set:
+```
+tools: Read, Grep, Glob, Bash
+```
+
+### Tool Reference
+
+**Core Search & Analysis Tools:**
+- **Read**: Read specific files (configs, source code, documentation)
+  - Use when: Agent needs to examine exact file contents
+  - Example: Reading package.json, tsconfig.json, specific source files
+
+- **Grep**: Search content across files with regex patterns
+  - Use when: Agent needs to find patterns, strings, or code across multiple files
+  - Example: Finding function definitions, import statements, TODO comments
+
+- **Glob**: Find files by glob patterns (*.ts, src/**/*.js)
+  - Use when: Agent needs to discover files matching patterns
+  - Example: Finding all test files, all TypeScript files, all config files
+
+- **Bash**: Run shell commands (git, npm, cloc, ls, etc.)
+  - Use when: Agent needs to execute system commands or CLI tools
+  - Example: git log, npm list, cloc for line counts, file system operations
+
+**File Modification Tools:**
+- **Write**: Create new files
+  - **Required if**: Agent generates reports, creates configs, or writes any new files
+  - Example: Writing {agent-name}-report.md output files
+
+- **Edit**: Modify existing files with find/replace operations
+  - Use when: Agent needs to update existing code or configs
+  - Example: Updating version numbers, fixing imports, applying refactorings
+
+**External Data Tools:**
+- **WebSearch**: Search the web for current information
+  - Use when: Agent needs up-to-date information beyond its knowledge cutoff
+  - Example: Finding latest documentation, current best practices
+
+- **WebFetch**: Fetch and analyze content from specific URLs
+  - Use when: Agent needs to read specific web pages or API docs
+  - Example: Reading documentation from a URL, analyzing API responses
+
+**Agent Orchestration:**
+- **Task**: Delegate work to other specialized agents
+  - Use when: Agent needs to spawn sub-agents for complex workflows
+  - Example: High-level planner spawning multiple executor agents
+
+### Tool Combination Examples
+
+**Research/Analysis Agent:**
+```
+tools: Read, Grep, Glob, Bash, Write
+```
+Reads code, searches patterns, analyzes with shell commands, outputs report.
+
+**Code Review Agent:**
+```
+tools: Read, Write, Grep, Glob, Bash
+```
+Reads files, searches codebase, runs tests/linters, writes review report.
+
+**Refactoring Agent:**
+```
+tools: Read, Edit, Grep, Glob, Bash
+```
+Searches code patterns, reads files, modifies them, runs tests to verify.
+
+**External Research Agent:**
+```
+tools: WebSearch, WebFetch, Write
+```
+Searches web, fetches documentation, writes research report.
+
+**Orchestrator Agent:**
+```
+tools: Read, Grep, Glob, Bash, Task
+```
+Analyzes codebase, delegates work to specialized sub-agents.
+
+### Best Practice: Start Minimal, Add as Needed
+
+1. Start with default set: `Read, Grep, Glob, Bash`
+2. Add `Write` if agent creates files (reports, configs)
+3. Add `Edit` if agent modifies existing files
+4. Add `WebSearch`/`WebFetch` only if external data is required
+5. Add `Task` only for orchestrator agents that spawn sub-agents
 
 ## Report File Convention
 
