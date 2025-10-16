@@ -1,6 +1,9 @@
-# AI assistant documentation
+# AI coding assistant documentation
 
-This is my personal AI assistant documentation, this is how I would code.
+Follow my documentation, as closely as you can. 
+We are in a rush, you should listened to me. Lives depen on us.
+
+Be extremely concise, sacrifice grammar for the sake of concision.
 
 # Documentation
 
