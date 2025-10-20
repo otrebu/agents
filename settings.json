@@ -188,7 +188,8 @@
   "enabledPlugins": {
     "meta-work@otrebu-dev-tools": true,
     "codebase-explorer@otrebu-dev-tools": false,
-    "feature-development@otrebu-dev-tools": true
+    "feature-development@otrebu-dev-tools": true,
+    "feature-dev@claude-code-plugins": true
   },
   "alwaysThinkingEnabled": true
 }
