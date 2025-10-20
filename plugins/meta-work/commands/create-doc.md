@@ -82,34 +82,9 @@ Based on mode detected, extract:
 
 ### Step 4: Generate HOW_TO Structure
 
-Create `docs/HOW_TO_{DOC_NAME}.md` with this structure:
+Create `docs/HOW_TO_{DOC_NAME}.md` following the canonical template structure.
 
-```markdown
-# How to {Human Readable Title}
-
-**Role:** {Define what this workflow accomplishes and who it's for}
-
-**Priorities (in order):**
-1. {Critical priority - must be done}
-2. {Important priority - should be done}
-3. {Nice-to-have priority - can be done if time permits}
-
-**Process:**
-1. {First step with clear action}
-2. {Second step with clear action}
-3. {Third step with clear action}
-4. {Continue as needed}
-
-**Output Format:**
-- {What the output should contain}
-- {Structure or format requirements}
-- {Where to save results}
-
-**Constraints:**
-- {Limitation or rule to follow}
-- {Things to avoid}
-- {Requirements or standards}
-```
+See @plugins/meta-work/docs/INSTRUCTION_TEMPLATE.md for the complete template and detailed guidelines.
 
 **Content guidelines for each mode:**
 

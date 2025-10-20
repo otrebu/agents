@@ -1,7 +1,6 @@
 # AI coding assistant documentation
 
-Follow my documentation, as closely as you can. 
-We are in a rush, you should listened to me. Lives depen on us.
+Follow my documentation, as closely as you can.
 
 Be extremely concise, sacrifice grammar for the sake of concision.
 

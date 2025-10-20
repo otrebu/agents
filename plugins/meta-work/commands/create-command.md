@@ -87,17 +87,6 @@ description: [One-sentence description]
 argument-hint: [optional, e.g., "[file-pattern]" or "<required-arg>"]
 ---
 
-**Role:** [Define what this command does]
-
-**Process:**
-1. [Step one]
-2. [Step two]
-3. [Output format/results]
-
-**Constraints:**
-- [Any limitations]
-- [Rules to follow]
-
 ## Context (if needed)
 
 <!-- Use the !\`actual-command\` syntax with real bash commands for dynamic context -->
@@ -105,8 +94,14 @@ argument-hint: [optional, e.g., "[file-pattern]" or "<required-arg>"]
 
 ## Your Task
 
-[Detailed instructions. Use $ARGUMENTS if argument-hint is provided]
+[Brief task description. Use $ARGUMENTS if argument-hint is provided]
+
+{Follow simplified instruction template from @plugins/meta-work/docs/INSTRUCTION_TEMPLATE.md}
+{Commands typically focus on: Role, Workflow, Constraints}
+{Omit Priorities and Output Format unless specifically needed}
 ```
+
+Refer to @plugins/meta-work/docs/INSTRUCTION_TEMPLATE.md for guidance on structure.
 
 #### Pattern D: Reference Documentation
 

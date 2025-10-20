@@ -84,34 +84,9 @@ If mode is "with doc", create the HOW_TO doc first:
 
 **Generate HOW_TO structure:**
 
-Create `docs/HOW_TO_{DOC_NAME}.md`:
+Create `docs/HOW_TO_{DOC_NAME}.md` following the canonical template structure.
 
-```markdown
-# How to {Human Readable Title}
-
-**Role:** {Define the analytical or research role based on description}
-
-**Priorities (in order):**
-1. {Critical analysis priority}
-2. {Important verification priority}
-3. {Nice-to-have reporting priority}
-
-**Process:**
-1. {First analysis step}
-2. {Second investigation step}
-3. {Third reporting step}
-4. {Continue as needed}
-
-**Output Format:**
-- {What the report should contain}
-- {Structure requirements}
-- {File name and location}
-
-**Constraints:**
-- {Analysis limitations}
-- {Things to check or avoid}
-- {Standards to follow}
-```
+See @plugins/meta-work/docs/INSTRUCTION_TEMPLATE.md for the complete template and guidelines.
 
 Use Write tool to create the doc file.
 
@@ -146,27 +121,12 @@ tools: Read, Grep, Glob, Bash
 model: inherit
 ---
 
-**Role:** {Define what this agent analyzes or researches}
+{Follow the instruction template structure from @plugins/meta-work/docs/INSTRUCTION_TEMPLATE.md}
 
-**Priorities (in order):**
-1. {Critical priority}
-2. {Important priority}
-3. {Nice-to-have priority}
-
-**Process:**
-1. {First step}
-2. {Second step}
-3. {Third step - output report}
-
-**Output Format:**
-- {Report section 1}
-- {Report section 2}
-- {File name and location}
-
-**Constraints:**
-- {Limitation 1}
-- {Limitation 2}
+{Include sections: Role, Priorities, Workflow, Output Format, Constraints, Best Practices}
 ```
+
+Refer to @plugins/meta-work/docs/INSTRUCTION_TEMPLATE.md for the complete template structure.
 
 ### Step 5: Validate Structure
 
