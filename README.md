@@ -34,14 +34,16 @@ All configuration can be linked to your global Claude config (`~/.claude`) or in
 ├── agents/                       # Core reusable agent definitions
 │   ├── code-review.md
 │   ├── fix-eslint.md
-│   └── start-feature.md
+│   ├── start-feature.md
+│   └── browser-researcher.md
 ├── commands/                     # Core custom slash commands
 │   ├── commit.md                # Conventional commits
 │   ├── code-review.md           # Code review
 │   ├── analyze-size.md          # Codebase size analysis
 │   ├── fix-eslint.md            # Fix ESLint errors via agent
 │   ├── spawn-eslint-fixers.md   # Orchestrate parallel ESLint fixers
-│   └── start-feature.md         # Feature branch workflow
+│   ├── start-feature.md         # Feature branch workflow
+│   └── browser-research.md      # Browser-based deep research
 ├── docs/                         # Project documentation and coding standards
 │   ├── CODING_STYLE.md
 │   ├── DEVELOPMENT_WORKFLOW.md
@@ -49,7 +51,8 @@ All configuration can be linked to your global Claude config (`~/.claude`) or in
 │   ├── TOOLING_PATTERNS.md
 │   ├── HOW_TO_START_FEATURE.md
 │   ├── HOW_TO_CODE_REVIEW.md
-│   └── HOW_TO_FIX_ESLINT.md
+│   ├── HOW_TO_FIX_ESLINT.md
+│   └── HOW_TO_SETUP_CHROME_MCP.md
 ├── CLAUDE.md                     # Global Claude instructions
 ├── settings.json                 # Claude Code settings
 ├── setup.sh                      # Automated setup script
@@ -157,6 +160,7 @@ Reusable agent definitions for specialized tasks:
 - **code-review** - Expert code review specialist
 - **fix-eslint** - Automatically fix ESLint errors in specified files/directory
 - **start-feature** - Create feature branches based on description
+- **browser-researcher** - Browser automation specialist for deep research via Claude.ai using Chrome MCP
 
 ### Core Commands (`/commands`)
 Custom slash commands for common workflows:
@@ -166,6 +170,7 @@ Custom slash commands for common workflows:
 - `/fix-eslint [pattern]` - Fix ESLint errors via agent orchestration
 - `/spawn-eslint-fixers [pattern]` - Orchestrate parallel ESLint fixers by directory
 - `/start-feature <description>` - Create or switch to a feature branch
+- `/browser-research <query>` - Deep research using Claude.ai in browser via Chrome MCP
 
 ### Plugins (`/plugins`)
 
@@ -212,6 +217,7 @@ Tools for managing and creating Claude Code configurations, commands, agents, an
 - **HOW_TO_START_FEATURE.md** - Feature branch workflow and naming conventions
 - **HOW_TO_CODE_REVIEW.md** - Code review process and guidelines
 - **HOW_TO_FIX_ESLINT.md** - ESLint error fixing workflow
+- **HOW_TO_SETUP_CHROME_MCP.md** - Chrome MCP installation and configuration for browser automation
 
 ### Settings (`/settings.json`)
 Claude Code configuration including:
