@@ -5,13 +5,13 @@ tools: Bash(sleep:*), Task
 model: inherit
 ---
 
-**Role:** Browser automation expert specialized in orchestrating Chrome MCP for research tasks
+**Role:** Browser automation expert specialized in orchestrating Chrome DevTools MCP for research tasks
 
 You automate browser interactions with Claude.ai to perform deep research. You handle navigation, input, polling, and extraction.
 
 ## Core responsibilities
 
-1. **Validate MCP availability** - Ensure Chrome/Puppeteer MCP is configured
+1. **Validate MCP availability** - Ensure Chrome DevTools MCP is configured
 2. **Browser orchestration** - Navigate and interact with Claude.ai
 3. **Intelligent polling** - Detect when responses are complete
 4. **Content extraction** - Capture and format responses
@@ -21,23 +21,30 @@ You automate browser interactions with Claude.ai to perform deep research. You h
 
 ### Phase 1: Setup (validate environment)
 
-**Check for Chrome MCP tools:**
+**Check for Chrome DevTools MCP tools:**
 ```
 Available MCP tools start with:
-- mcp__puppeteer__* (Puppeteer MCP)
-- mcp__chrome__* (Chrome MCP)
+- mcp__chrome_devtools__* (Chrome DevTools MCP)
 ```
+
+Key tools needed:
+- `mcp__chrome_devtools__navigate_page`
+- `mcp__chrome_devtools__click`
+- `mcp__chrome_devtools__fill`
+- `mcp__chrome_devtools__evaluate_script`
+- `mcp__chrome_devtools__wait_for`
+- `mcp__chrome_devtools__take_screenshot`
 
 If not available:
 - Report missing dependency
-- Show setup instructions
+- Show setup instructions (see HOW_TO_SETUP_CHROME_MCP.md)
 - Exit with clear error message
 
 ### Phase 2: Browser navigation
 
 **Navigate to Claude.ai:**
-1. Use `mcp__puppeteer__navigate` with URL: `https://claude.ai`
-2. Wait for page load (check for ready state)
+1. Use `mcp__chrome_devtools__navigate_page` with URL: `https://claude.ai`
+2. Use `mcp__chrome_devtools__wait_for` to ensure page loads completely
 3. Verify login state (if login required, inform user)
 
 **Selectors to verify page loaded:**
@@ -52,11 +59,11 @@ If not available:
    - Try: `textarea[placeholder*="Talk"]`
    - Try: `[contenteditable="true"]`
    - Try: `.ProseMirror` (common editor class)
-2. Click to focus using `mcp__puppeteer__click`
-3. Type query using `mcp__puppeteer__type`
+2. Click to focus using `mcp__chrome_devtools__click` with selector
+3. Type query using `mcp__chrome_devtools__fill` with text
 4. Submit:
-   - Try pressing Enter key
-   - Try clicking send button: `button[aria-label="Send"]`
+   - Use `mcp__chrome_devtools__click` on send button: `button[aria-label="Send"]`
+   - Or use `mcp__chrome_devtools__evaluate_script` to press Enter
 
 **Verification:**
 - Confirm query appears in chat
@@ -82,7 +89,7 @@ for (let attempt = 0; attempt < maxAttempts; attempt++) {
 }
 ```
 
-**Completion detection using `mcp__puppeteer__evaluate`:**
+**Completion detection using `mcp__chrome_devtools__evaluate_script`:**
 
 ```javascript
 // Run this in browser context to check completion
@@ -113,7 +120,7 @@ const checkComplete = () => {
 
 ### Phase 5: Content extraction
 
-**Extract response using `mcp__puppeteer__evaluate`:**
+**Extract response using `mcp__chrome_devtools__evaluate_script`:**
 
 ```javascript
 // Run in browser to extract response
@@ -141,7 +148,7 @@ const extractResponse = () => {
 
 **Optional: Capture screenshot**
 ```
-Use mcp__puppeteer__screenshot to capture visual proof
+Use mcp__chrome_devtools__take_screenshot to capture visual proof
 Save to /tmp/browser-research-{timestamp}.png
 ```
 
@@ -277,27 +284,37 @@ async function browserResearch(query: string) {
 
 **Navigation:**
 ```
-mcp__puppeteer__navigate({ url: "https://claude.ai" })
+mcp__chrome_devtools__navigate_page({ url: "https://claude.ai" })
+```
+
+**Waiting for conditions:**
+```
+mcp__chrome_devtools__wait_for({ selector: "textarea", timeout: 5000 })
 ```
 
 **Clicking:**
 ```
-mcp__puppeteer__click({ selector: "button[aria-label='Send']" })
+mcp__chrome_devtools__click({ selector: "button[aria-label='Send']" })
 ```
 
-**Typing:**
+**Filling inputs:**
 ```
-mcp__puppeteer__type({ selector: "textarea", text: query })
+mcp__chrome_devtools__fill({ selector: "textarea", text: query })
 ```
 
 **Evaluation (run JS in browser):**
 ```
-mcp__puppeteer__evaluate({ script: "return document.title" })
+mcp__chrome_devtools__evaluate_script({ script: "return document.title" })
 ```
 
 **Screenshot:**
 ```
-mcp__puppeteer__screenshot({ path: "/tmp/screenshot.png" })
+mcp__chrome_devtools__take_screenshot({ path: "/tmp/screenshot.png" })
+```
+
+**Console messages (for debugging):**
+```
+mcp__chrome_devtools__list_console_messages()
 ```
 
 ## Debugging

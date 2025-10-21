@@ -8,34 +8,34 @@ argument-hint: "<query>"
 
 ## Prerequisites
 
-This command requires Chrome MCP server to be installed and enabled. See setup instructions below.
+This command requires Chrome DevTools MCP server to be installed and enabled. See setup instructions below.
 
 ## Your task
 
 You will perform deep research by automating Claude.ai in a browser session.
 
-### Step 1: Validate Chrome MCP availability
+### Step 1: Validate Chrome DevTools MCP availability
 
-Check if Chrome MCP tools are available by looking for tools starting with `mcp__chrome__` or `mcp__puppeteer__`.
+Check if Chrome DevTools MCP tools are available by looking for tools starting with `mcp__chrome_devtools__`.
 
-If Chrome MCP is not available:
-- Inform user that Chrome MCP must be installed
+If Chrome DevTools MCP is not available:
+- Inform user that Chrome DevTools MCP must be installed
 - Provide setup instructions from the documentation below
 - Exit gracefully
 
 ### Step 2: Navigate to Claude.ai
 
-Use Chrome MCP tools to:
-1. Launch browser (or use existing session)
+Use Chrome DevTools MCP tools to:
+1. Create/select page using `navigate_page`
 2. Navigate to `https://claude.ai`
-3. Wait for page to load completely
+3. Use `wait_for` to ensure page loads completely
 
 ### Step 3: Start conversation
 
 1. Locate the chat input field (usually a textarea or contenteditable element)
-2. Click on it to focus
-3. Type the user's query exactly as provided
-4. Submit the query (click send button or press Enter)
+2. Use `click` to focus the input
+3. Use `fill` to enter the user's query exactly as provided
+4. Use `click` to submit (click send button) or use `evaluate_script` to press Enter
 
 ### Step 4: Wait for response
 
@@ -90,15 +90,19 @@ Format your output:
 - Max attempts: 60 (3 minutes total)
 - Early exit: if completion detected
 
-**Completion detection (use multiple signals):**
+**Completion detection using `evaluate_script` (use multiple signals):**
 ```javascript
-// Pseudo-code for detection
-isComplete = (
-  !document.querySelector('[aria-label="Stop"]') &&
-  document.querySelector('[aria-label="Send"]') &&
-  !document.querySelector('[data-testid="thinking-indicator"]') &&
-  lastMessageHasTimestamp()
-)
+// Run via evaluate_script tool
+const isComplete = () => {
+  const noStopButton = !document.querySelector('[aria-label="Stop"]');
+  const sendVisible = document.querySelector('[aria-label="Send"]');
+  const notThinking = !document.querySelector('[data-testid="thinking-indicator"]');
+  const messages = document.querySelectorAll('[data-testid="message"]');
+  const lastMessage = messages[messages.length - 1];
+  const hasTimestamp = lastMessage?.querySelector('[data-testid="message-timestamp"]');
+
+  return noStopButton && sendVisible && notThinking && hasTimestamp;
+};
 ```
 
 **Element selectors (may need updates as UI changes):**
@@ -107,15 +111,15 @@ isComplete = (
 - Stop: `button[aria-label="Stop"]`
 - Messages: `div[data-testid="message"]` or similar
 
-## Chrome MCP setup
+## Chrome DevTools MCP setup
 
 ### Installation
 
+Use npx (recommended - always gets latest version):
+
 ```bash
-# Install Chrome MCP server (if not already installed)
-npm install -g @modelcontextprotocol/server-puppeteer
-# OR
-npx @modelcontextprotocol/server-puppeteer
+# No installation needed - uses npx
+npx -y chrome-devtools-mcp@latest
 ```
 
 ### Configuration
@@ -125,30 +129,56 @@ Add to `settings.json`:
 ```json
 {
   "mcpServers": {
-    "puppeteer": {
+    "chrome-devtools": {
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-puppeteer"
+        "chrome-devtools-mcp@latest"
       ]
     }
   },
   "enabledMcpjsonServers": [
     "github",
     "memory",
-    "puppeteer"
+    "chrome-devtools"
   ]
 }
 ```
 
+### Requirements
+
+- Node.js v20.19 or newer LTS version
+- Chrome stable or newer
+- npm package manager
+
 ### Verification
 
-After configuration, restart Claude Code. The following tools should be available:
-- `mcp__puppeteer__navigate`
-- `mcp__puppeteer__click`
-- `mcp__puppeteer__type`
-- `mcp__puppeteer__screenshot`
-- `mcp__puppeteer__evaluate`
+After configuration, restart Claude Code. The following tools should be available (27 total):
+
+**Input Automation:**
+- `mcp__chrome_devtools__click`
+- `mcp__chrome_devtools__fill`
+- `mcp__chrome_devtools__hover`
+- `mcp__chrome_devtools__drag`
+- `mcp__chrome_devtools__fill_form`
+- `mcp__chrome_devtools__handle_dialog`
+- `mcp__chrome_devtools__upload_file`
+
+**Navigation:**
+- `mcp__chrome_devtools__navigate_page`
+- `mcp__chrome_devtools__new_page`
+- `mcp__chrome_devtools__close_page`
+- `mcp__chrome_devtools__list_pages`
+- `mcp__chrome_devtools__select_page`
+- `mcp__chrome_devtools__navigate_page_history`
+- `mcp__chrome_devtools__wait_for`
+
+**Debugging:**
+- `mcp__chrome_devtools__evaluate_script`
+- `mcp__chrome_devtools__take_screenshot`
+- `mcp__chrome_devtools__take_snapshot`
+- `mcp__chrome_devtools__get_console_message`
+- `mcp__chrome_devtools__list_console_messages`
 
 ## Alternative: Use WebFetch as fallback
 
