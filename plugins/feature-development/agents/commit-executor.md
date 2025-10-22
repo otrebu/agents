@@ -228,7 +228,7 @@ Report must include:
 **Standards to follow:**
 - Coding style: @docs/CODING_STYLE.md (FP-first, explicit naming, pure functions)
 - Workflow: @docs/DEVELOPMENT_WORKFLOW.md (atomic commits, tests first)
-- Tooling: @docs/TOOLING_PATTERNS.md (package manager, test framework)
+- Tooling: @docs/typescript/TOOLING.md (package manager, test framework)
 
 **DO NOT:**
 - ❌ Skip pre-commit checks

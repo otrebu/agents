@@ -3,13 +3,12 @@
 ## Functional Programming Patterns
 
 - FP-first, minimal OOP
-- Avoid classes entirely.
+- Avoid classes entirely. Only exception: custom error types when required by the language.
 - Prefer small, focused functions. If >3 params, accept a single options object.
 - Favor immutable returns; isolate side effects at the edges.
 - Prefer data-first utilities (inputs first, options last; return new values).
-- Only exception: custom errors that extend `Error`.
-- Prefer pure functions, modules, closures, and plain JavaScript objects.
-- Use composition over inheritance. No `this`, no `new`, no prototypes.
+- Prefer pure functions and plain data structures.
+- Use composition over inheritance.
 
 ## Explicit, descriptive verbose naming
 
@@ -58,27 +57,8 @@
 
 ## Testing
 
-- any tests: prefer to use parameterized tests, think carefully about what input and output look like so that the tests exercise the system and explain the code to the future traveller
+### Universal Testing Principles
 
-## Import aliases (Absolute, Readable, Consistent)
-
-Goal: Make imports readable and stable by using import aliases and absolute paths from the project root or src/.
-Scope: Applies only to languages/toolchains that support aliases (e.g., TS/JS, Python, Go). Never rewrite node_modules (third-party) imports.
-
-Examples:
-✅ Good (with aliases):
-
-```typescript
-import { UserService } from "@/services/UserService";
-import { Button } from "@/components/ui/Button";
-import { formatDate } from "@/utils/dates";
-```
-
-❌ Avoid (relative paths):
-
-```typescript
-import { UserService } from "../../../services/UserService";
-import { Button } from "../../components/ui/Button";
-```
-
-IMPORTANT: Path aliases must be configured in multiple tools for your project to work correctly. Each tool needs its own configuration. Be aware and prompt the user to configure the aliases if not configured in tsconfig.json, vite.config.ts, etc.
+- Update tests when behavior changes, don't force green
+- Test names should tell a story
+- Tests should serve as documentation

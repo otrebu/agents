@@ -45,8 +45,11 @@ All configuration can be linked to your global Claude config (`~/.claude`) or in
 ├── docs/                         # Project documentation and coding standards
 │   ├── CODING_STYLE.md
 │   ├── DEVELOPMENT_WORKFLOW.md
-│   ├── TECH_STACK_PREFERENCES.md
-│   ├── TOOLING_PATTERNS.md
+│   ├── typescript/
+│   │   ├── STACK.md
+│   │   ├── TOOLING.md
+│   │   ├── TESTING.md
+│   │   └── LOGGING.md
 │   ├── HOW_TO_START_FEATURE.md
 │   ├── HOW_TO_CODE_REVIEW.md
 │   └── HOW_TO_FIX_ESLINT.md
@@ -205,10 +208,12 @@ Tools for managing and creating Claude Code configurations, commands, agents, an
 **Installation**: Add the plugin via the marketplace or install directly from `plugins/meta-work/`
 
 ### Documentation (`/docs`)
-- **CODING_STYLE.md** - Functional programming patterns, naming conventions, import aliases
+- **CODING_STYLE.md** - Universal coding principles (FP patterns, naming, testing, logging)
 - **DEVELOPMENT_WORKFLOW.md** - Testing, commits, branching, documentation guidelines
-- **TECH_STACK_PREFERENCES.md** - Preferred tech stack choices
-- **TOOLING_PATTERNS.md** - Common tools and their usage patterns
+- **typescript/STACK.md** - TypeScript/JavaScript tech stack overview
+- **typescript/TOOLING.md** - Tool usage patterns and configurations
+- **typescript/TESTING.md** - Testing patterns with Vitest
+- **typescript/LOGGING.md** - Logging strategies (CLI vs services)
 - **HOW_TO_START_FEATURE.md** - Feature branch workflow and naming conventions
 - **HOW_TO_CODE_REVIEW.md** - Code review process and guidelines
 - **HOW_TO_FIX_ESLINT.md** - ESLint error fixing workflow

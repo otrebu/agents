@@ -1,5 +1,11 @@
 # Tooling Patterns
 
+> **⚠️ DEPRECATED:** This file is being migrated. See:
+> - @docs/typescript/STACK.md
+> - @docs/typescript/TOOLING.md
+> - @docs/typescript/TESTING.md
+> - @docs/typescript/LOGGING.md
+
 ## pnpm
 
 ```bash

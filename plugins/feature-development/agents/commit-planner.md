@@ -504,7 +504,7 @@ Use this exact structure for the overview file:
 ⚠️ **Missing: {Tool Name}**
 - Impact: {what functionality is affected}
 - Recommendation: {setup instructions or command}
-- Reference: @docs/TOOLING_PATTERNS.md#{section}
+- Reference: @docs/typescript/TOOLING.md#{section}
 
 {IF ALL PRESENT:}
 ✅ All recommended tooling configured
@@ -637,7 +637,7 @@ graph TD
 **Project Documentation:**
 - Coding Style: @docs/CODING_STYLE.md
 - Development Workflow: @docs/DEVELOPMENT_WORKFLOW.md
-- Tooling Patterns: @docs/TOOLING_PATTERNS.md
+- TypeScript/JavaScript Tooling: @docs/typescript/TOOLING.md
 
 **External Standards:**
 - Conventional Commits: https://www.conventionalcommits.org/
@@ -784,7 +784,7 @@ Uses HS256 algorithm with secret from environment.
 
 {IF NOT CONFIGURED:}
 ⚠️ Manual code review required. Consider setting up ESLint.
-Reference: @docs/TOOLING_PATTERNS.md#eslint
+Reference: @docs/typescript/TOOLING.md#eslint
 
 ---
 
@@ -798,7 +798,7 @@ Reference: @docs/TOOLING_PATTERNS.md#eslint
 
 {IF NOT CONFIGURED:}
 ⚠️ Manual formatting required. Consider setting up Prettier.
-Reference: @docs/TOOLING_PATTERNS.md#prettier
+Reference: @docs/typescript/TOOLING.md#prettier
 
 ---
 
@@ -832,7 +832,7 @@ Reference: @docs/TOOLING_PATTERNS.md#prettier
 
 {IF NOT CONFIGURED:}
 ⚠️ Manual verification required before commit
-Consider setting up Husky: @docs/TOOLING_PATTERNS.md#husky
+Consider setting up Husky: @docs/typescript/TOOLING.md#husky
 
 ---
 
@@ -923,7 +923,7 @@ git revert {commit-hash}
 - **Dependency Graph:** See overview file for visual graph
 - **Coding Standards:** @docs/CODING_STYLE.md
 - **Workflow:** @docs/DEVELOPMENT_WORKFLOW.md
-- **Tooling:** @docs/TOOLING_PATTERNS.md
+- **Tooling:** @docs/typescript/TOOLING.md
 
 ---
 
