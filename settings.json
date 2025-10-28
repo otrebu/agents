@@ -186,10 +186,10 @@
     "command": "/Users/Uberto.Rapizzi/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
-    "meta-work@otrebu-dev-tools": true,
+    "meta-work@otrebu-dev-tools": false,
     "codebase-explorer@otrebu-dev-tools": false,
-    "feature-development@otrebu-dev-tools": true,
-    "feature-dev@claude-code-plugins": true
+    "feature-development@otrebu-dev-tools": false,
+    "feature-dev@claude-code-plugins": false
   },
   "alwaysThinkingEnabled": true
 }
