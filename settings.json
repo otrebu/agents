@@ -26,6 +26,7 @@
       "Bash(git fetch:*)",
       "Bash(git pull:*)",
       "Bash(git push origin:*)",
+      "Bash(git push:*)",
       "Bash(git remote -v)",
       "Bash(git remote add:*)",
       "Bash(git init)",
@@ -101,7 +102,10 @@
       "Bash(./*.sh)",
       "Bash(./*.js)",
       "Bash(pnpm lint 2>&1 | grep -E \"^\\s*/\" | sed 's/\\s*[0-9]*:[0-9]*.*//' | sort -u | xargs -n1 dirname | sort | uniq -c)",
-      "SlashCommand(*)"
+      "SlashCommand(*)",
+      "Skill(git-commit)",
+      "Skill(start-feature)",
+      "Skill(skill-creator)"
     ],
     "deny": [
       "Read(.env*)",
@@ -174,13 +178,8 @@
     ]
   },
   "enableAllProjectMcpServers": false,
-  "enabledMcpjsonServers": [
-    "github",
-    "memory"
-  ],
-  "disabledMcpjsonServers": [
-    "filesystem"
-  ],
+  "enabledMcpjsonServers": ["github", "memory"],
+  "disabledMcpjsonServers": ["filesystem"],
   "statusLine": {
     "type": "command",
     "command": "/Users/Uberto.Rapizzi/.claude/statusline-command.sh"
