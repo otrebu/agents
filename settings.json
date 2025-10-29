@@ -108,7 +108,8 @@
       "Skill(finish-feature)",
       "Skill(skill-creator)",
       "Skill(brainwriting)",
-      "Skill(analyze-size)"
+      "Skill(analyze-size)",
+      "Skill(scratchpad-fetch)"
     ],
     "deny": [
       "Read(.env*)",

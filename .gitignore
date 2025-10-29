@@ -37,3 +37,6 @@ coverage/
 # Temporary files
 *.tmp
 .cache/
+
+# Scratchpad files
+docs/scratchpad/
