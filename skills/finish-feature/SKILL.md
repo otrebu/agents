@@ -74,10 +74,10 @@ git pull origin main  # or master
 Merge the feature branch into main:
 
 ```bash
-git merge $FEATURE_BRANCH --no-ff
+git merge $FEATURE_BRANCH
 ```
 
-Uses `--no-ff` to preserve feature branch history as a merge commit.
+Uses fast-forward merge when possible for cleaner history.
 
 **If merge conflicts occur:**
 - Notify user of conflicts
