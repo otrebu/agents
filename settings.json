@@ -105,7 +105,9 @@
       "SlashCommand(*)",
       "Skill(git-commit)",
       "Skill(start-feature)",
-      "Skill(skill-creator)"
+      "Skill(finish-feature)",
+      "Skill(skill-creator)",
+      "Skill(brainwriting)"
     ],
     "deny": [
       "Read(.env*)",
@@ -178,8 +180,13 @@
     ]
   },
   "enableAllProjectMcpServers": false,
-  "enabledMcpjsonServers": ["github", "memory"],
-  "disabledMcpjsonServers": ["filesystem"],
+  "enabledMcpjsonServers": [
+    "github",
+    "memory"
+  ],
+  "disabledMcpjsonServers": [
+    "filesystem"
+  ],
   "statusLine": {
     "type": "command",
     "command": "/Users/Uberto.Rapizzi/.claude/statusline-command.sh"

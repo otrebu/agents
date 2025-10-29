@@ -1,6 +1,7 @@
 ---
 name: skill-creator
 description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.
+allowed-tools: Bash(python3 ./skills/skill-creator/scripts/init_skill.py:*)
 ---
 
 # Skill Creator for Claude Code
@@ -179,10 +180,15 @@ Output: List of reusable resources needed.
 
 Skip if skill exists.
 
-Run init script:
+Run init script from repo root:
 
 ```bash
-scripts/init_skill.py <skill-name> --path <output-directory>
+python3 ./skills/skill-creator/scripts/init_skill.py <skill-name> --path <output-directory>
+```
+
+Example:
+```bash
+python3 ./skills/skill-creator/scripts/init_skill.py brainwriting --path ./.claude/skills
 ```
 
 Creates:
