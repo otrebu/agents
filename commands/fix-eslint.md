@@ -4,6 +4,14 @@ argument-hint: [optional file pattern to fix, e.g., "src/**/*.ts"]
 description: Automatically fix ESLint errors by modifying code to comply with linting rules
 ---
 
+> **⚠️ DEPRECATED:** This command has been replaced by the `fix-eslint` skill.
+>
+> **Use instead:** Invoke the skill directly - Claude will automatically use it when you mention fixing ESLint errors.
+>
+> **Why migrate:** The skill provides smart routing (direct fix for ≤20 errors, parallel agents for >20 errors) and consolidates all ESLint fixing logic in one place.
+>
+> **Documentation:** See `.claude/skills/fix-eslint/SKILL.md`
+
 ## Context
 
 - Current ESLint errors: !`pnpm lint 2>&1 || true`

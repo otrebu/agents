@@ -109,6 +109,7 @@
       "Skill(skill-creator)",
       "Skill(brainwriting)",
       "Skill(analyze-size)",
+      "Skill(fix-eslint)",
       "Skill(scratchpad-fetch)"
     ],
     "deny": [

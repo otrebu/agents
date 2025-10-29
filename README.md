@@ -21,6 +21,7 @@ All configuration can be linked to your global Claude config (`~/.claude`) or in
 │   │   ├── analyze-size/
 │   │   ├── brainwriting/
 │   │   ├── finish-feature/
+│   │   ├── fix-eslint/
 │   │   ├── git-commit/
 │   │   ├── skill-creator/
 │   │   └── start-feature/
@@ -55,8 +56,7 @@ All configuration can be linked to your global Claude config (`~/.claude`) or in
 │   │   ├── TESTING.md
 │   │   └── LOGGING.md
 │   ├── HOW_TO_START_FEATURE.md
-│   ├── HOW_TO_CODE_REVIEW.md
-│   └── HOW_TO_FIX_ESLINT.md
+│   └── HOW_TO_CODE_REVIEW.md
 ├── CLAUDE.md                     # Global Claude instructions
 ├── settings.json                 # Claude Code settings
 ├── setup.sh                      # Automated setup script
@@ -168,14 +168,15 @@ Reusable agent definitions for specialized tasks:
 ### Core Commands (`/commands`)
 Custom slash commands for common workflows:
 - `/code-review` - Comprehensive code review
-- `/fix-eslint [pattern]` - Fix ESLint errors via agent orchestration
-- `/spawn-eslint-fixers [pattern]` - Orchestrate parallel ESLint fixers by directory
+- `/fix-eslint [pattern]` - ⚠️ **DEPRECATED** - Use `fix-eslint` skill instead
+- `/spawn-eslint-fixers [pattern]` - ⚠️ **DEPRECATED** - Use `fix-eslint` skill instead
 
 ### Core Skills (`.claude/skills`)
 Modular packages providing specialized workflows and domain expertise:
 - **analyze-size** - Analyze codebase size and language distribution using cloc
 - **brainwriting** - Structured brainstorming using parallel sub-agents
 - **finish-feature** - Complete feature work and merge back to main
+- **fix-eslint** - Automatically fix ESLint errors. Smart routing: direct fix for ≤20 errors, parallel agents for >20 errors
 - **git-commit** - Create conventional commits with proper formatting
 - **skill-creator** - Guide for creating effective skills
 - **start-feature** - Create or switch to feature branches
@@ -226,7 +227,6 @@ Tools for managing and creating Claude Code configurations, commands, agents, an
 - **typescript/LOGGING.md** - Logging strategies (CLI vs services)
 - **HOW_TO_START_FEATURE.md** - Feature branch workflow and naming conventions
 - **HOW_TO_CODE_REVIEW.md** - Code review process and guidelines
-- **HOW_TO_FIX_ESLINT.md** - ESLint error fixing workflow
 
 ### Settings (`/settings.json`)
 Claude Code configuration including:
