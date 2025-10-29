@@ -1,10 +1,9 @@
 # My Claude Memory
 
 A centralized configuration repository for Claude Code featuring:
-- 🤖 **Specialized agents** for code review, ESLint fixing, command creation
-- ⚡ **Custom slash commands** for common workflows (commits, branches, code review)
-- 🔧 **Meta-command system** to create new commands following DRY principles
-- 🔌 **Plugin marketplace** with modular extensions (codebase explorer)
+- 🎯 **Specialized skills** for code review, ESLint fixing, git workflows, brainstorming, and more
+- 🔌 **Plugin marketplace** with modular extensions (codebase explorer, meta-work, feature development)
+- 🔧 **Meta-work tools** to create new commands, agents, docs, and plugins following DRY principles
 - 📚 **Personal coding standards** (FP-first style, development workflow, tech stack preferences)
 - 🔗 **Symlink-based setup** for easy sharing across projects
 
@@ -20,9 +19,12 @@ All configuration can be linked to your global Claude config (`~/.claude`) or in
 │   ├── skills/                   # Specialized skill modules
 │   │   ├── analyze-size/
 │   │   ├── brainwriting/
+│   │   ├── code-review/
 │   │   ├── finish-feature/
 │   │   ├── fix-eslint/
 │   │   ├── git-commit/
+│   │   ├── permissions/
+│   │   ├── scratchpad-fetch/
 │   │   ├── skill-creator/
 │   │   └── start-feature/
 │   └── settings.json            -> ../settings.json
@@ -34,28 +36,39 @@ All configuration can be linked to your global Claude config (`~/.claude`) or in
 │   │   ├── commands/            # Plugin commands
 │   │   ├── agents/              # Plugin agents
 │   │   └── README.md            # Plugin documentation
-│   └── meta-work/               # Meta-work plugin (command creation, etc.)
+│   ├── meta-work/               # Meta-work plugin (command creation, etc.)
+│   │   ├── .claude-plugin/      # Plugin manifest
+│   │   ├── commands/            # Plugin commands
+│   │   ├── docs/                # Plugin documentation
+│   │   └── README.md            # Plugin documentation
+│   └── feature-development/      # Feature development plugin
 │       ├── .claude-plugin/      # Plugin manifest
 │       ├── commands/            # Plugin commands
 │       ├── agents/              # Plugin agents
 │       └── README.md            # Plugin documentation
-├── agents/                       # Core reusable agent definitions
-│   ├── code-review.md
-│   ├── fix-eslint.md
-│   └── start-feature.md
-├── commands/                     # Core custom slash commands
-│   ├── code-review.md           # Code review
-│   ├── fix-eslint.md            # Fix ESLint errors via agent
-│   └── spawn-eslint-fixers.md   # Orchestrate parallel ESLint fixers
+├── skills/                       # Core reusable skill modules
+│   ├── analyze-size/
+│   ├── brainwriting/
+│   ├── code-review/
+│   ├── finish-feature/
+│   ├── fix-eslint/
+│   ├── git-commit/
+│   ├── permissions/
+│   ├── scratchpad-fetch/
+│   ├── skill-creator/
+│   └── start-feature/
 ├── docs/                         # Project documentation and coding standards
 │   ├── CODING_STYLE.md
 │   ├── DEVELOPMENT_WORKFLOW.md
-│   ├── typescript/
-│   │   ├── STACK.md
-│   │   ├── TOOLING.md
-│   │   ├── TESTING.md
-│   │   └── LOGGING.md
-│   └── HOW_TO_START_FEATURE.md
+│   ├── HOW_TO_DEEP_CONTEXT_GATHER.md
+│   ├── HOW_TO_DO_HIGH_LEVEL_PLANNING.md
+│   ├── HOW_TO_WRITE_EFFECTIVE_PROMPTS.md
+│   ├── TOOLING_PATTERNS.md
+│   └── typescript/
+│       ├── STACK.md
+│       ├── TOOLING.md
+│       ├── TESTING.md
+│       └── LOGGING.md
 ├── CLAUDE.md                     # Global Claude instructions
 ├── settings.json                 # Claude Code settings
 ├── setup.sh                      # Automated setup script
@@ -87,7 +100,7 @@ Use the provided setup script:
 
 The script will:
 - ✓ Create `.claude` directory if needed
-- ✓ Create symlinks to agents, commands, settings
+- ✓ Create symlinks to agents, commands, skills, settings
 - ✓ Use relative paths for project configs (portable)
 - ✓ Skip existing files/symlinks (safe to re-run)
 - ✓ Preview changes with `--dry-run` before applying
@@ -117,6 +130,7 @@ cd ~/.claude
 # Create symlinks using relative paths
 ln -s ~/dev/agents/agents agents
 ln -s ~/dev/agents/commands commands
+ln -s ~/dev/agents/skills skills
 ln -s ~/dev/agents/settings.json settings.json
 
 # Optional: Link documentation
@@ -136,6 +150,7 @@ cd ~/path/to/your-project/.claude
 # (adjust the path based on where agents is relative to your project)
 ln -s ../../agents/agents agents
 ln -s ../../agents/commands commands
+ln -s ../../agents/skills skills
 ln -s ../../agents/settings.json settings.json
 ```
 
@@ -153,80 +168,40 @@ You should see output like:
 ```
 lrwxr-xr-x  agents -> ../agents
 lrwxr-xr-x  commands -> ../commands
+lrwxr-xr-x  skills -> ../skills
 lrwxr-xr-x  settings.json -> ../settings.json
 ```
 
 ## What's Included
 
-### Core Agents (`/agents`)
-Reusable agent definitions for specialized tasks:
-- **code-review** - Expert code review specialist
-- **fix-eslint** - Automatically fix ESLint errors in specified files/directory
-- **start-feature** - Create feature branches based on description
-
-### Core Commands (`/commands`)
-Custom slash commands for common workflows:
-- `/code-review` - Comprehensive code review
-- `/fix-eslint [pattern]` - ⚠️ **DEPRECATED** - Use `fix-eslint` skill instead
-- `/spawn-eslint-fixers [pattern]` - ⚠️ **DEPRECATED** - Use `fix-eslint` skill instead
-
 ### Core Skills (`.claude/skills`)
 Modular packages providing specialized workflows and domain expertise:
 - **analyze-size** - Analyze codebase size and language distribution using cloc
-- **brainwriting** - Structured brainstorming using parallel sub-agents
+- **brainwriting** - Structured brainstorming using parallel sub-agents to explore idea spaces (5 rounds of parallel agent analysis and refinement)
 - **code-review** - Expert code review with automated pre-review checks (tests, lint, format) and auto-fix capabilities
-- **finish-feature** - Complete feature work and merge back to main
+- **finish-feature** - Complete feature work and merge back to main branch
 - **fix-eslint** - Automatically fix ESLint errors. Smart routing: direct fix for ≤20 errors, parallel agents for >20 errors
-- **git-commit** - Create conventional commits with proper formatting
+- **git-commit** - Create conventional commits with proper formatting based on git diff analysis
+- **permissions** - Configure and manage Claude Code permissions, sandboxing, and tool access
 - **scratchpad-fetch** - Download and aggregate web pages/docs into timestamped scratchpad files
-- **skill-creator** - Guide for creating effective skills
-- **start-feature** - Create or switch to feature branches
+- **skill-creator** - Guide for creating effective skills with specialized knowledge, workflows, or tool integrations
+- **start-feature** - Create or switch to feature branches with proper naming conventions
 
 ### Plugins (`/plugins`)
 
-#### Codebase Explorer Plugin
-**Location**: `plugins/codebase-explorer/`
-
-Comprehensive codebase exploration through specialized analysis agents:
-- **Command**: `/explore-codebase` - Orchestrate multi-agent codebase exploration
-- **Agents**: 7 specialized agents
-  - `explore-codebase` - Orchestrator agent
-  - `discover-codebase` - Initial discovery (technology, structure)
-  - `analyze-architecture` - Architecture, patterns, component relationships
-  - `analyze-technical` - Testing, error handling, CI/CD, technical quality
-  - `analyze-security` - Security analysis and vulnerability assessment
-  - `analyze-history` - Git history analysis and development patterns
-  - `inventory-features` - Features, user journeys, business capabilities
-- **Documentation**: 7 comprehensive HOW_TO guides for each analysis domain
-
-**Installation**: Add the plugin via the marketplace or install directly from `plugins/codebase-explorer/`
-
-#### Meta-Work Plugin
-**Location**: `plugins/meta-work/`
-
-Tools for managing and creating Claude Code configurations, commands, agents, and plugins. Provides "meta work" capabilities for building and maintaining your custom Claude Code environment.
-
-- **Command**: `/create-command <description>` - Create complete command suites following DRY principles
-- **What it does**:
-  - Interactively gathers requirements (name, tools, complexity)
-  - Decides between Pattern A (standalone) or Pattern B (shared doc)
-  - Generates appropriate files in `commands/`, `agents/`, and `docs/`
-  - Validates structure and references
-- **Patterns**:
-  - Pattern A (Standalone): Single command/agent with inline instructions
-  - Pattern B (Shared Doc): Both agent and command with shared documentation
-- **Future features** (planned): `/create-plugin`, `/analyze-config`, `/audit-commands`, `/update-readme`, and more
-
-**Installation**: Add the plugin via the marketplace or install directly from `plugins/meta-work/`
+See [Available Plugins](#available-plugins) section below for detailed information about each plugin.
 
 ### Documentation (`/docs`)
 - **CODING_STYLE.md** - Universal coding principles (FP patterns, naming, testing, logging)
 - **DEVELOPMENT_WORKFLOW.md** - Testing, commits, branching, documentation guidelines
+- **HOW_TO_DEEP_CONTEXT_GATHER.md** - Guide for comprehensive context gathering workflows
+- **HOW_TO_DO_HIGH_LEVEL_PLANNING.md** - Guide for high-level solution planning and architecture
+- **HOW_TO_WRITE_EFFECTIVE_PROMPTS.md** - Best practices for writing effective prompts
+- **TOOLING_PATTERNS.md** - Tool usage patterns and configurations
 - **typescript/STACK.md** - TypeScript/JavaScript tech stack overview
 - **typescript/TOOLING.md** - Tool usage patterns and configurations
 - **typescript/TESTING.md** - Testing patterns with Vitest
 - **typescript/LOGGING.md** - Logging strategies (CLI vs services)
-- **HOW_TO_START_FEATURE.md** - Feature branch workflow and naming conventions
 
 ### Settings (`/settings.json`)
 Claude Code configuration including:
@@ -303,29 +278,39 @@ Comprehensive codebase exploration through 7 specialized analysis agents:
 
 #### Meta-Work (`plugins/meta-work/`)
 Tools for managing and creating Claude Code configurations:
-- Create complete command suites with `/create-command`
-- Follows DRY principles with Pattern A (standalone) and Pattern B (shared doc)
+- **Commands**: `/create-command`, `/create-agent`, `/create-doc`, `/create-plugin`
+- Atomic command design (each command does one thing well)
+- Supports inline instructions or shared documentation patterns
 - Validates structure and prevents conflicts
-- Future features: plugin creation, config analysis, command auditing, and more
+- Plugin-scoped support for organizing by domain
 
-**Usage**: Install the plugin and run `/create-command <description>`
+**Usage**: Install the plugin and run `/create-command <description>`, `/create-agent <description>`, etc.
 
 #### Feature Development (`plugins/feature-development/`)
 Software feature development tools with research, planning, and implementation agents:
-- **deep-research** - Parallel web research with optional report generation
-- **deep-context-gatherer** - Web + codebase analysis for comprehensive context (outputs to `docs/reports/`)
-- **high-level-planner** - Generates 3-5 diverse implementation approaches with trade-off analysis (outputs to `docs/plans/`)
-- **commit-planner** - Atomic commit-level planning with dependency tracking and wave-based parallelization (outputs to `docs/implementation/`)
+- **Command**: `/execute-implementation` - Orchestrate wave-based execution of implementation plans
+- **Agents**:
+  - `deep-research` - Parallel web research with optional report generation
+  - `deep-context-gatherer` - Web + codebase analysis for comprehensive context (outputs to `docs/reports/`)
+  - `high-level-planner` - Generates 3-5 diverse implementation approaches with trade-off analysis (outputs to `docs/plans/`)
+  - `plan-refiner` - Refines existing plans based on feedback, generates variants and hybrids
+  - `commit-planner` - Atomic commit-level planning with dependency tracking and wave-based parallelization (outputs to `docs/implementation/`)
+  - `commit-executor` - Implements individual commits following detailed plans
 
 **Key workflow**:
 1. `deep-context-gatherer` → research topic
 2. `high-level-planner` → generate implementation options with comparison matrix
-3. `commit-planner` → create commit-level plans with dependency tracking
-4. Implement following atomic commit plans with pre-commit checklists
+3. (Optional) `plan-refiner` → refine or create variants/hybrids
+4. `commit-planner` → create commit-level plans with dependency tracking
+5. `/execute-implementation` → wave-based execution with parallel commits
 
 The workflow automatically chains outputs: architect detects and reuses context reports, planner detects and uses architect plans.
 
-**Usage**: `@feature-development:commit-planner plan commits using docs/plans/{feature}/option-1.md`
+**Usage**: 
+- `@feature-development:deep-context-gatherer gather context for {topic}`
+- `@feature-development:high-level-planner design solutions using docs/reports/{topic}.md`
+- `@feature-development:commit-planner plan commits using docs/plans/{feature}/option-1.md`
+- `/execute-implementation docs/implementation/{feature-slug}`
 
 ### Creating Your Own Plugins
 To create a new plugin:

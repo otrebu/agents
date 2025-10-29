@@ -107,6 +107,7 @@ setup_global() {
     link_file "$target_dir" "${SCRIPT_DIR}/commands" "commands"
     link_file "$target_dir" "${SCRIPT_DIR}/settings.json" "settings.json"
     link_file "$target_dir" "${SCRIPT_DIR}/docs" "docs"
+    link_file "$target_dir" "${SCRIPT_DIR}/skills" "skills"
     link_file "$target_dir" "${SCRIPT_DIR}/CLAUDE.md" "CLAUDE.md"
 
     echo ""
@@ -163,6 +164,7 @@ setup_project() {
     link_file "$target_dir" "${relative_path}/agents" "agents"
     link_file "$target_dir" "${relative_path}/commands" "commands"
     link_file "$target_dir" "${relative_path}/settings.json" "settings.json"
+    link_file "$target_dir" "${relative_path}/skills" "skills"
 
     echo ""
     if [ "$DRY_RUN" = true ]; then
