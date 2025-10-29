@@ -55,8 +55,7 @@ All configuration can be linked to your global Claude config (`~/.claude`) or in
 │   │   ├── TOOLING.md
 │   │   ├── TESTING.md
 │   │   └── LOGGING.md
-│   ├── HOW_TO_START_FEATURE.md
-│   └── HOW_TO_CODE_REVIEW.md
+│   └── HOW_TO_START_FEATURE.md
 ├── CLAUDE.md                     # Global Claude instructions
 ├── settings.json                 # Claude Code settings
 ├── setup.sh                      # Automated setup script
@@ -175,9 +174,11 @@ Custom slash commands for common workflows:
 Modular packages providing specialized workflows and domain expertise:
 - **analyze-size** - Analyze codebase size and language distribution using cloc
 - **brainwriting** - Structured brainstorming using parallel sub-agents
+- **code-review** - Expert code review with automated pre-review checks (tests, lint, format) and auto-fix capabilities
 - **finish-feature** - Complete feature work and merge back to main
 - **fix-eslint** - Automatically fix ESLint errors. Smart routing: direct fix for ≤20 errors, parallel agents for >20 errors
 - **git-commit** - Create conventional commits with proper formatting
+- **scratchpad-fetch** - Download and aggregate web pages/docs into timestamped scratchpad files
 - **skill-creator** - Guide for creating effective skills
 - **start-feature** - Create or switch to feature branches
 
@@ -226,7 +227,6 @@ Tools for managing and creating Claude Code configurations, commands, agents, an
 - **typescript/TESTING.md** - Testing patterns with Vitest
 - **typescript/LOGGING.md** - Logging strategies (CLI vs services)
 - **HOW_TO_START_FEATURE.md** - Feature branch workflow and naming conventions
-- **HOW_TO_CODE_REVIEW.md** - Code review process and guidelines
 
 ### Settings (`/settings.json`)
 Claude Code configuration including:
