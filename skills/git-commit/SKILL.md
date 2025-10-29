@@ -1,6 +1,6 @@
 ---
 name: git-commit
-description: Create git commits following conventional commits format. Use when user asks to commit changes, create a commit, or save work to git. Handles staging files, generating commit messages from diffs, and optional push operations.
+description: Create git commits following conventional commits format. Use when user asks to commit, commit changes, create a commit, or save work to git. Handles staging files, generating commit messages from diffs, and optional push operations.
 ---
 
 # Git Commit with Conventional Commits
@@ -23,6 +23,7 @@ git log --oneline -10
 ### 2. Analyze Changes
 
 Review the diff to determine:
+
 - **Type**: feat, fix, refactor, docs, test, chore
 - **Scope**: affected module/component
 - **Description**: concise summary in imperative mood
@@ -34,6 +35,7 @@ git add <relevant-files>
 ```
 
 **Critical**: NEVER stage:
+
 - `.env` files
 - Credential files
 - Secret keys
@@ -42,6 +44,7 @@ git add <relevant-files>
 ### 4. Create Commit
 
 Format:
+
 ```
 <type>(scope): description
 
@@ -50,6 +53,7 @@ Format:
 ```
 
 Rules:
+
 - Summary: 50-72 chars
 - Imperative mood: "add" not "added"
 - Auto-generate from diff (never use user's exact words as message)
@@ -59,6 +63,7 @@ Rules:
 ### 5. Post-Commit Actions
 
 Check user's request for post-commit instructions:
+
 - "and push" → `git push`
 - "and push origin <branch>" → `git push origin <branch>`
 - No instruction → commit only

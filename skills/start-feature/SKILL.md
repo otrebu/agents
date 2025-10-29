@@ -1,6 +1,7 @@
 ---
 name: start-feature
 description: Create or switch to feature branches with proper naming conventions. Use when user wants to start working on a new feature. Generates feature/branch-name patterns from descriptions, checks existence, and creates/switches accordingly.
+allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*), Bash(git diff:*), Bash(git log:*), Bash(git branch:*), Bash(git push:*)
 ---
 
 # Start Feature
@@ -10,6 +11,10 @@ description: Create or switch to feature branches with proper naming conventions
 Creates or switches to feature branches following the `feature/<slug>` naming convention. Analyzes feature descriptions to generate concise, descriptive branch names and handles branch creation or switching automatically.
 
 ## Process
+
+### 1. Check Current Branch
+
+
 
 ### 1. Parse Feature Description
 
@@ -27,7 +32,7 @@ Extract 2-4 key words that capture the essence of the feature from the descripti
 - "add pagination to table component" → `feature/table-pagination`
 - "refactor the api client" → `feature/api-refactor`
 
-### 2. Verify Git Status
+### 2. Verify Git Status and Current Branch
 
 Before creating or switching branches, verify current git status:
 
@@ -36,6 +41,12 @@ git status
 ```
 
 Ensure working directory is clean or changes are properly handled.
+
+```bash
+git branch --show-current
+```
+
+Is it already a feature branch? If so ask the user if they want to branch off from here or go back to main branch first.
 
 ### 3. Check Branch Existence
 
