@@ -14,9 +14,16 @@ All configuration can be linked to your global Claude config (`~/.claude`) or in
 
 ```
 .
-├── .claude/                      # Example .claude folder with symlinks
+├── .claude/                      # Example .claude folder
 │   ├── agents/                  -> ../agents
 │   ├── commands/                -> ../commands
+│   ├── skills/                   # Specialized skill modules
+│   │   ├── analyze-size/
+│   │   ├── brainwriting/
+│   │   ├── finish-feature/
+│   │   ├── git-commit/
+│   │   ├── skill-creator/
+│   │   └── start-feature/
 │   └── settings.json            -> ../settings.json
 ├── .claude-plugin/               # Plugin marketplace definition
 │   └── marketplace.json         # Marketplace configuration
@@ -36,12 +43,9 @@ All configuration can be linked to your global Claude config (`~/.claude`) or in
 │   ├── fix-eslint.md
 │   └── start-feature.md
 ├── commands/                     # Core custom slash commands
-│   ├── commit.md                # Conventional commits
 │   ├── code-review.md           # Code review
-│   ├── analyze-size.md          # Codebase size analysis
 │   ├── fix-eslint.md            # Fix ESLint errors via agent
-│   ├── spawn-eslint-fixers.md   # Orchestrate parallel ESLint fixers
-│   └── start-feature.md         # Feature branch workflow
+│   └── spawn-eslint-fixers.md   # Orchestrate parallel ESLint fixers
 ├── docs/                         # Project documentation and coding standards
 │   ├── CODING_STYLE.md
 │   ├── DEVELOPMENT_WORKFLOW.md
@@ -163,12 +167,18 @@ Reusable agent definitions for specialized tasks:
 
 ### Core Commands (`/commands`)
 Custom slash commands for common workflows:
-- `/commit [message]` - Create conventional commits
 - `/code-review` - Comprehensive code review
-- `/analyze-size` - Analyze codebase size and language distribution using cloc
 - `/fix-eslint [pattern]` - Fix ESLint errors via agent orchestration
 - `/spawn-eslint-fixers [pattern]` - Orchestrate parallel ESLint fixers by directory
-- `/start-feature <description>` - Create or switch to a feature branch
+
+### Core Skills (`.claude/skills`)
+Modular packages providing specialized workflows and domain expertise:
+- **analyze-size** - Analyze codebase size and language distribution using cloc
+- **brainwriting** - Structured brainstorming using parallel sub-agents
+- **finish-feature** - Complete feature work and merge back to main
+- **git-commit** - Create conventional commits with proper formatting
+- **skill-creator** - Guide for creating effective skills
+- **start-feature** - Create or switch to feature branches
 
 ### Plugins (`/plugins`)
 

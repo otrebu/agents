@@ -1,6 +1,6 @@
 ---
 name: git-commit
-description: Create git commits following conventional commits format. Use when user asks to commit, commit changes, create a commit, or save work to git. Handles staging files, generating commit messages from diffs, and optional push operations.
+description: Create git commits following conventional commits format. Use when user asks to just commit, git commit, commit changes, create a commit. Handles staging files, generating commit messages from diffs, and optional push operations.
 allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*), Bash(git diff:*), Bash(git log:*), Bash(git branch:*), Bash(git push:*)
 ---
 
