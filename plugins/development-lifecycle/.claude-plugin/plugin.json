@@ -1,7 +1,7 @@
 {
   "name": "feature-development",
   "version": "1.0.0",
-  "description": "Software feature development tools with agents and commands for effective delivery",
+  "description": "Software feature development tools with agents, commands and skills for effective delivery",
   "author": {
     "name": "otrebu",
     "email": "dev@uberto.me"

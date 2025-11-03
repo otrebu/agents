@@ -7,72 +7,51 @@ A feature/change is complete when ALL of these are true:
 1. ✅ Tests added/updated and passing
 2. ✅ README and relevant docs updated
 3. ✅ Committed with conventional commit message
-4. ✅ On feature branch (most of the time, not all the time)
-
-**Documentation is mandatory, not optional.** If you skip step 2, the feature is incomplete.
+4. ✅ On feature branch (when appropriate)
 
 ---
 
-## 0) First, get context
+## 0) Get context
 
-- Before doing anything, read `README`, and package/project config.
-- If missing info (test command, branch naming, CI), **ask** concise questions.
+- Read `README` and package/project config first
+- Ask concise questions if missing info (test command, branch naming, CI)
 
 ## 1) Tests 🧪
 
-- For every new feature, **add or update tests** that demonstrate the intended behavior.
-- When behavior changes, **update tests to reflect the new behavior**, not to “force green”.
-- Keep tests fast; if slow, mark as integration/e2e and isolate from unit runs.
-- When makes sense to Test Driven Development, do it.
+- Add or update tests for every new feature
+- Update tests to reflect new behavior (don't force green)
+- Keep tests fast; mark slow tests as integration/e2e and isolate from unit runs
+- Use TDD when appropriate
 
 ## 2) Commit discipline ✍️
 
-- Use **Conventional Commits** with small, meaningful commits:
-  `feat(scope): short imperative summary`
-  Include body + breaking change footer when needed. Never sign the commit from you.
-- Run the project's tests **before each commit**. If tests fail, **do not commit**.
-- **Include documentation updates** with the feature (ideal) or in immediate follow-up commit.
-  - Example: `feat(commands): add analyze-size command` should include README updates
-  - Or: Followed immediately by `docs(readme): document analyze-size command`
+- Use **Conventional Commits**: `feat(scope): short imperative summary`
+  - Include body + breaking change footer when needed
+  - Never sign commits from AI
+- Run tests before each commit. Don't commit if tests fail
+- Include documentation updates with feature or in immediate follow-up
 
 ## 3) Branching 🔀
 
-- **Check branch strategy first.** If currently on `main`/`master`:
-  1. Ask: "Currently on main. Should I stay here or create a feature branch? (I can use `/start-feature <description>` to create one)"
+- **Check branch strategy.** If on `main`/`master`:
+  1. Ask: "Stay on main or create feature branch? (use `/start-feature <description>`)"
   2. Wait for user decision
-  3. If creating branch, use repo convention (e.g., `feat/<ticket>-<slug>`)
-- When using feature branches, push and open PRs; **never push directly** to protected branches.
-- Some repos allow direct work on main (small projects, personal repos). When in doubt, ask.
+  3. Use repo convention (e.g., `feat/<ticket>-<slug>`)
+- Push feature branches and open PRs; never push directly to protected branches
+- Some repos allow direct work on main. Ask if uncertain
 
 ## 4) Documentation 📝
 
-**A feature is NOT complete until documentation is updated.**
+Update docs immediately after implementing features:
 
-After implementing ANY feature or making significant changes:
-
-1. **Update the README immediately** - before the next task, before moving on
-
-   - Add new features/commands to appropriate sections
-   - Update examples if behavior changed
-   - Refresh the "What's Included" section
-   - Update repository structure if files were added
-
-2. **Update relevant docs** (`/docs`, changelog, HOW_TO guides)
-
-   - If you created a new pattern, document it
-   - If you changed behavior, update affected docs
-   - Keep examples accurate and remove stale sections
-
-3. **Include docs in the same commit** or immediately after
-   - Ideal: Feature implementation + docs in one commit
-   - Acceptable: Docs in immediate follow-up commit
-   - Never: Waiting for someone to notice missing docs
-
-**For AI assistants:** Treat documentation as a blocking requirement. After you complete a feature, ask yourself: "What project-level docs need updating?" If the answer is "README" or "any HOW_TO guide", do it immediately, don't wait to be asked.
+- **README**: Add features/commands, update examples, refresh structure
+- **Relevant docs**: Update `/docs`, HOW_TO guides, patterns
+- **Commit with feature** or in immediate follow-up
+- **For AI**: Don't wait to be asked. Ask "What docs need updating?" and do it
 
 ## 5) Pre-merge checklist ✅
 
-- All tests pass locally and in CI.
-- Lint/type checks pass.
-- Docs updated (README/examples).
-- PR description explains **what/why**, links ticket, and notes breaking changes.
+- Tests pass locally and in CI
+- Lint/type checks pass
+- Docs updated (README/examples)
+- PR description explains what/why, links ticket, notes breaking changes

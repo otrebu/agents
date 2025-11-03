@@ -2,29 +2,28 @@
 
 ## Functional Programming Patterns
 
-- FP-first, minimal OOP
-- Avoid classes entirely. Only exception: custom error types when required by the language.
-- Prefer small, focused functions. If >3 params, accept a single options object.
-- Favor immutable returns; isolate side effects at the edges.
-- Prefer data-first utilities (inputs first, options last; return new values).
-- Prefer pure functions and plain data structures.
-- Use composition over inheritance.
+- FP-first, minimal OOP. Avoid classes (exception: custom error types)
+- Prefer small, focused functions. If >3 params, use single options object
+- Favor immutable returns and pure functions; isolate side effects at edges
+- Use plain data structures over class instances
+- Prefer data-first utilities (inputs first, options last)
+- Use composition over inheritance
 
 ## Explicit, descriptive verbose naming
 
-- Names must be intention-revealing and self-documenting.
-- Include domain terms and units where relevant (e.g., `timeoutMs`, `priceGBP`).
-- Booleans start with is/has/should; functions are verbs; data are nouns.
-- Avoid abbreviations unless industry-standard (id, URL, HTML).
+- Names must be self-documenting
+- Include domain terms and units where relevant (e.g., `timeoutMs`, `priceGBP`)
+- Booleans start with is/has/should; functions are verbs; data are nouns
+- Avoid abbreviations unless industry-standard (id, URL, HTML)
 
 ## Comments explain WHY, not HOW
 
-- Write comments only for rationale, constraints, trade-offs, invariants, and gotchas.
-- Do not narrate implementation steps or restate code.
+- Write comments only for rationale, constraints, trade-offs, invariants, and gotchas
+- Do not narrate implementation steps or restate code
 
 ## Error handling
 
-- Error handling: Prefer explicit error handling with typed errors
+- Prefer explicit error handling with typed errors
 
 ## Logging
 
@@ -53,7 +52,7 @@
   - **fatal**: Critical errors requiring immediate shutdown
 - Include contextual data (requestId, userId, etc.) for traceability
 - Log level reflects **system severity**, not business outcomes (failed login = info/debug, not error)
-- Add a good amount of logs, to the point of being annoying, but not too much that it's overwhelming, so that we can trace the code execution.
+- Log at key decision points, state transitions, and external calls for traceability
 
 ## Testing
 
@@ -61,4 +60,6 @@
 
 - Update tests when behavior changes, don't force green
 - Test names should tell a story
-- Tests should serve as documentation
+- Tests serve as documentation
+
+For language-specific testing patterns, see @docs/typescript/TESTING.md

@@ -1,5 +1,7 @@
 # My Claude Memory
 
+
+🥚
 A centralized configuration repository for Claude Code featuring:
 - 🎯 **Specialized skills** for code review, ESLint fixing, git workflows, brainstorming, and more
 - 🔌 **Plugin marketplace** with modular extensions (codebase explorer, meta-work, feature development)
@@ -13,57 +15,41 @@ All configuration can be linked to your global Claude config (`~/.claude`) or in
 
 ```
 .
-├── .claude/                      # Example .claude folder
+├── .claude/                      # Example .claude folder (symlinked)
 │   ├── agents/                  -> ../agents
 │   ├── commands/                -> ../commands
-│   ├── skills/                   # Specialized skill modules
-│   │   ├── analyze-size/
-│   │   ├── brainwriting/
-│   │   ├── code-review/
-│   │   ├── finish-feature/
-│   │   ├── fix-eslint/
-│   │   ├── git-commit/
-│   │   ├── permissions/
-│   │   ├── scratchpad-fetch/
-│   │   ├── skill-creator/
-│   │   └── start-feature/
+│   ├── skills/                  -> ../skills
 │   └── settings.json            -> ../settings.json
 ├── .claude-plugin/               # Plugin marketplace definition
 │   └── marketplace.json         # Marketplace configuration
 ├── plugins/                      # Plugin directory
-│   ├── codebase-explorer/       # Codebase exploration plugin
-│   │   ├── .claude-plugin/      # Plugin manifest
-│   │   ├── commands/            # Plugin commands
-│   │   ├── agents/              # Plugin agents
-│   │   └── README.md            # Plugin documentation
 │   ├── meta-work/               # Meta-work plugin (command creation, etc.)
 │   │   ├── .claude-plugin/      # Plugin manifest
 │   │   ├── commands/            # Plugin commands
-│   │   ├── docs/                # Plugin documentation
+│   │   ├── skills/              # Plugin-scoped skills
+│   │   │   ├── prompting/       # Prompt engineering standards
+│   │   │   └── skill-creator/   # Skill creation guide
 │   │   └── README.md            # Plugin documentation
-│   └── feature-development/      # Feature development plugin
+│   └── development-lifecycle/   # Development lifecycle plugin
 │       ├── .claude-plugin/      # Plugin manifest
 │       ├── commands/            # Plugin commands
 │       ├── agents/              # Plugin agents
 │       └── README.md            # Plugin documentation
-├── skills/                       # Core reusable skill modules
+├── skills/                       # Core reusable skill modules (12 total)
 │   ├── analyze-size/
 │   ├── brainwriting/
+│   ├── claude-permissions/
 │   ├── code-review/
 │   ├── finish-feature/
 │   ├── fix-eslint/
 │   ├── git-commit/
-│   ├── permissions/
 │   ├── scratchpad-fetch/
-│   ├── skill-creator/
-│   └── start-feature/
+│   ├── start-feature/
+│   ├── timestamp/
+│   └── typescript-coding/
 ├── docs/                         # Project documentation and coding standards
 │   ├── CODING_STYLE.md
 │   ├── DEVELOPMENT_WORKFLOW.md
-│   ├── HOW_TO_DEEP_CONTEXT_GATHER.md
-│   ├── HOW_TO_DO_HIGH_LEVEL_PLANNING.md
-│   ├── HOW_TO_WRITE_EFFECTIVE_PROMPTS.md
-│   ├── TOOLING_PATTERNS.md
 │   └── typescript/
 │       ├── STACK.md
 │       ├── TOOLING.md
@@ -174,18 +160,36 @@ lrwxr-xr-x  settings.json -> ../settings.json
 
 ## What's Included
 
+### Architecture Overview 🏗️
+
+**Skills** = Self-contained modules with SKILL.md frontmatter
+- Core skills: `/skills` (shared across projects)
+- Plugin-scoped: `plugins/{name}/skills` (domain-specific)
+- Invoke: `Skill(name)` or `Skill(plugin:name)`
+
+**Commands** = Slash commands for direct instructions
+- Format: `/command-name [args]`
+- Simple operations, no complex reasoning
+
+**Agents** = Specialized AI reasoning agents
+- Format: `@plugin:agent-name`
+- Complex multi-step tasks, parallel execution
+
+**Migration**: Commands/agents → skills architecture
+
 ### Core Skills (`.claude/skills`)
-Modular packages providing specialized workflows and domain expertise:
+Modular packages providing specialized workflows and domain expertise (12 total):
 - **analyze-size** - Analyze codebase size and language distribution using cloc
-- **brainwriting** - Structured brainstorming using parallel sub-agents to explore idea spaces (5 rounds of parallel agent analysis and refinement)
-- **code-review** - Expert code review with automated pre-review checks (tests, lint, format) and auto-fix capabilities
+- **brainwriting** - Structured brainstorming using parallel sub-agents (5 rounds of parallel exploration)
+- **claude-permissions** - Configure and manage permissions, sandboxing, and tool access
+- **code-review** - Expert code review with automated pre-review checks and auto-fix capabilities
 - **finish-feature** - Complete feature work and merge back to main branch
-- **fix-eslint** - Automatically fix ESLint errors. Smart routing: direct fix for ≤20 errors, parallel agents for >20 errors
-- **git-commit** - Create conventional commits with proper formatting based on git diff analysis
-- **permissions** - Configure and manage Claude Code permissions, sandboxing, and tool access
-- **scratchpad-fetch** - Download and aggregate web pages/docs into timestamped scratchpad files
-- **skill-creator** - Guide for creating effective skills with specialized knowledge, workflows, or tool integrations
-- **start-feature** - Create or switch to feature branches with proper naming conventions
+- **fix-eslint** - Auto-fix ESLint errors (direct for ≤20, parallel agents for >20)
+- **git-commit** - Create conventional commits from git diff analysis
+- **scratchpad-fetch** - Download and aggregate web pages/docs into timestamped files
+- **start-feature** - Create/switch to feature branches with proper naming
+- **timestamp** - Generate deterministic timestamps (YYYYMMDDHHMMSS format)
+- **typescript-coding** - Expert TS/JS guidance (stack, tooling, testing, logging patterns)
 
 ### Plugins (`/plugins`)
 
@@ -194,10 +198,6 @@ See [Available Plugins](#available-plugins) section below for detailed informati
 ### Documentation (`/docs`)
 - **CODING_STYLE.md** - Universal coding principles (FP patterns, naming, testing, logging)
 - **DEVELOPMENT_WORKFLOW.md** - Testing, commits, branching, documentation guidelines
-- **HOW_TO_DEEP_CONTEXT_GATHER.md** - Guide for comprehensive context gathering workflows
-- **HOW_TO_DO_HIGH_LEVEL_PLANNING.md** - Guide for high-level solution planning and architecture
-- **HOW_TO_WRITE_EFFECTIVE_PROMPTS.md** - Best practices for writing effective prompts
-- **TOOLING_PATTERNS.md** - Tool usage patterns and configurations
 - **typescript/STACK.md** - TypeScript/JavaScript tech stack overview
 - **typescript/TOOLING.md** - Tool usage patterns and configurations
 - **typescript/TESTING.md** - Testing patterns with Vitest
@@ -250,15 +250,15 @@ The marketplace is defined in `.claude-plugin/marketplace.json`:
   },
   "plugins": [
     {
-      "name": "codebase-explorer",
-      "source": "./plugins/codebase-explorer",
-      "description": "Comprehensive codebase exploration through specialized analysis agents",
-      "version": "1.0.0"
-    },
-    {
       "name": "meta-work",
       "source": "./plugins/meta-work",
       "description": "Tools for managing and creating Claude Code configurations, commands, agents, and plugins",
+      "version": "1.0.0"
+    },
+    {
+      "name": "development-lifecycle",
+      "source": "./plugins/development-lifecycle",
+      "description": "Software feature development with research, planning, and implementation",
       "version": "1.0.0"
     }
   ]
@@ -267,26 +267,20 @@ The marketplace is defined in `.claude-plugin/marketplace.json`:
 
 ### Available Plugins
 
-#### Codebase Explorer (`plugins/codebase-explorer/`)
-Comprehensive codebase exploration through 7 specialized analysis agents:
-- Orchestrates multi-agent analysis workflow
-- Generates persistent documentation (01-DISCOVERY.md, 02-ARCHITECTURE.md, etc.)
-- Analyzes technology stack, architecture, features, security, and history
-- Perfect for onboarding, documentation audits, and pre-refactoring assessment
-
-**Usage**: Install the plugin and run `/explore-codebase`
-
 #### Meta-Work (`plugins/meta-work/`)
 Tools for managing and creating Claude Code configurations:
 - **Commands**: `/create-command`, `/create-agent`, `/create-doc`, `/create-plugin`
+- **Plugin-scoped Skills**:
+  - `prompting` - Prompt engineering standards (Anthropic best practices, clarity, structure)
+  - `skill-creator` - Guide for creating effective skills with specialized knowledge/workflows
 - Atomic command design (each command does one thing well)
 - Supports inline instructions or shared documentation patterns
 - Validates structure and prevents conflicts
 - Plugin-scoped support for organizing by domain
 
-**Usage**: Install the plugin and run `/create-command <description>`, `/create-agent <description>`, etc.
+**Usage**: Install plugin → `/create-command <description>` or `Skill(meta-work:prompting)`
 
-#### Feature Development (`plugins/feature-development/`)
+#### Development Lifecycle (`plugins/development-lifecycle/`)
 Software feature development tools with research, planning, and implementation agents:
 - **Command**: `/execute-implementation` - Orchestrate wave-based execution of implementation plans
 - **Agents**:
@@ -306,10 +300,10 @@ Software feature development tools with research, planning, and implementation a
 
 The workflow automatically chains outputs: architect detects and reuses context reports, planner detects and uses architect plans.
 
-**Usage**: 
-- `@feature-development:deep-context-gatherer gather context for {topic}`
-- `@feature-development:high-level-planner design solutions using docs/reports/{topic}.md`
-- `@feature-development:commit-planner plan commits using docs/plans/{feature}/option-1.md`
+**Usage**:
+- `@development-lifecycle:deep-context-gatherer gather context for {topic}`
+- `@development-lifecycle:high-level-planner design solutions using docs/reports/{topic}.md`
+- `@development-lifecycle:commit-planner plan commits using docs/plans/{feature}/option-1.md`
 - `/execute-implementation docs/implementation/{feature-slug}`
 
 ### Creating Your Own Plugins
