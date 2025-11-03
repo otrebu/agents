@@ -17,6 +17,12 @@
       "source": "./../plugins/development-lifecycle",
       "description": "Software feature development tools with agents and commands for effective delivery",
       "version": "1.0.0"
+    },
+    {
+      "name": "typescript-coding",
+      "source": "./../plugins/typescript-coding",
+      "description": "TypeScript/JavaScript development guidance with stack decisions, tooling, testing, and logging patterns",
+      "version": "1.0.0"
     }
   ]
 }

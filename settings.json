@@ -219,7 +219,8 @@
   },
   "enabledPlugins": {
     "meta-work@otrebu-dev-tools": true,
-    "development-lifecycle@otrebu-dev-tools": true
+    "development-lifecycle@otrebu-dev-tools": true,
+    "typescript-coding@otrebu-dev-tools": true
   },
   "alwaysThinkingEnabled": true
 }

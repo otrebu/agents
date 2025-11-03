@@ -1,0 +1,17 @@
+{
+  "name": "typescript-coding",
+  "version": "1.0.0",
+  "description": "TypeScript/JavaScript development guidance with stack decisions, tooling, testing, and logging patterns",
+  "author": {
+    "name": "otrebu",
+    "email": "dev@uberto.me"
+  },
+  "license": "MIT",
+  "keywords": [
+    "typescript",
+    "javascript",
+    "testing",
+    "tooling",
+    "logging"
+  ]
+}
