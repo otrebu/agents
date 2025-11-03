@@ -1,6 +1,6 @@
 ---
-name: permissions
-description: Configure and manage Claude Code permissions, sandboxing, and tool access. Use when user wants to set up permissions, configure sandboxing, understand allowed tools, manage settings.json permissions, or set up security boundaries for Claude Code.
+name: claude-permissions
+description: Configure, manage, update and review Claude Code permissions, sandboxing, and tool access. Use when user wants to set up permissions, configure sandboxing, update allowed tools, manage settings.json permissions, or review permissions in skills or commands or agents or settings.json. When user writes a new skill, command, agent, or updates settings.json, they should use this skill to manage permissions.
 allowed-tools: Read, Write, Edit, Grep, Glob
 ---
 
@@ -27,6 +27,7 @@ These operations are automatically allowed:
 ### Bash Commands (Requires Approval)
 
 **BashTool** execution requires user approval. Users can:
+
 - Approve individual commands
 - Choose "Always allow" for specific commands in a project directory
 - Configure persistent permissions in `settings.json`
@@ -78,15 +79,8 @@ Configure persistent permissions in `.claude/settings.json` or `~/.claude.json`:
       "Bash(git status)",
       "Bash(git commit -m:*)"
     ],
-    "deny": [
-      "Read(.env*)",
-      "Bash(rm -rf /)",
-      "Bash(sudo:*)"
-    ],
-    "ask": [
-      "Bash(git push --force:*)",
-      "Bash(docker run:*)"
-    ]
+    "deny": ["Read(.env*)", "Bash(rm -rf /)", "Bash(sudo:*)"],
+    "ask": ["Bash(git push --force:*)", "Bash(docker run:*)"]
   }
 }
 ```
@@ -192,10 +186,7 @@ Add sandboxing configuration to `settings.json`:
       "Bash(git commit -m:*)",
       "Bash(git push origin:*)"
     ],
-    "ask": [
-      "Bash(git push --force:*)",
-      "Bash(git rebase:*)"
-    ]
+    "ask": ["Bash(git push --force:*)", "Bash(git rebase:*)"]
   }
 }
 ```
@@ -228,15 +219,8 @@ Add sandboxing configuration to `settings.json`:
       "Bash(git:* except: git push --force, git rebase)",
       "Bash(pnpm:* except: pnpm remove)"
     ],
-    "deny": [
-      "Read(.env*)",
-      "Bash(rm -rf /)",
-      "Bash(sudo:*)"
-    ],
-    "ask": [
-      "Bash(git push --force:*)",
-      "Bash(docker run:*)"
-    ]
+    "deny": ["Read(.env*)", "Bash(rm -rf /)", "Bash(sudo:*)"],
+    "ask": ["Bash(git push --force:*)", "Bash(docker run:*)"]
   },
   "sandbox": {
     "enabled": true,
@@ -263,6 +247,7 @@ allowed-tools: Read, Grep, Glob
 ### Agent-Level Permissions
 
 Agents (subagents) can be configured with specific tool permissions at:
+
 - User-level: `~/.claude/agents/` (available across all projects)
 - Project-level: `.claude/agents/` (shareable with team)
 
@@ -294,4 +279,3 @@ Each agent can have custom prompts and tool permissions defined in their YAML fr
 - [Claude Code Settings Documentation](https://docs.claude.com/en/docs/claude-code/settings)
 - [Sandboxing Documentation](https://www.anthropic.com/engineering/claude-code-sandboxing)
 - [Agent Skills Documentation](https://anthropic.mintlify.app/en/docs/agents-and-tools/agent-skills/overview)
-

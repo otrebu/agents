@@ -110,7 +110,8 @@
       "Skill(brainwriting)",
       "Skill(analyze-size)",
       "Skill(fix-eslint)",
-      "Skill(scratchpad-fetch)"
+      "Skill(scratchpad-fetch)",
+      "Skill(timestamp)"
     ],
     "deny": [
       "Read(.env*)",
@@ -182,6 +183,7 @@
       "Bash(zip:*)"
     ]
   },
+  "model": "sonnet",
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
     "github",
@@ -190,17 +192,6 @@
   "disabledMcpjsonServers": [
     "filesystem"
   ],
-  "statusLine": {
-    "type": "command",
-    "command": "/Users/Uberto.Rapizzi/.claude/statusline-command.sh"
-  },
-  "enabledPlugins": {
-    "meta-work@otrebu-dev-tools": false,
-    "codebase-explorer@otrebu-dev-tools": false,
-    "feature-development@otrebu-dev-tools": false,
-    "feature-dev@claude-code-plugins": false
-  },
-  "alwaysThinkingEnabled": true,
   "hooks": {
     "Stop": [
       {
@@ -212,6 +203,27 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '\n\nIF THERE IS A SKILL FOR THIS USE IT! PLEASE CHECK.'"
+          }
+        ]
+      }
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "/Users/Uberto.Rapizzi/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "meta-work@otrebu-dev-tools": true,
+    "codebase-explorer@otrebu-dev-tools": false,
+    "feature-development@otrebu-dev-tools": false,
+    "feature-dev@claude-code-plugins": false
+  },
+  "alwaysThinkingEnabled": true
 }

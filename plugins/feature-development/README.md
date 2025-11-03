@@ -54,7 +54,7 @@ Orchestrates parallel generation of 3-5 diverse implementation approaches with t
 
 **Output:** `docs/plans/{feature-slug}/COMPARISON.md` + individual option files
 
-**Documentation:** See `@docs/HOW_TO_ARCHITECT_SOLUTIONS.md` for detailed workflow and process
+**Documentation:** See `@docs/HOW_TO_DO_HIGH_LEVEL_PLANNING.md` for detailed workflow and process
 
 **Key Features:**
 - Detects and reuses deep-context-gatherer reports (no redundant analysis)
@@ -110,8 +110,6 @@ Transforms high-level plans into atomic commit-level implementations with depend
 **Tools:** Read, Grep, Glob, Bash, Write, Task
 
 **Output:** `docs/implementation/{feature-slug}/00-overview.md` + individual commit files
-
-**Documentation:** See `@docs/HOW_TO_PLAN_COMMITS.md` for detailed process
 
 **Key Features:**
 - Repository-aware tooling detection (package manager, tests, git hooks)

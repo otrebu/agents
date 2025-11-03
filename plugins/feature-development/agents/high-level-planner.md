@@ -7,9 +7,9 @@ model: inherit
 
 ULTRATHINK
 
-@docs/HOW_TO_ARCHITECT_SOLUTIONS.md
+@docs/HOW_TO_DO_HIGH_LEVEL_PLANNING.md
 
-<!-- Shared documentation in repository root: /docs/HOW_TO_ARCHITECT_SOLUTIONS.md -->
+<!-- Shared documentation in repository root: /docs/HOW_TO_DO_HIGH_LEVEL_PLANNING.md -->
 
 **Input Source Detection:**
 

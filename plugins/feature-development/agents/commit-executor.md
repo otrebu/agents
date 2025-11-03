@@ -101,7 +101,6 @@ If linting errors occur:
   Task: Fix ESLint errors
   Subagent: fix-eslint
   Prompt: Fix all ESLint errors in {list of modified files}.
-  See @docs/HOW_TO_FIX_ESLINT.md for guidelines.
   ```
 - **Verify:** Re-run lint after fixes
 

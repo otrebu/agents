@@ -320,8 +320,6 @@ Here are recommended workflows for different scenarios:
 # Refactor review-pr to reference doc (prompted)
 
 # 2. Manually refactor agent to reference same doc
-# Edit agents/code-reviewer.md to reference @docs/HOW_TO_REVIEW_PR.md
-
 # Result: DRY - both command and agent share documentation
 ```
 

@@ -21,7 +21,7 @@ The skill accepts different modes and options:
 
 - **intent**: Optional description or file reference
   - Plain text: `"add OAuth2 authentication"`
-  - File reference: `@docs/requirements.md`
+  - File reference (example): `@docs/requirements.md` (placeholder - replace with actual requirements file)
   - Used for Requirements Alignment section
 
 - **save**: Boolean flag (--save)
@@ -152,7 +152,7 @@ save: true
 **Review with file-based requirements:**
 ```
 mode: changes
-intent: "@docs/requirements/auth.md"
+intent: "@docs/requirements/auth.md"  # Example: replace with actual requirements file path
 save: true
 ```
 
