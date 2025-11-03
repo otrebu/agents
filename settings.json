@@ -111,7 +111,9 @@
       "Skill(analyze-size)",
       "Skill(fix-eslint)",
       "Skill(scratchpad-fetch)",
-      "Skill(timestamp)"
+      "Skill(timestamp)",
+      "Skill(meta-work:prompting)",
+      "Skill(meta-work:skill-creator)"
     ],
     "deny": [
       "Read(.env*)",
@@ -185,13 +187,8 @@
   },
   "model": "sonnet",
   "enableAllProjectMcpServers": false,
-  "enabledMcpjsonServers": [
-    "github",
-    "memory"
-  ],
-  "disabledMcpjsonServers": [
-    "filesystem"
-  ],
+  "enabledMcpjsonServers": ["github", "memory"],
+  "disabledMcpjsonServers": ["filesystem"],
   "hooks": {
     "Stop": [
       {

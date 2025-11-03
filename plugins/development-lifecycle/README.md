@@ -120,6 +120,108 @@ Transforms high-level plans into atomic commit-level implementations with depend
 - Per-commit implementation plans with pre-commit checklists
 - Mermaid dependency graphs for visualization
 
+## Skills
+
+### `git-commit`
+
+Create git commits following conventional commits format.
+
+**Use when:** User asks to commit, git commit, commit changes, or create a commit
+
+**Process:**
+- Gathers context (git status, diff, branch, recent log)
+- Analyzes changes to determine type, scope, description
+- Stages relevant files (NEVER stages secrets/credentials)
+- Creates atomic commit with conventional format
+- Optional: pushes to remote if requested
+
+**Conventional Commit Types:** feat, fix, refactor, docs, test, chore
+
+**Tools:** Bash(git add, status, commit, diff, log, branch, push)
+
+**See:** `plugins/development-lifecycle/skills/SKILL.md`
+
+---
+
+### `start-feature`
+
+Create or switch to feature branches with proper naming conventions.
+
+**Use when:** User wants to start working on a new feature
+
+**Process:**
+- Generates `feature/<slug>` branch names from descriptions
+- Checks branch existence
+- Creates or switches accordingly
+- Validates git status before operations
+
+**Tools:** Bash(git status, branch, checkout)
+
+**See:** `plugins/development-lifecycle/skills/start-feature/SKILL.md`
+
+---
+
+### `finish-feature`
+
+Complete feature work and merge back to main branch.
+
+**Use when:** User wants to finish a feature, close a feature, or merge feature branch
+
+**Process:**
+- Verifies working directory status
+- Switches to main branch
+- Pulls latest changes
+- Merges feature branch
+- Pushes to remote
+- Optional: deletes feature branch
+
+**Tools:** Bash(git add, status, commit, diff, log, branch, push, pull, merge, checkout, stash, tag)
+
+**See:** `plugins/development-lifecycle/skills/finish-feature/SKILL.md`
+
+---
+
+### `code-review`
+
+Expert code review with automated pre-review checks.
+
+**Use when:** Immediately after writing/modifying code, or when user requests code review
+
+**Process:**
+- Gathers code (uncommitted changes or specific files)
+- Runs pre-review checks (tests, linting, formatting via scripts/pre-review.sh)
+- Auto-fixes lint/format/test failures (delegates to fix-eslint skill)
+- Executes thorough code review following methodology.md
+- Reviews for critical issues, functional gaps, requirements alignment
+- Optional: saves review to docs/CODE_REVIEW.md
+
+**Tools:** Read, Write, Grep, Glob, Bash(git, pnpm), Task, TodoWrite
+
+**See:** `plugins/development-lifecycle/skills/code-review/SKILL.md`
+
+---
+
+### `fix-eslint`
+
+Automatically fix ESLint errors by modifying code to comply with linting rules.
+
+**Use when:** Linting errors exist and need automated fixing
+
+**Strategy:**
+- ≤20 errors: Direct fix
+- >20 errors: Spawns parallel agents per directory
+
+**Priorities:**
+- Never bypass rules (no eslint-disable comments)
+- Fix code to comply with standards
+- Preserve functionality
+
+**Tools:** Read, Write, Edit, Grep, Glob, Bash, Task, TodoWrite
+
+**See:** `plugins/development-lifecycle/skills/fix-eslint/SKILL.md`
+
+---
+
 ## Features
 
 ### Research & Planning Workflow

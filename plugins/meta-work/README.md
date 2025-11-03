@@ -136,6 +136,32 @@ plugins/{name}/
 
 ---
 
+### Skills
+
+#### `claude-permissions`
+
+Configure, manage, and review Claude Code permissions, sandboxing, and tool access.
+
+**Use when:**
+- Setting up project or user permissions
+- Configuring sandboxing for bash commands
+- Reviewing permissions in skills, commands, agents, or settings.json
+- Managing tool access patterns (allow/ask/deny)
+- Writing new skills/commands/agents that need permission configuration
+
+**Capabilities:**
+- Interactive permissions management via `/permissions` command
+- `settings.json` configuration for persistent permissions
+- Sandboxing setup for filesystem and network isolation
+- Permission pattern matching (wildcards, file patterns, command families)
+- Security best practices and examples
+
+**Tools:** Read, Write, Edit, Grep, Glob
+
+**See:** `plugins/meta-work/skills/claude-permissions/SKILL.md`
+
+---
+
 ## Architecture
 
 The meta-work plugin follows a compositional, atomic command design:
@@ -463,11 +489,15 @@ plugins/meta-work/
 ├── .claude-plugin/
 │   └── plugin.json              # Plugin manifest
 ├── commands/
-│   └── create-command.md        # Command definitions
-├── agents/
-│   └── create-command.md        # Agent definitions
+│   ├── create-command.md        # Command definitions
+│   ├── create-agent.md
+│   ├── create-doc.md
+│   └── create-plugin.md
+├── skills/
+│   ├── claude-permissions/      # Permission management skill
+│   └── prompting/               # Prompt engineering skill
 ├── docs/
-│   └── HOW_TO_CREATE_COMMAND.md # Detailed guides
+│   └── INSTRUCTION_TEMPLATE.md  # Documentation templates
 ├── hooks/                        # Reserved for future use
 └── README.md                     # This file
 ```
