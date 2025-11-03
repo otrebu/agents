@@ -40,5 +40,6 @@ coverage/
 
 # Scratchpad files
 docs/scratchpad/
+docs/web-captures/
 
 ./claude/settings.local.json
