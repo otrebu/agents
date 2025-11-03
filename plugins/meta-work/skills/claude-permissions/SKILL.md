@@ -113,6 +113,14 @@ Use `--allowedTools` flag for session-specific permissions (not persistent).
 - `**` matches directories recursively
 - Pattern matching is case-sensitive
 
+### Skill and SlashCommand Patterns
+
+- **All slash commands**: `"SlashCommand(*)"`
+- **Specific main skill**: `"Skill(typescript-coding)"`
+- **All plugin skills**: `"Skill(plugin-name:*)"` (e.g., `"Skill(meta-work:*)"`)
+- **Specific plugin skill**: `"Skill(plugin-name:skill-name)"` (e.g., `"Skill(meta-work:prompting)"`)
+- **Note**: `Skill(*)` may not work for plugin-scoped skills; use explicit names or plugin wildcards
+
 ## Sandboxing
 
 Sandboxing provides filesystem and network isolation to enhance security and reduce permission prompts.
@@ -226,6 +234,25 @@ Add sandboxing configuration to `settings.json`:
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
     "excludedCommands": ["git"]
+  }
+}
+```
+
+### Allow All Skills and Commands
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "SlashCommand(*)",
+      "Skill(analyze-size)",
+      "Skill(brainwriting)",
+      "Skill(scratchpad-fetch)",
+      "Skill(timestamp)",
+      "Skill(typescript-coding)",
+      "Skill(meta-work:*)",
+      "Skill(development-lifecycle:*)"
+    ]
   }
 }
 ```

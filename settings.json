@@ -103,17 +103,13 @@
       "Bash(./*.js)",
       "Bash(pnpm lint 2>&1 | grep -E \"^\\s*/\" | sed 's/\\s*[0-9]*:[0-9]*.*//' | sort -u | xargs -n1 dirname | sort | uniq -c)",
       "SlashCommand(*)",
-      "Skill(git-commit)",
-      "Skill(start-feature)",
-      "Skill(finish-feature)",
-      "Skill(skill-creator)",
-      "Skill(brainwriting)",
       "Skill(analyze-size)",
-      "Skill(fix-eslint)",
+      "Skill(brainwriting)",
       "Skill(scratchpad-fetch)",
       "Skill(timestamp)",
-      "Skill(meta-work:prompting)",
-      "Skill(meta-work:skill-creator)"
+      "Skill(typescript-coding)",
+      "Skill(meta-work:*)",
+      "Skill(development-lifecycle:*)"
     ],
     "deny": [
       "Read(.env*)",
@@ -187,8 +183,13 @@
   },
   "model": "sonnet",
   "enableAllProjectMcpServers": false,
-  "enabledMcpjsonServers": ["github", "memory"],
-  "disabledMcpjsonServers": ["filesystem"],
+  "enabledMcpjsonServers": [
+    "github",
+    "memory"
+  ],
+  "disabledMcpjsonServers": [
+    "filesystem"
+  ],
   "hooks": {
     "Stop": [
       {
@@ -218,9 +219,7 @@
   },
   "enabledPlugins": {
     "meta-work@otrebu-dev-tools": true,
-    "codebase-explorer@otrebu-dev-tools": false,
-    "feature-development@otrebu-dev-tools": false,
-    "feature-dev@claude-code-plugins": false
+    "development-lifecycle@otrebu-dev-tools": true
   },
   "alwaysThinkingEnabled": true
 }
