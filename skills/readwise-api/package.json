@@ -1,0 +1,21 @@
+{
+  "name": "@agents/readwise-api-skill",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Readwise API skill for fetching and analyzing reading activity",
+  "scripts": {
+    "test": "vitest",
+    "test:run": "vitest run",
+    "fetch": "tsx scripts/fetch-todays-activity.ts"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "ora": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.0"
+  }
+}
