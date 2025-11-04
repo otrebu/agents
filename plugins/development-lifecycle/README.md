@@ -222,6 +222,32 @@ Automatically fix ESLint errors by modifying code to comply with linting rules.
 
 ---
 
+### `dev-work-summary`
+
+Scan ~/dev recursively for git repos and report today's work.
+
+**Use when:** User asks "what did I work on", "show my work", "daily summary", "what repos did I touch"
+
+**Process:**
+- Scans all git repos in ~/dev recursively
+- Reports today's activity (since midnight)
+- Shows commits, branches, uncommitted changes
+- Analyzes file changes (added/modified/deleted)
+- Provides aggregated stats
+
+**Output:**
+- Repo name and location
+- Current branch
+- Uncommitted changes
+- Commit messages with timestamps
+- File-level change summary
+
+**Tools:** Bash(git log, status, diff-tree, ls-files, find)
+
+**See:** `plugins/development-lifecycle/skills/dev-work-summary/SKILL.md`
+
+---
+
 ## Features
 
 ### Research & Planning Workflow
