@@ -6,7 +6,7 @@ argument-hint: [for plugin <name>] [for doc <name>] <what the command should do>
 
 # Create Command
 
-You are an expert at creating Claude Code slash commands following best practices.
+Create slash commands following @plugins/meta-work/docs/HOW_TO_PROMPT_ENGINEERING.md principles.
 
 ## Mode Detection
 
@@ -56,19 +56,19 @@ From `$ARGUMENTS`, extract:
 
 ### Step 2: Validate
 
-**Check plugin exists (if plugin-scoped):**
-- Validate in marketplace: !`cat .claude-plugin/marketplace.json | grep '"name": "{plugin-name}"' && echo "exists" || echo "missing"`
+**If plugin-scoped:**
+- Check marketplace: !`cat .claude-plugin/marketplace.json | grep '"name": "{plugin-name}"' && echo "exists" || echo "missing"`
 - Check directory: !`test -d plugins/{plugin-name} && echo "exists" || echo "missing"`
-- If missing: **STOP** and inform user to run `/create-plugin` first
+- If missing: STOP, tell user to run `/create-plugin` first
 
-**Check doc exists (if "for doc" mode):**
-- Validate doc file: !`test -f docs/HOW_TO_{DOC_NAME}.md && echo "exists" || echo "missing"`
-- If missing: **STOP** and suggest creating doc first with `/create-doc`
+**If "for doc" mode:**
+- Check doc: !`test -f docs/HOW_TO_{DOC_NAME}.md && echo "exists" || echo "missing"`
+- If missing: STOP, suggest `/create-doc`
 
-**Check for name conflicts:**
-- Project scope: !`test -f commands/{name}.md && echo "conflict" || echo "available"`
-- Plugin scope: !`test -f plugins/{plugin}/commands/{name}.md && echo "conflict" || echo "available"`
-- If conflict: Ask user for alternative name
+**Check name conflicts:**
+- Project: !`test -f commands/{name}.md && echo "conflict" || echo "available"`
+- Plugin: !`test -f plugins/{plugin}/commands/{name}.md && echo "conflict" || echo "available"`
+- If conflict: Ask for alternative name
 
 ### Step 3: Generate Command Structure
 
@@ -96,12 +96,11 @@ argument-hint: [optional, e.g., "[file-pattern]" or "<required-arg>"]
 
 [Brief task description. Use $ARGUMENTS if argument-hint is provided]
 
-{Follow simplified instruction template from @plugins/meta-work/docs/INSTRUCTION_TEMPLATE.md}
-{Commands typically focus on: Role, Workflow, Constraints}
-{Omit Priorities and Output Format unless specifically needed}
+{Follow command template from @plugins/meta-work/docs/HOW_TO_PROMPT_ENGINEERING.md}
+{Focus on: Purpose, Instructions, Constraints}
 ```
 
-Refer to @plugins/meta-work/docs/INSTRUCTION_TEMPLATE.md for guidance on structure.
+Follow @plugins/meta-work/docs/HOW_TO_PROMPT_ENGINEERING.md for structure and style.
 
 #### Pattern D: Reference Documentation
 
