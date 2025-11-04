@@ -101,7 +101,7 @@ Delegate subtasks to specialized agents with minimal context
 
 ## Supplementary Resources
 
-For full standards: `read ./CLAUDE.md`
+For full standards: @plugins/meta-work/docs/HOW_TO_PROMPT_ENGINEERING.md
 
 ## Based On
 
