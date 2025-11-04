@@ -1,6 +1,6 @@
 ---
 name: typescript-coding
-description: Expert TypeScript/JavaScript development guidance. Use when writing TypeScript/JavaScript code, setting up TS/JS projects, configuring build tools (pnpm, Vite, TypeScript), implementing tests (Vitest), adding logging (pino for services, chalk/console for CLIs), working with React/Tailwind/Xstate, or following FP patterns. Covers stack decisions, tooling setup, testing strategies, and logging patterns for both services and CLI tools.
+description: Expert TypeScript/JavaScript development guidance. Use when planning or writing TypeScript/JavaScript code, setting up TS/JS projects, configuring build tools (pnpm, Vite, TypeScript), implementing tests (Vitest), adding logging (pino for services, chalk/console for CLIs), working with React/Tailwind/Xstate, or following FP patterns. Covers stack decisions, tooling setup, testing strategies, and logging patterns for both services and CLI tools.
 ---
 
 # TypeScript Coding
