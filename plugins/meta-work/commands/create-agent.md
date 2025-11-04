@@ -6,7 +6,7 @@ argument-hint: [for plugin <name>] [with doc | for doc <name>] <what the agent d
 
 # Create Agent
 
-You are an expert at creating Claude Code agents following best practices.
+Create Claude Code agents following @plugins/meta-work/docs/HOW_TO_PROMPT_ENGINEERING.md principles.
 
 ## Mode Detection
 
@@ -60,19 +60,19 @@ From `$ARGUMENTS`, extract:
 
 ### Step 2: Validate
 
-**Check plugin exists (if plugin-scoped):**
-- Validate in marketplace: !`cat .claude-plugin/marketplace.json | grep '"name": "{plugin-name}"' && echo "exists" || echo "missing"`
+**If plugin-scoped:**
+- Check marketplace: !`cat .claude-plugin/marketplace.json | grep '"name": "{plugin-name}"' && echo "exists" || echo "missing"`
 - Check directory: !`test -d plugins/{plugin-name} && echo "exists" || echo "missing"`
-- If missing: **STOP** and inform user to run `/create-plugin` first
+- If missing: STOP, tell user to run `/create-plugin` first
 
-**Check doc exists (if "for doc" mode):**
-- Validate doc file: !`test -f docs/HOW_TO_{DOC_NAME}.md && echo "exists" || echo "missing"`
-- If missing: **STOP** and suggest using "with doc" mode or creating doc first with `/create-doc`
+**If "for doc" mode:**
+- Check doc: !`test -f docs/HOW_TO_{DOC_NAME}.md && echo "exists" || echo "missing"`
+- If missing: STOP, suggest "with doc" mode or `/create-doc`
 
-**Check for name conflicts:**
-- Project scope: !`test -f agents/{name}.md && echo "conflict" || echo "available"`
-- Plugin scope: !`test -f plugins/{plugin}/agents/{name}.md && echo "conflict" || echo "available"`
-- If conflict: Ask user for alternative name
+**Check name conflicts:**
+- Project: !`test -f agents/{name}.md && echo "conflict" || echo "available"`
+- Plugin: !`test -f plugins/{plugin}/agents/{name}.md && echo "conflict" || echo "available"`
+- If conflict: Ask for alternative name
 
 ### Step 3: Create Documentation (With Doc Mode Only)
 
@@ -84,9 +84,7 @@ If mode is "with doc", create the HOW_TO doc first:
 
 **Generate HOW_TO structure:**
 
-Create `docs/HOW_TO_{DOC_NAME}.md` following the canonical template structure.
-
-See @plugins/meta-work/docs/INSTRUCTION_TEMPLATE.md for the complete template and guidelines.
+Create `docs/HOW_TO_{DOC_NAME}.md` following @plugins/meta-work/docs/HOW_TO_PROMPT_ENGINEERING.md.
 
 Use Write tool to create the doc file.
 
@@ -121,12 +119,12 @@ tools: Read, Grep, Glob, Bash
 model: inherit
 ---
 
-{Follow the instruction template structure from @plugins/meta-work/docs/INSTRUCTION_TEMPLATE.md}
+{Follow agent template from @plugins/meta-work/docs/HOW_TO_PROMPT_ENGINEERING.md}
 
-{Include sections: Role, Priorities, Workflow, Output Format, Constraints, Best Practices}
+{Include sections: Role, Capabilities/Workflow, Output Format, Constraints}
 ```
 
-Refer to @plugins/meta-work/docs/INSTRUCTION_TEMPLATE.md for the complete template structure.
+Follow @plugins/meta-work/docs/HOW_TO_PROMPT_ENGINEERING.md for structure and style.
 
 ### Step 5: Validate Structure
 
@@ -253,98 +251,33 @@ Location: plugins/{plugin}/agents/{name}.md
 
 ## Tool Configuration
 
-### Why Tools Are Required
-
-Unlike the official Claude Code documentation (which makes tools optional), this command **requires tools to be explicitly specified** for clarity and security. Always define which tools an agent can access.
+Explicitly specify tools for clarity and security.
 
 ### Default Tool Set
 
-Most agents use this standard set:
 ```
 tools: Read, Grep, Glob, Bash
 ```
 
-### Tool Reference
+### Common Tools
 
-**Core Search & Analysis Tools:**
-- **Read**: Read specific files (configs, source code, documentation)
-  - Use when: Agent needs to examine exact file contents
-  - Example: Reading package.json, tsconfig.json, specific source files
+- **Read**: Read files
+- **Write**: Create files (add if agent generates reports/configs)
+- **Edit**: Modify existing files
+- **Grep**: Search content with regex
+- **Glob**: Find files by pattern
+- **Bash**: Run shell commands
+- **WebSearch**: Search web for current info
+- **WebFetch**: Fetch specific URLs
+- **Task**: Delegate to sub-agents
 
-- **Grep**: Search content across files with regex patterns
-  - Use when: Agent needs to find patterns, strings, or code across multiple files
-  - Example: Finding function definitions, import statements, TODO comments
+### Start Minimal, Add as Needed
 
-- **Glob**: Find files by glob patterns (*.ts, src/**/*.js)
-  - Use when: Agent needs to discover files matching patterns
-  - Example: Finding all test files, all TypeScript files, all config files
-
-- **Bash**: Run shell commands (git, npm, cloc, ls, etc.)
-  - Use when: Agent needs to execute system commands or CLI tools
-  - Example: git log, npm list, cloc for line counts, file system operations
-
-**File Modification Tools:**
-- **Write**: Create new files
-  - **Required if**: Agent generates reports, creates configs, or writes any new files
-  - Example: Writing {agent-name}-report.md output files
-
-- **Edit**: Modify existing files with find/replace operations
-  - Use when: Agent needs to update existing code or configs
-  - Example: Updating version numbers, fixing imports, applying refactorings
-
-**External Data Tools:**
-- **WebSearch**: Search the web for current information
-  - Use when: Agent needs up-to-date information beyond its knowledge cutoff
-  - Example: Finding latest documentation, current best practices
-
-- **WebFetch**: Fetch and analyze content from specific URLs
-  - Use when: Agent needs to read specific web pages or API docs
-  - Example: Reading documentation from a URL, analyzing API responses
-
-**Agent Orchestration:**
-- **Task**: Delegate work to other specialized agents
-  - Use when: Agent needs to spawn sub-agents for complex workflows
-  - Example: High-level planner spawning multiple executor agents
-
-### Tool Combination Examples
-
-**Research/Analysis Agent:**
-```
-tools: Read, Grep, Glob, Bash, Write
-```
-Reads code, searches patterns, analyzes with shell commands, outputs report.
-
-**Code Review Agent:**
-```
-tools: Read, Write, Grep, Glob, Bash
-```
-Reads files, searches codebase, runs tests/linters, writes review report.
-
-**Refactoring Agent:**
-```
-tools: Read, Edit, Grep, Glob, Bash
-```
-Searches code patterns, reads files, modifies them, runs tests to verify.
-
-**External Research Agent:**
-```
-tools: WebSearch, WebFetch, Write
-```
-Searches web, fetches documentation, writes research report.
-
-**Orchestrator Agent:**
-```
-tools: Read, Grep, Glob, Bash, Task
-```
-Analyzes codebase, delegates work to specialized sub-agents.
-
-### Best Practice: Start Minimal, Add as Needed
-
-1. Start with default set: `Read, Grep, Glob, Bash`
-2. Add `Write` if agent creates files (reports, configs)
-3. Add `Edit` if agent modifies existing files
-4. Add `WebSearch`/`WebFetch` only if external data is required
-5. Add `Task` only for orchestrator agents that spawn sub-agents
+1. Default: `Read, Grep, Glob, Bash`
+2. Add `Write` if creating files
+3. Add `Edit` if modifying files
+4. Add `WebSearch`/`WebFetch` only if external data needed
+5. Add `Task` only for orchestrator agents
 
 ## Report File Convention
 
