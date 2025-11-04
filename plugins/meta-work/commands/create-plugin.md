@@ -6,7 +6,7 @@ argument-hint: <what the plugin does>
 
 # Create Plugin
 
-You are an expert at creating Claude Code plugins following best practices.
+Create Claude Code plugins following standard structure.
 
 ## Context
 
