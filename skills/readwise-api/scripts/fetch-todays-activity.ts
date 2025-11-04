@@ -13,24 +13,41 @@ import {
 import {
   groupHighlightsBySource,
   summarizeArticles,
-  getTodayDateRange,
+  getDateRange,
   findTopHighlightedSources,
   formatDate,
+  formatDateRange,
   truncateText,
-  type DateRange
+  groupHighlightsByDay,
+  findPeakDays,
+  groupHighlightsByCategory,
+  extractKeyInsights,
+  generateReadingContextParagraph,
+  generateReadingPattern,
+  type DateRange,
+  type DatePreset
 } from './analyze-highlights.js';
 
 // CLI configuration
 interface CliOptions {
-  readonly mode: 'articles' | 'highlights' | 'top-highlighted' | 'all';
+  readonly mode:
+    | 'learnings'
+    | 'timeline'
+    | 'categories'
+    | 'dashboard'
+    | 'articles'
+    | 'highlights'
+    | 'top-highlighted'
+    | 'all';
   readonly topN?: number;
+  readonly preset?: DatePreset;
+  readonly customRange?: { startDate: Date; endDate?: Date };
 }
 
 async function main(): Promise<void> {
   // Parse args
   const args = process.argv.slice(2);
-  const mode = (args[0] as CliOptions['mode']) || 'all';
-  const topN = args[1] ? parseInt(args[1], 10) : 10;
+  const options = parseCliArgs(args);
 
   // Get API token from env
   const apiToken = process.env.READWISE_API_TOKEN;
@@ -43,30 +60,148 @@ async function main(): Promise<void> {
   }
 
   const config: ReadwiseConfig = { apiToken };
-  const dateRange = getTodayDateRange();
+  const dateRange = getDateRange(options.preset, options.customRange);
 
   // Execute based on mode
-  if (mode === 'articles' || mode === 'all') {
-    await showTodaysArticles(config, dateRange);
+  // New default order: learnings → timeline → categories → dashboard
+  if (options.mode === 'learnings' || options.mode === 'all') {
+    await showKeyLearnings(config, dateRange, options.preset);
   }
 
-  if (mode === 'highlights' || mode === 'all') {
-    await showTodaysHighlights(config, dateRange);
+  if (options.mode === 'timeline' || options.mode === 'all') {
+    await showActivityTimeline(config, dateRange, options.preset);
   }
 
-  if (mode === 'top-highlighted' || mode === 'all') {
-    await showTopHighlighted(config, dateRange, topN);
+  if (options.mode === 'categories' || options.mode === 'all') {
+    await showByCategory(config, dateRange, options.preset);
+  }
+
+  if (options.mode === 'dashboard' || options.mode === 'all') {
+    await showStatsDashboard(config, dateRange, options.preset);
+  }
+
+  // Legacy modes (still available individually)
+  if (options.mode === 'articles') {
+    await showArticles(config, dateRange, options.preset);
+  }
+
+  if (options.mode === 'highlights') {
+    await showHighlights(config, dateRange, options.preset);
+  }
+
+  if (options.mode === 'top-highlighted') {
+    await showTopHighlighted(config, dateRange, options.preset, options.topN ?? 10);
   }
 }
 
-async function showTodaysArticles(
+// Parse CLI arguments into options
+function parseCliArgs(args: string[]): CliOptions {
+  let mode: CliOptions['mode'] = 'all';
+  let topN: number | undefined;
+  let preset: DatePreset | undefined;
+  let fromDate: Date | undefined;
+  let toDate: Date | undefined;
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+
+    // Mode args
+    if (
+      [
+        'learnings',
+        'timeline',
+        'categories',
+        'dashboard',
+        'articles',
+        'highlights',
+        'top-highlighted',
+        'all'
+      ].includes(arg)
+    ) {
+      mode = arg as CliOptions['mode'];
+      continue;
+    }
+
+    // Date preset flags
+    if (arg === '--today') {
+      preset = 'today';
+      continue;
+    }
+    if (arg === '--yesterday') {
+      preset = 'yesterday';
+      continue;
+    }
+    if (arg === '--last-week') {
+      preset = 'last-week';
+      continue;
+    }
+    if (arg === '--last-month') {
+      preset = 'last-month';
+      continue;
+    }
+
+    // Custom date flags
+    if (arg === '--from' && i + 1 < args.length) {
+      fromDate = new Date(args[++i]);
+      continue;
+    }
+    if (arg === '--to' && i + 1 < args.length) {
+      toDate = new Date(args[++i]);
+      continue;
+    }
+
+    // TopN number
+    const parsed = parseInt(arg, 10);
+    if (!isNaN(parsed)) {
+      topN = parsed;
+    }
+  }
+
+  const customRange =
+    fromDate || toDate
+      ? { startDate: fromDate ?? new Date(), endDate: toDate }
+      : undefined;
+
+  return { mode, topN, preset, customRange };
+}
+
+// Rendering utilities
+function renderActivityBar(count: number, maxCount: number, width: number = 30): string {
+  if (maxCount === 0) return '░'.repeat(width);
+
+  const blocks = ['░', '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'];
+  const ratio = count / maxCount;
+  const filled = Math.floor(ratio * width);
+  const partial = (ratio * width) % 1;
+  const blockIndex = Math.floor(partial * (blocks.length - 1));
+
+  let bar = '█'.repeat(filled);
+  if (filled < width && blockIndex > 0) {
+    bar += blocks[blockIndex];
+  }
+  bar += '░'.repeat(Math.max(0, width - bar.length));
+
+  return bar;
+}
+
+function renderCategoryBar(count: number, maxCount: number, width: number = 14): string {
+  return renderActivityBar(count, maxCount, width);
+}
+
+function formatPercentage(value: number): string {
+  return value >= 10 ? `${Math.round(value)}%` : `${value.toFixed(1)}%`;
+}
+
+async function showArticles(
   config: ReadwiseConfig,
-  dateRange: DateRange
+  dateRange: DateRange,
+  preset?: DatePreset
 ): Promise<void> {
-  const spinner = ora('Fetching articles saved today...').start();
+  const spinner = ora('Fetching articles...').start();
 
   const result = await fetchReaderDocuments(config, {
     updatedAfter: dateRange.startDate,
+    updatedBefore: dateRange.endDate,
     location: 'new'
   });
 
@@ -78,14 +213,14 @@ async function showTodaysArticles(
   spinner.succeed(chalk.green('Articles fetched!'));
 
   const summary = summarizeArticles(result.data);
-  const today = formatDate(dateRange.startDate);
+  const dateLabel = formatDateRange(dateRange, preset);
 
-  console.log('\n' + chalk.bold.blue(`📚 Articles Saved Today (${today})`));
+  console.log('\n' + chalk.bold.blue(`📚 Articles Saved (${dateLabel})`));
   console.log(chalk.dim('━'.repeat(50)) + '\n');
   console.log(chalk.bold(`Total: ${summary.totalCount} items\n`));
 
   if (summary.totalCount === 0) {
-    console.log(chalk.dim('No articles saved today yet.\n'));
+    console.log(chalk.dim('No articles saved in this period.\n'));
     return;
   }
 
@@ -113,11 +248,12 @@ async function showTodaysArticles(
   }
 }
 
-async function showTodaysHighlights(
+async function showHighlights(
   config: ReadwiseConfig,
-  dateRange: DateRange
+  dateRange: DateRange,
+  preset?: DatePreset
 ): Promise<void> {
-  const spinner = ora('Fetching highlights created today...').start();
+  const spinner = ora('Fetching highlights...').start();
 
   const result = await fetchHighlights(config, dateRange);
 
@@ -130,16 +266,16 @@ async function showTodaysHighlights(
 
   const grouped = groupHighlightsBySource(result.data);
   const totalCount = result.data.length;
-  const today = formatDate(dateRange.startDate);
+  const dateLabel = formatDateRange(dateRange, preset);
 
-  console.log('\n' + chalk.bold.yellow(`✨ Highlights Created Today (${today})`));
+  console.log('\n' + chalk.bold.yellow(`✨ Highlights Created (${dateLabel})`));
   console.log(chalk.dim('━'.repeat(50)) + '\n');
   console.log(
     chalk.bold(`Total: ${totalCount} highlights from ${grouped.length} sources\n`)
   );
 
   if (totalCount === 0) {
-    console.log(chalk.dim('No highlights created today yet.\n'));
+    console.log(chalk.dim('No highlights created in this period.\n'));
     return;
   }
 
@@ -172,6 +308,7 @@ async function showTodaysHighlights(
 async function showTopHighlighted(
   config: ReadwiseConfig,
   dateRange: DateRange,
+  preset: DatePreset | undefined,
   topN: number
 ): Promise<void> {
   const spinner = ora('Analyzing most highlighted content...').start();
@@ -187,9 +324,9 @@ async function showTopHighlighted(
 
   const grouped = groupHighlightsBySource(result.data);
   const topSources = findTopHighlightedSources(grouped, topN);
-  const today = formatDate(dateRange.startDate);
+  const dateLabel = formatDateRange(dateRange, preset);
 
-  console.log('\n' + chalk.bold.red(`🔥 Most Highlighted Content (${today})`));
+  console.log('\n' + chalk.bold.red(`🔥 Most Highlighted Content (${dateLabel})`));
   console.log(chalk.dim('━'.repeat(50)) + '\n');
 
   if (topSources.length === 0) {
@@ -213,6 +350,229 @@ async function showTopHighlighted(
     console.log(chalk.dim('   Recent: ') + chalk.white(`"${text}"`));
     console.log();
   }
+}
+
+async function showKeyLearnings(
+  config: ReadwiseConfig,
+  dateRange: DateRange,
+  preset?: DatePreset
+): Promise<void> {
+  const spinner = ora('Extracting insights...').start();
+
+  const [highlightsResult, articlesResult] = await Promise.all([
+    fetchHighlights(config, dateRange),
+    fetchReaderDocuments(config, {
+      updatedAfter: dateRange.startDate,
+      updatedBefore: dateRange.endDate,
+      location: 'new'
+    })
+  ]);
+
+  if (!highlightsResult.success || !highlightsResult.data) {
+    spinner.fail(chalk.red(`Failed: ${highlightsResult.error}`));
+    return;
+  }
+
+  spinner.succeed(chalk.green('Insights extracted!'));
+
+  const highlights = highlightsResult.data;
+  const articles = articlesResult.data ?? [];
+  const dateLabel = formatDateRange(dateRange, preset);
+
+  console.log('\n' + chalk.bold.magenta(`🧠 KEY LEARNINGS (${dateLabel})`));
+  console.log(chalk.dim('─'.repeat(50)) + '\n');
+
+  if (highlights.length === 0) {
+    console.log(chalk.dim('No highlights in this period.\n'));
+    return;
+  }
+
+  // Extract insights
+  const insights = extractKeyInsights(highlights, 5);
+
+  console.log(chalk.bold('Top insights:\n'));
+  for (const insight of insights) {
+    console.log(
+      chalk.dim('•') +
+        ` ${insight.emoji} ${chalk.cyan(insight.domain)}: ${chalk.white(truncateText(insight.text, 120))}`
+    );
+  }
+
+  // Context paragraph
+  const context = generateReadingContextParagraph(highlights, articles);
+  console.log('\n' + chalk.dim(context) + '\n');
+}
+
+async function showActivityTimeline(
+  config: ReadwiseConfig,
+  dateRange: DateRange,
+  preset?: DatePreset
+): Promise<void> {
+  const spinner = ora('Analyzing timeline...').start();
+
+  const result = await fetchHighlights(config, dateRange);
+
+  if (!result.success || !result.data) {
+    spinner.fail(chalk.red(`Failed: ${result.error}`));
+    return;
+  }
+
+  spinner.succeed(chalk.green('Timeline analyzed!'));
+
+  const highlights = result.data;
+  const dateLabel = formatDateRange(dateRange, preset);
+  const dailyBreakdown = groupHighlightsByDay(highlights, dateRange);
+  const maxCount = Math.max(...dailyBreakdown.map(d => d.count));
+
+  console.log('\n' + chalk.bold.blue(`📈 ACTIVITY TIMELINE (${dateLabel})`));
+  console.log(chalk.dim('─'.repeat(50)) + '\n');
+
+  if (highlights.length === 0) {
+    console.log(chalk.dim('No activity in this period.\n'));
+    return;
+  }
+
+  // Daily breakdown
+  for (const day of dailyBreakdown) {
+    const bar = renderActivityBar(day.count, maxCount, 20);
+    const dateStr = formatDate(new Date(day.date + 'T00:00:00')).slice(0, 6); // "Jan 15"
+    const pct = maxCount > 0 ? ((day.count / maxCount) * 100).toFixed(0) : '0';
+
+    if (day.count > 0) {
+      console.log(
+        `${dateStr} ${chalk.cyan(day.dayOfWeek)} │ ${chalk.yellow(bar)} │ ${chalk.white.bold(day.count)} (${pct}%)`
+      );
+    } else {
+      console.log(
+        `${dateStr} ${chalk.dim(day.dayOfWeek)} │ ${chalk.dim(bar)} │ ${chalk.dim('0')}`
+      );
+    }
+  }
+
+  // Peak days
+  const peaks = findPeakDays(dailyBreakdown, 2);
+  if (peaks.length > 0) {
+    const peakStr = peaks
+      .map(p => `${formatDate(new Date(p.date + 'T00:00:00')).slice(0, 6)} (${p.count})`)
+      .join(' | ');
+    console.log('\n' + chalk.red('🔥 Peak: ') + chalk.white(peakStr));
+  }
+
+  // Pattern
+  const pattern = generateReadingPattern(dailyBreakdown);
+  console.log(chalk.dim(`Pattern: ${pattern}`) + '\n');
+}
+
+async function showByCategory(
+  config: ReadwiseConfig,
+  dateRange: DateRange,
+  preset?: DatePreset
+): Promise<void> {
+  const spinner = ora('Grouping by category...').start();
+
+  const result = await fetchHighlights(config, dateRange);
+
+  if (!result.success || !result.data) {
+    spinner.fail(chalk.red(`Failed: ${result.error}`));
+    return;
+  }
+
+  spinner.succeed(chalk.green('Categories grouped!'));
+
+  const highlights = result.data;
+  const dateLabel = formatDateRange(dateRange, preset);
+  const categories = groupHighlightsByCategory(highlights);
+  const maxCount = Math.max(...categories.map(c => c.count));
+
+  console.log('\n' + chalk.bold.green(`📂 BY CATEGORY (${dateLabel})`));
+  console.log(chalk.dim('─'.repeat(50)) + '\n');
+
+  if (highlights.length === 0) {
+    console.log(chalk.dim('No highlights to categorize.\n'));
+    return;
+  }
+
+  for (const category of categories.slice(0, 8)) {
+    const bar = renderCategoryBar(category.count, maxCount);
+    const pct = formatPercentage(category.percentage);
+
+    console.log(
+      `${chalk.cyan(category.domain.padEnd(15))} │ ${chalk.yellow(bar)} │ ${chalk.white.bold(category.count.toString().padStart(3))} ${chalk.dim(`(${pct})`)}`
+    );
+  }
+
+  // Summary
+  const topTwo = categories.slice(0, 2);
+  if (topTwo.length > 0) {
+    const summary = topTwo.map(c => `${c.domain.toLowerCase()} (${Math.round(c.percentage)}%)`).join(' + ');
+    console.log('\n' + chalk.dim(`Focus: ${summary}`) + '\n');
+  }
+}
+
+async function showStatsDashboard(
+  config: ReadwiseConfig,
+  dateRange: DateRange,
+  preset?: DatePreset
+): Promise<void> {
+  const spinner = ora('Calculating stats...').start();
+
+  const [highlightsResult, articlesResult] = await Promise.all([
+    fetchHighlights(config, dateRange),
+    fetchReaderDocuments(config, {
+      updatedAfter: dateRange.startDate,
+      updatedBefore: dateRange.endDate,
+      location: 'new'
+    })
+  ]);
+
+  if (!highlightsResult.success || !highlightsResult.data) {
+    spinner.fail(chalk.red(`Failed: ${highlightsResult.error}`));
+    return;
+  }
+
+  spinner.succeed(chalk.green('Stats calculated!'));
+
+  const highlights = highlightsResult.data;
+  const articles = articlesResult.data ?? [];
+  const dateLabel = formatDateRange(dateRange, preset);
+
+  const uniqueSources = new Set(highlights.map(h => h.title)).size;
+  const dailyBreakdown = groupHighlightsByDay(highlights, dateRange);
+  const daysWithActivity = dailyBreakdown.filter(d => d.count > 0).length;
+  const avgPerDay = daysWithActivity > 0 ? highlights.length / daysWithActivity : 0;
+
+  const grouped = groupHighlightsBySource(highlights);
+  const topSource = grouped[0];
+
+  console.log('\n' + chalk.bold.cyan('┌─ STATS DASHBOARD ─────────────────┐'));
+  console.log(chalk.cyan('│') + '                                   ' + chalk.cyan('│'));
+  console.log(
+    chalk.cyan('│') +
+      ` ${chalk.white('📥 Saved:')}      ${chalk.bold(articles.length.toString().padStart(3))} items          ${chalk.cyan('│')}`
+  );
+  console.log(
+    chalk.cyan('│') +
+      ` ${chalk.white('✨ Highlighted:')} ${chalk.bold(highlights.length.toString().padStart(3))} notes         ${chalk.cyan('│')}`
+  );
+  console.log(
+    chalk.cyan('│') +
+      ` ${chalk.white('📖 Sources:')}    ${chalk.bold(uniqueSources.toString().padStart(3))} unique        ${chalk.cyan('│')}`
+  );
+  console.log(
+    chalk.cyan('│') +
+      ` ${chalk.white('📊 Avg/day:')}    ${chalk.bold(avgPerDay.toFixed(1).padStart(3))} highlights   ${chalk.cyan('│')}`
+  );
+
+  if (topSource) {
+    console.log(chalk.cyan('│') + '                                   ' + chalk.cyan('│'));
+    console.log(
+      chalk.cyan('│') +
+        ` ${chalk.red('🔥')} ${chalk.white(truncateText(topSource.sourceTitle, 21).padEnd(21))} ${chalk.yellow(topSource.count)} ${chalk.cyan('│')}`
+    );
+  }
+
+  console.log(chalk.cyan('│') + '                                   ' + chalk.cyan('│'));
+  console.log(chalk.cyan('└───────────────────────────────────┘\n'));
 }
 
 // Entry point

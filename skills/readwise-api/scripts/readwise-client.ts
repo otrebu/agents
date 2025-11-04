@@ -112,6 +112,7 @@ export async function fetchReaderDocuments(
   config: ReadwiseConfig,
   options?: {
     readonly updatedAfter?: Date;
+    readonly updatedBefore?: Date;
     readonly location?: 'new' | 'later' | 'archive' | 'feed';
     readonly category?: string;
   }
@@ -155,7 +156,18 @@ export async function fetchReaderDocuments(
       }
     } while (pageCursor);
 
-    return { success: true, data: documents };
+    // Client-side filtering for updatedBefore
+    // Reader API doesn't support end date natively, so filter locally
+    let filtered = documents;
+    if (options?.updatedBefore) {
+      const beforeTime = options.updatedBefore.getTime();
+      filtered = documents.filter(doc => {
+        const docTime = new Date(doc.updatedAt).getTime();
+        return docTime <= beforeTime;
+      });
+    }
+
+    return { success: true, data: filtered };
   } catch (error) {
     return {
       success: false,
