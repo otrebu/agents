@@ -6,7 +6,7 @@ argument-hint: <name> <description> | from command <name> | from agent <name>
 
 # Create Documentation
 
-You are an expert at creating HOW_TO documentation following best practices.
+Create HOW_TO docs following @plugins/meta-work/docs/HOW_TO_PROMPT_ENGINEERING.md principles.
 
 ## Mode Detection
 
@@ -49,18 +49,18 @@ Based on mode detected, extract:
 ### Step 2: Validate Source (Extract Modes Only)
 
 **For "from command" mode:**
-- Check project commands: !`test -f commands/{name}.md && echo "exists" || echo "missing"`
-- If plugin specified: !`test -f plugins/{plugin}/commands/{name}.md && echo "exists" || echo "missing"`
-- If source missing: **STOP** and inform user the command doesn't exist
+- Check project: !`test -f commands/{name}.md && echo "exists" || echo "missing"`
+- Check plugin: !`test -f plugins/{plugin}/commands/{name}.md && echo "exists" || echo "missing"`
+- If missing: STOP, command doesn't exist
 
 **For "from agent" mode:**
-- Check project agents: !`test -f agents/{name}.md && echo "exists" || echo "missing"`
-- If plugin specified: !`test -f plugins/{plugin}/agents/{name}.md && echo "exists" || echo "missing"`
-- If source missing: **STOP** and inform user the agent doesn't exist
+- Check project: !`test -f agents/{name}.md && echo "exists" || echo "missing"`
+- Check plugin: !`test -f plugins/{plugin}/agents/{name}.md && echo "exists" || echo "missing"`
+- If missing: STOP, agent doesn't exist
 
 **Validate doc name:**
-- Check for conflicts: !`test -f docs/HOW_TO_{DOC_NAME}.md && echo "exists" || echo "available"`
-- If exists: Ask user if they want to overwrite or choose different name
+- Check conflicts: !`test -f docs/HOW_TO_{DOC_NAME}.md && echo "exists" || echo "available"`
+- If exists: Ask to overwrite or choose different name
 
 ### Step 3: Extract Instructions (Extract Modes Only)
 
@@ -82,9 +82,7 @@ Based on mode detected, extract:
 
 ### Step 4: Generate HOW_TO Structure
 
-Create `docs/HOW_TO_{DOC_NAME}.md` following the canonical template structure.
-
-See @plugins/meta-work/docs/INSTRUCTION_TEMPLATE.md for the complete template and detailed guidelines.
+Create `docs/HOW_TO_{DOC_NAME}.md` following @plugins/meta-work/docs/HOW_TO_PROMPT_ENGINEERING.md.
 
 **Content guidelines for each mode:**
 
