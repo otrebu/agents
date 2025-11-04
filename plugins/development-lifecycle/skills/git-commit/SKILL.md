@@ -1,14 +1,12 @@
 ---
 name: git-commit
-description: Create git commits following conventional commits format. Use when user asks to just commit, git commit, commit changes, create a commit. Handles staging files, generating commit messages from diffs, and optional push operations.
+description: Create conventional commits from staged/unstaged changes. Use when user asks to commit, create commits, commit changes, commit all, make commits, separate commits, commit everything, stage and commit, or requests push after committing. Handles single or multiple commits, staging, message generation from diffs, and push operations.
 allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*), Bash(git diff:*), Bash(git log:*), Bash(git branch:*), Bash(git push:*)
 ---
 
-# Git Commit with Conventional Commits
+# Git Commit
 
-## Overview
-
-Automatically stage changes and create conventional commits based on git diff analysis.
+Stage changes and create conventional commits from diff analysis.
 
 ## Workflow
 
@@ -17,73 +15,80 @@ Automatically stage changes and create conventional commits based on git diff an
 ```bash
 git status
 git diff HEAD
-git branch --show-current
 git log --oneline -10
 ```
 
-### 2. Analyze Changes
+### 2. Determine Commit Strategy
 
-Review the diff to determine:
+**Single commit:** All changes relate to one logical change
+**Multiple commits:** Changes span distinct features/fixes/areas
 
+If multiple commits needed:
+1. Group related changes by type and scope
+2. Create separate commits for each group
+3. Follow dependency order (e.g., deps before features)
+
+### 3. Per Commit: Analyze & Stage
+
+Review diff to extract:
 - **Type**: feat, fix, refactor, docs, test, chore
-- **Scope**: affected module/component
-- **Description**: concise summary in imperative mood
+- **Scope**: module/component affected
+- **Description**: imperative mood summary (50-72 chars)
 
-### 3. Stage Files
-
+Stage related files:
 ```bash
-git add <relevant-files>
+git add <files-for-this-commit>
 ```
 
-**Critical**: NEVER stage:
-
+**Never stage:**
 - `.env` files
-- Credential files
-- Secret keys
-- Token files
+- Credentials
+- Secrets/tokens
 
 ### 4. Create Commit
 
 Format:
-
 ```
 <type>(scope): description
 
-- Detail line 1
-- Detail line 2
+Optional body with details
 ```
 
-Rules:
-
-- Summary: 50-72 chars
+**Rules:**
 - Imperative mood: "add" not "added"
-- Auto-generate from diff (never use user's exact words as message)
-- NEVER add Claude signature or co-authorship
-- Keep commits atomic and focused
+- Generate from diff, not user's words
+- NEVER add Claude signature/co-authorship
+- Atomic: one logical change per commit
 
-### 5. Post-Commit Actions
+### 5. Repeat or Push
 
-Check user's request for post-commit instructions:
+**Multiple commits:** Return to step 3 for next commit
+**Push requested:** Run `git push` after all commits
+**No push requested:** Stop after committing
 
-- "and push" → `git push`
-- "and push origin <branch>" → `git push origin <branch>`
-- No instruction → commit only
+## Conventional Commit Types
 
-## Type Reference
+- `feat` - New features
+- `fix` - Bug fixes
+- `refactor` - Code restructuring without behavior change
+- `docs` - Documentation only
+- `test` - Tests
+- `chore` - Tooling, deps, config
 
-- `feat(scope):` - New features
-- `fix(scope):` - Bug fixes
-- `refactor(scope):` - Code restructuring
-- `docs(scope):` - Documentation
-- `test(scope):` - Tests
-- `chore(scope):` - Maintenance
+## Examples
 
-## Example
-
+**Single commit:**
 ```
 feat(api): add user authentication endpoint
 
-- Implement JWT token generation
-- Add login/logout routes
-- Include password hashing with bcrypt
+Implements JWT token generation, login/logout routes,
+and bcrypt password hashing.
+```
+
+**Multiple commits scenario:**
+```
+1. chore(deps): install jsonwebtoken and bcrypt
+2. feat(auth): add JWT token signing function
+3. feat(auth): add token verification middleware
+4. docs(api): document authentication endpoints
 ```
