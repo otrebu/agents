@@ -209,7 +209,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '\n\nIF THERE IS A SKILL FOR THIS USE IT! PLEASE CHECK.'"
+            "command": "\"$CLAUDE_PROJECT_DIR\"/hooks/skill-reminder/prompt-hook.sh"
           }
         ]
       }
