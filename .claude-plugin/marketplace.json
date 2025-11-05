@@ -23,6 +23,18 @@
       "source": "./../plugins/typescript-coding",
       "description": "TypeScript/JavaScript development guidance with stack decisions, tooling, testing, and logging patterns",
       "version": "1.0.0"
+    },
+    {
+      "name": "knowledge-work",
+      "source": "./../plugins/knowledge-work",
+      "description": "Knowledge capture, web research, ideation. Skills for gathering external info (web scraping, doc fetching) and creative exploration (brainwriting, reading analytics).",
+      "version": "1.0.0"
+    },
+    {
+      "name": "basic-skills",
+      "source": "./../plugins/basic-skills",
+      "description": "Foundational utilities used across other skills. Simple, reusable helpers.",
+      "version": "1.0.0"
     }
   ]
 }

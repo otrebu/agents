@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash:*)",
+      "Skill(timestamp)",
+      "Skill(dev-work-summary)",
+      "Skill(development-lifecycle:analyze-size)",
+      "Bash(cloc:*)",
+      "Skill(meta-work:claude-permissions)",
+      "Skill(development-lifecycle:git-commit)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

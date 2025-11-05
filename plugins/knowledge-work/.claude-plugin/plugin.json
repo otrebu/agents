@@ -1,0 +1,11 @@
+{
+  "name": "knowledge-work",
+  "version": "1.0.0",
+  "description": "Knowledge capture, web research, ideation. Skills for gathering external info (web scraping, doc fetching) and creative exploration (brainwriting, reading analytics).",
+  "author": {
+    "name": "otrebu",
+    "email": "dev@uberto.me"
+  },
+  "license": "MIT",
+  "keywords": ["knowledge", "research", "ideation", "web-scraping", "documentation"]
+}

@@ -122,6 +122,31 @@ Transforms high-level plans into atomic commit-level implementations with depend
 
 ## Skills
 
+### `analyze-size`
+
+Analyze codebase size and language distribution using cloc.
+
+**Use when:** Starting work on new repos to assess scale, composition, and complexity
+
+**Process:**
+- Runs cloc analysis on codebase
+- Calculates total LOC (lines of code)
+- Determines size category (tiny/small/medium/large/huge)
+- Breaks down language distribution by percentage
+- Provides insights on primary languages and codebase composition
+
+**Output:**
+- Total lines of code
+- Size category
+- Language breakdown (percentages)
+- Key insights about project complexity
+
+**Tools:** Bash(cloc)
+
+**See:** `plugins/development-lifecycle/skills/analyze-size/SKILL.md`
+
+---
+
 ### `git-commit`
 
 Create git commits following conventional commits format.
@@ -249,6 +274,17 @@ Scan ~/dev recursively for git repos and report today's work.
 ---
 
 ## Features
+
+### Development Lifecycle Workflow
+
+The recommended workflow for feature development using skills:
+
+1. **Analyze** - Use `analyze-size` to assess codebase scale and composition (especially for new repos)
+2. **Branch** - Use `start-feature` to create/switch to feature branch
+3. **Code** - Implement your feature
+4. **Review** - Use `code-review` to validate changes
+5. **Commit** - Use `git-commit` to create conventional commits
+6. **Finish** - Use `finish-feature` to merge back to main
 
 ### Research & Planning Workflow
 

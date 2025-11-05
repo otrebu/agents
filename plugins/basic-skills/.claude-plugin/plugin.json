@@ -1,0 +1,11 @@
+{
+  "name": "basic-skills",
+  "version": "1.0.0",
+  "description": "Foundational utilities used across other skills. Simple, reusable helpers.",
+  "author": {
+    "name": "otrebu",
+    "email": "dev@uberto.me"
+  },
+  "license": "MIT",
+  "keywords": ["utilities", "helpers", "timestamp"]
+}

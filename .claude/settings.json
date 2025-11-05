@@ -1,1 +1,29 @@
-../settings.json
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "plugins": [
+    "/Users/Uberto.Rapizzi/dev/agents/plugins/meta-work",
+    "/Users/Uberto.Rapizzi/dev/agents/plugins/development-lifecycle",
+    "/Users/Uberto.Rapizzi/dev/agents/plugins/typescript-coding",
+    "/Users/Uberto.Rapizzi/dev/agents/plugins/knowledge-work",
+    "/Users/Uberto.Rapizzi/dev/agents/plugins/basic-skills"
+  ],
+  "hooks": {
+    "Stop": [{
+      "matcher": "",
+      "hooks": [{
+        "type": "command",
+        "command": "/Users/Uberto.Rapizzi/dev/agents/hooks/tts-readback/node_modules/.bin/tsx /Users/Uberto.Rapizzi/dev/agents/hooks/tts-readback/stop-hook.ts",
+        "timeout": 30
+      }, {
+        "type": "prompt",
+        "prompt": "Evaluate if Claude should stop: $ARGUMENTS. Check if all tasks are complete."
+      }]
+    }],
+    "UserPromptSubmit": [{
+      "hooks": [{
+        "type": "command",
+        "command": "/Users/Uberto.Rapizzi/dev/agents/hooks/skill-reminder/node_modules/.bin/tsx /Users/Uberto.Rapizzi/dev/agents/hooks/skill-reminder/prompt-hook.ts"
+      }]
+    }]
+  }
+}

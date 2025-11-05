@@ -3,51 +3,47 @@
 
 🥚
 A centralized configuration repository for Claude Code featuring:
-- 🎯 **Specialized skills** for code review, ESLint fixing, git workflows, brainstorming, and more
-- 🔌 **Plugin marketplace** with modular extensions (codebase explorer, meta-work, feature development)
+- 🎯 **Specialized skills** organized in plugins for code review, ESLint fixing, git workflows, brainstorming, and more
+- 🔌 **Plugin marketplace** with modular extensions (meta-work, development-lifecycle, typescript-coding, knowledge-work, basic-skills)
 - 🔧 **Meta-work tools** to create new commands, agents, docs, and plugins following DRY principles
 - 📚 **Personal coding standards** (FP-first style, development workflow, tech stack preferences)
-- 🎤 **Custom hooks** for enhanced functionality (TTS readback, audio notifications)
-- 🔗 **Symlink-based setup** for easy sharing across projects
+- 🎤 **Custom hooks** for enhanced functionality (TTS readback, skill reminders)
+- 📦 **Plugin-based setup** using absolute paths for reliable config reuse across projects
 
-All configuration can be linked to your global Claude config (`~/.claude`) or individual project `.claude` folders.
+All configuration can be referenced from your project `.claude` folders using the bootstrap script.
 
 ## Repository Structure
 
 ```
 .
-├── .claude/                      # Example .claude folder (symlinked)
-│   ├── agents/                  -> ../agents
-│   ├── commands/                -> ../commands
-│   ├── skills/                  -> ../skills
-│   └── settings.json            -> ../settings.json
+├── .claude/                      # Project config (references plugins via absolute paths)
+│   └── settings.json             # Simplified plugin-based config
 ├── .claude-plugin/               # Plugin marketplace definition
-│   └── marketplace.json         # Marketplace configuration
-├── plugins/                      # Plugin directory
-│   ├── meta-work/               # Meta-work plugin (command creation, etc.)
-│   │   ├── .claude-plugin/      # Plugin manifest
-│   │   ├── commands/            # Plugin commands
-│   │   ├── skills/              # Plugin-scoped skills
-│   │   │   ├── prompting/       # Prompt engineering standards
-│   │   │   └── skill-creator/   # Skill creation guide
-│   │   └── README.md            # Plugin documentation
-│   └── development-lifecycle/   # Development lifecycle plugin
-│       ├── .claude-plugin/      # Plugin manifest
-│       ├── commands/            # Plugin commands
-│       ├── agents/              # Plugin agents
-│       └── README.md            # Plugin documentation
-├── skills/                       # Core reusable skill modules (12 total)
-│   ├── analyze-size/
-│   ├── brainwriting/
-│   ├── claude-permissions/
-│   ├── code-review/
-│   ├── finish-feature/
-│   ├── fix-eslint/
-│   ├── git-commit/
-│   ├── scratchpad-fetch/
-│   ├── start-feature/
-│   ├── timestamp/
-│   └── typescript-coding/
+│   └── marketplace.json          # Marketplace configuration
+├── plugins/                      # All skills organized in plugins
+│   ├── meta-work/                # Meta-work: commands, skills, plugins, docs
+│   │   ├── .claude-plugin/       # Plugin manifest
+│   │   ├── commands/             # /create-command, /create-agent, /create-doc, /create-plugin
+│   │   ├── skills/               # prompting, claude-permissions, skill-creator, plugin-creator
+│   │   └── README.md
+│   ├── development-lifecycle/    # Dev workflow: git, code review, planning
+│   │   ├── .claude-plugin/
+│   │   ├── commands/             # /execute-implementation
+│   │   ├── agents/               # deep-research, deep-context-gatherer, high-level-planner, etc.
+│   │   ├── skills/               # analyze-size, git-commit, code-review, start-feature, finish-feature, fix-eslint, dev-work-summary
+│   │   └── README.md
+│   ├── typescript-coding/        # TypeScript/JavaScript development guidance
+│   │   ├── .claude-plugin/
+│   │   ├── skills/               # typescript-coding
+│   │   └── README.md
+│   ├── knowledge-work/           # Knowledge capture, web research, ideation
+│   │   ├── .claude-plugin/
+│   │   ├── skills/               # brainwriting, readwise-api, scratchpad-fetch, web-to-markdown
+│   │   └── README.md
+│   └── basic-skills/             # Foundational utilities
+│       ├── .claude-plugin/
+│       ├── skills/               # timestamp
+│       └── README.md
 ├── docs/                         # Project documentation and coding standards
 │   ├── CODING_STYLE.md
 │   ├── DEVELOPMENT_WORKFLOW.md
@@ -69,101 +65,75 @@ All configuration can be linked to your global Claude config (`~/.claude`) or in
 └── README.md
 ```
 
-## Setup: Linking to Your Projects
-
-You can link this configuration to either your global Claude config (`~/.claude`) or individual project `.claude` folders.
+## Setup: Using This Configuration
 
 ### Quick Setup (Automated)
 
-Use the provided setup script:
+Use the provided bootstrap script to set up new projects:
 
 ```bash
-# For global configuration
-./setup.sh --global
+# Bootstrap a new project
+./setup-project.sh ~/path/to/your-project
 
-# For a specific project
-./setup.sh --project ~/path/to/your-project
-
-# Preview what would be done (dry run)
-./setup.sh --global --dry-run
-./setup.sh --project ~/path/to/your-project --dry-run
-
-# Show help
-./setup.sh --help
+# Use current directory
+./setup-project.sh .
 ```
 
 The script will:
 - ✓ Create `.claude` directory if needed
-- ✓ Create symlinks to agents, commands, skills, settings
-- ✓ Use relative paths for project configs (portable)
-- ✓ Skip existing files/symlinks (safe to re-run)
-- ✓ Preview changes with `--dry-run` before applying
+- ✓ Create `settings.json` with absolute paths to all plugins
+- ✓ Configure hooks (TTS readback, skill reminder)
+- ✓ Safe to re-run (won't overwrite existing files)
 
 ### Manual Setup
 
-If you prefer to create symlinks manually:
+If you prefer manual configuration, create `.claude/settings.json` in your project:
 
-**✅ Recommended approach:**
-1. **Navigate to** the `.claude` folder where you want to create the links
-2. **Run `ln -s`** from that location
-3. **Use relative paths** when possible (especially for project configs)
+```json
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "plugins": [
+    "/Users/Uberto.Rapizzi/dev/agents/plugins/meta-work",
+    "/Users/Uberto.Rapizzi/dev/agents/plugins/development-lifecycle",
+    "/Users/Uberto.Rapizzi/dev/agents/plugins/typescript-coding",
+    "/Users/Uberto.Rapizzi/dev/agents/plugins/knowledge-work",
+    "/Users/Uberto.Rapizzi/dev/agents/plugins/basic-skills"
+  ],
+  "hooks": {
+    "Stop": [{
+      "matcher": "",
+      "hooks": [{
+        "type": "command",
+        "command": "/Users/Uberto.Rapizzi/dev/agents/hooks/tts-readback/node_modules/.bin/tsx /Users/Uberto.Rapizzi/dev/agents/hooks/tts-readback/stop-hook.ts",
+        "timeout": 30
+      }]
+    }],
+    "UserPromptSubmit": [{
+      "hooks": [{
+        "type": "command",
+        "command": "/Users/Uberto.Rapizzi/dev/agents/hooks/skill-reminder/prompt-hook.sh"
+      }]
+    }]
+  }
+}
+```
 
-**Why this works:**
-- Running from the target `.claude` folder makes the command consistent
-- Relative paths are portable across different systems/users
-- Easier to understand and maintain
+**Note:** Adjust paths if your `agents` directory is in a different location.
 
-#### Global Configuration (Manual)
+### Verifying Setup
 
-Link to your global Claude config (`~/.claude`):
+Check that plugins are loaded correctly:
 
 ```bash
-# Navigate to your global .claude folder
-cd ~/.claude
+# List available skills (should show namespaced skills)
+claude --help | grep -A 20 "Skills:"
 
-# Create symlinks using relative paths
-ln -s ~/dev/agents/agents agents
-ln -s ~/dev/agents/commands commands
-ln -s ~/dev/agents/skills skills
-ln -s ~/dev/agents/settings.json settings.json
-
-# Optional: Link documentation
-ln -s ~/dev/agents/docs docs
-ln -s ~/dev/agents/CLAUDE.md CLAUDE.md
-```
-
-#### Project-Specific Configuration (Manual)
-
-Link to a specific project's `.claude` folder:
-
-```bash
-# Navigate to your project's .claude folder
-cd ~/path/to/your-project/.claude
-
-# Create symlinks using relative paths to this repository
-# (adjust the path based on where agents is relative to your project)
-ln -s ../../agents/agents agents
-ln -s ../../agents/commands commands
-ln -s ../../agents/skills skills
-ln -s ../../agents/settings.json settings.json
-```
-
-### Verifying Symlinks
-
-Check that symlinks are created correctly:
-
-```bash
-ls -la ~/.claude          # for global config
-# or
-ls -la .claude            # for project config
-```
-
-You should see output like:
-```
-lrwxr-xr-x  agents -> ../agents
-lrwxr-xr-x  commands -> ../commands
-lrwxr-xr-x  skills -> ../skills
-lrwxr-xr-x  settings.json -> ../settings.json
+# Should see entries like:
+# - knowledge-work:brainwriting
+# - knowledge-work:readwise-api
+# - basic-skills:timestamp
+# - development-lifecycle:analyze-size
+# etc.
 ```
 
 ## What's Included
@@ -185,19 +155,36 @@ lrwxr-xr-x  settings.json -> ../settings.json
 
 **Migration**: Commands/agents → skills architecture
 
-### Core Skills (`.claude/skills`)
-Modular packages providing specialized workflows and domain expertise (12 total):
-- **analyze-size** - Analyze codebase size and language distribution using cloc
-- **brainwriting** - Structured brainstorming using parallel sub-agents (5 rounds of parallel exploration)
-- **claude-permissions** - Configure and manage permissions, sandboxing, and tool access
-- **code-review** - Expert code review with automated pre-review checks and auto-fix capabilities
-- **finish-feature** - Complete feature work and merge back to main branch
-- **fix-eslint** - Auto-fix ESLint errors (direct for ≤20, parallel agents for >20)
-- **git-commit** - Create conventional commits from git diff analysis
-- **scratchpad-fetch** - Download and aggregate web pages/docs into timestamped files
-- **start-feature** - Create/switch to feature branches with proper naming
-- **timestamp** - Generate deterministic timestamps (YYYYMMDDHHMMSS format)
-- **typescript-coding** - Expert TS/JS guidance (stack, tooling, testing, logging patterns)
+### All Skills (Organized by Plugin)
+
+Skills are now organized into semantic plugins for better discoverability and config management:
+
+**development-lifecycle** (7 skills):
+- `analyze-size` - Analyze codebase size/language distribution using cloc
+- `git-commit` - Create conventional commits from git diff analysis
+- `code-review` - Expert code review with automated pre-review checks
+- `start-feature` - Create/switch to feature branches
+- `finish-feature` - Complete feature work and merge to main
+- `fix-eslint` - Auto-fix ESLint errors (parallel agents for >20 errors)
+- `dev-work-summary` - Scan ~/dev for today's work across all repos
+
+**knowledge-work** (4 skills):
+- `brainwriting` - Structured brainstorming with parallel sub-agents
+- `readwise-api` - Fetch and analyze Readwise reading activity
+- `scratchpad-fetch` - Download and aggregate web pages/docs
+- `web-to-markdown` - Batch-process web pages to markdown via Playwright
+
+**meta-work** (4 skills):
+- `prompting` - Prompt engineering standards (Anthropic best practices)
+- `claude-permissions` - Configure permissions, sandboxing, tool access
+- `skill-creator` - Guide for creating effective skills
+- `plugin-creator` - Create Claude Code plugins with proper structure
+
+**typescript-coding** (1 skill):
+- `typescript-coding` - Expert TS/JS guidance (stack, tooling, testing, logging)
+
+**basic-skills** (1 skill):
+- `timestamp` - Generate deterministic timestamps (YYYYMMDDHHMMSS format)
 
 ### Plugins (`/plugins`)
 
@@ -309,18 +296,19 @@ The marketplace is defined in `.claude-plugin/marketplace.json`:
 #### Meta-Work (`plugins/meta-work/`)
 Tools for managing and creating Claude Code configurations:
 - **Commands**: `/create-command`, `/create-agent`, `/create-doc`, `/create-plugin`
-- **Plugin-scoped Skills**:
+- **Skills**:
   - `prompting` - Prompt engineering standards (Anthropic best practices, clarity, structure)
+  - `claude-permissions` - Configure and manage permissions, sandboxing, tool access
   - `skill-creator` - Guide for creating effective skills with specialized knowledge/workflows
+  - `plugin-creator` - Create Claude Code plugins with proper structure
 - Atomic command design (each command does one thing well)
 - Supports inline instructions or shared documentation patterns
 - Validates structure and prevents conflicts
-- Plugin-scoped support for organizing by domain
 
-**Usage**: Install plugin → `/create-command <description>` or `Skill(meta-work:prompting)`
+**Usage**: `/create-command <description>` or `Skill(meta-work:prompting)`
 
 #### Development Lifecycle (`plugins/development-lifecycle/`)
-Software feature development tools with research, planning, and implementation agents:
+Software feature development tools with research, planning, implementation, and git workflows:
 - **Command**: `/execute-implementation` - Orchestrate wave-based execution of implementation plans
 - **Agents**:
   - `deep-research` - Parallel web research with optional report generation
@@ -345,6 +333,41 @@ The workflow automatically chains outputs: architect detects and reuses context 
 - `@development-lifecycle:commit-planner plan commits using docs/plans/{feature}/option-1.md`
 - `/execute-implementation docs/implementation/{feature-slug}`
 
+#### TypeScript Coding (`plugins/typescript-coding/`)
+Expert TypeScript/JavaScript development guidance:
+- **Skills**:
+  - `typescript-coding` - Comprehensive TS/JS guidance (stack, tooling, testing, logging patterns)
+- Covers stack decisions, build tool configuration (pnpm, Vite, TypeScript)
+- Testing strategies with Vitest
+- Logging patterns (pino for services, chalk/console for CLIs)
+- FP-first patterns with React, Tailwind, XState
+
+**Usage**: `Skill(typescript-coding:typescript-coding)` when planning or writing TS/JS code
+
+#### Knowledge Work (`plugins/knowledge-work/`)
+Knowledge capture, web research, and ideation workflows:
+- **Skills**:
+  - `brainwriting` - Structured brainstorming using parallel sub-agents (5 rounds of exploration)
+  - `readwise-api` - Fetch and analyze Readwise reading activity for any date range
+  - `scratchpad-fetch` - Download and aggregate web pages/docs into timestamped scratchpad files
+  - `web-to-markdown` - Batch-process web pages via Playwright, convert HTML to markdown
+- Designed for gathering external knowledge and creative ideas into structured formats
+- All web fetching skills output to timestamped files for easy reference
+
+**Usage**:
+- `Skill(knowledge-work:brainwriting)` for ideation and concept exploration
+- `Skill(knowledge-work:web-to-markdown)` to capture web content as markdown
+- `Skill(knowledge-work:readwise-api)` to analyze reading habits
+
+#### Basic Skills (`plugins/basic-skills/`)
+Foundational utilities used across other skills:
+- **Skills**:
+  - `timestamp` - Generate deterministic timestamps in YYYYMMDDHHMMSS format
+- Simple, reusable helpers for common tasks
+- Designed to grow with additional foundational utilities (path helpers, string utilities, etc.)
+
+**Usage**: `Skill(basic-skills:timestamp)` when you need consistent timestamp formatting
+
 ### Creating Your Own Plugins
 To create a new plugin:
 1. Create a directory under `plugins/`
@@ -356,13 +379,15 @@ See [Claude Code Plugin Documentation](https://docs.claude.com/en/docs/claude-co
 
 ## Updating Configuration
 
-Since files are symlinked, any updates to this repository automatically reflect in all linked projects:
+Since projects reference plugins via absolute paths, any updates to this repository automatically reflect in all projects using these plugins:
 
 ```bash
 cd ~/dev/agents
 git pull origin main
-# Changes are immediately available in all linked .claude folders
+# Changes are immediately available in all projects referencing these plugins
 ```
+
+**Note:** The plugin-based approach means you edit skills once in `~/dev/agents`, and all projects see the updates immediately. No need to propagate changes to individual projects.
 
 ---
 
