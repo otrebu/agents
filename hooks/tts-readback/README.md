@@ -90,7 +90,24 @@ pnpm test
 
 ## Configuration
 
-Edit `stop-hook.ts` to customize:
+### Enable/Disable TTS
+
+Toggle TTS via environment variable:
+
+```bash
+# Disable TTS
+export CLAUDE_CODE_TTS_ENABLED=false
+
+# Re-enable (or unset)
+export CLAUDE_CODE_TTS_ENABLED=true
+unset CLAUDE_CODE_TTS_ENABLED
+```
+
+Add to `~/.zshrc` or `~/.bashrc` for persistence.
+
+### Customize Voice/Behavior
+
+Edit `stop-hook.ts`:
 
 ```typescript
 // Change voice (line 67)

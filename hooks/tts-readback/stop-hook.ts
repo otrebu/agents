@@ -140,6 +140,11 @@ async function textToSpeech(text: string): Promise<void> {
 }
 
 async function main() {
+  // Check if TTS is enabled
+  if (process.env.CLAUDE_CODE_TTS_ENABLED === 'false') {
+    process.exit(0);
+  }
+
   log("=== TTS Hook Started ===");
   log(`CARTESIA_API_KEY present: ${!!process.env.CARTESIA_API_KEY}`);
   log(
