@@ -1,9 +1,16 @@
 #!/usr/bin/env tsx
 
-import { readFileSync } from "node:fs";
+import { readFileSync, appendFileSync } from "node:fs";
 import { spawn } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import Cartesia from "@cartesia/cartesia-js";
+
+const LOG_FILE = "/tmp/claude-tts-hook.log";
+
+function log(message: string) {
+  const timestamp = new Date().toISOString();
+  appendFileSync(LOG_FILE, `[${timestamp}] ${message}\n`);
+}
 
 interface StopHookInput {
   session_id: string;
@@ -23,6 +30,7 @@ interface TranscriptEntry {
 }
 
 async function extractRecentAssistantText(transcriptPath: string): Promise<string> {
+  log(`Extracting text from: ${transcriptPath}`);
   try {
     // Read last 20 lines efficiently (pattern from research)
     const tailCmd = spawn("tail", ["-n", "20", transcriptPath]);
@@ -55,8 +63,11 @@ async function extractRecentAssistantText(transcriptPath: string): Promise<strin
       }
     }
 
-    return textParts.join(" ").trim();
+    const result = textParts.join(" ").trim();
+    log(`Extracted text (${result.length} chars): ${result.substring(0, 100)}...`);
+    return result;
   } catch (error) {
+    log(`Error extracting transcript: ${error}`);
     console.error("Error extracting transcript:", error);
     return "Claude Code finished.";
   }
@@ -66,10 +77,12 @@ async function textToSpeech(text: string): Promise<void> {
   const apiKey = process.env.CARTESIA_API_KEY;
 
   if (!apiKey) {
+    log("CARTESIA_API_KEY not set, falling back to silent mode");
     console.error("CARTESIA_API_KEY not set, falling back to silent mode");
     return;
   }
 
+  log("Calling Cartesia TTS API...");
   try {
     const client = new Cartesia({ apiKey });
 
@@ -92,26 +105,32 @@ async function textToSpeech(text: string): Promise<void> {
     const audioPath = "/tmp/claude-response.wav";
     const audioBytes = await new Response(response).bytes();
     writeFileSync(audioPath, audioBytes);
+    log(`Audio saved to ${audioPath} (${audioBytes.length} bytes)`);
 
     // Play with afplay (macOS)
+    log("Playing audio with afplay...");
     spawn("afplay", [audioPath], { stdio: "inherit" });
   } catch (error) {
+    log(`TTS error: ${error}`);
     console.error("TTS error:", error);
     // Non-fatal - don't block Claude
   }
 }
 
 async function main() {
+  log("=== TTS Hook Started ===");
   try {
     // Read hook input from stdin
     const stdinBuffer = readFileSync(0, "utf-8");
     const hookInput: StopHookInput = JSON.parse(stdinBuffer);
+    log(`Session: ${hookInput.session_id}`);
 
     // Extract recent assistant text from transcript
     const text = await extractRecentAssistantText(hookInput.transcript_path);
 
     // Skip if no meaningful text found
     if (!text || text.length < 10) {
+      log("No significant text to read back (< 10 chars)");
       console.log("No significant text to read back");
       process.exit(0);
     }
@@ -122,12 +141,18 @@ async function main() {
       ? text.substring(0, maxLength) + "... and more."
       : text;
 
+    if (truncatedText !== text) {
+      log(`Truncated to ${maxLength} chars`);
+    }
+
     // Generate and play TTS
     await textToSpeech(truncatedText);
 
+    log("=== TTS Hook Completed ===");
     // Exit 0 = success, don't block Claude
     process.exit(0);
   } catch (error) {
+    log(`Fatal error: ${error}`);
     console.error("Hook error:", error);
     // Exit 0 even on error - don't disrupt Claude
     process.exit(0);
