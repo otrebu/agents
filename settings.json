@@ -98,6 +98,7 @@
       "Bash(docker inspect:*)",
       "Bash(cloc:*)",
       "Bash(caffeinate:*)",
+      "Bash(afplay:*)",
       "Bash(chmod +x ./*)",
       "Bash(./*.sh)",
       "Bash(./*.js)",
@@ -198,7 +199,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "afplay /System/Library/Sounds/Glass.aiff"
+            "command": "tsx \"$CLAUDE_PROJECT_DIR\"/hooks/tts-readback/stop-hook.ts",
+            "timeout": 30
           }
         ]
       }
