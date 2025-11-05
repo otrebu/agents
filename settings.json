@@ -21,7 +21,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "pnpm dlx tsx /Users/Uberto.Rapizzi/dev/agents/hooks/skill-reminder/prompt-hook.ts"
+            "command": "/Users/Uberto.Rapizzi/dev/agents/hooks/skill-reminder/prompt-hook.ts"
           }
         ]
       }

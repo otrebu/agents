@@ -12,7 +12,7 @@ import type {
   SyncHookJSONOutput,
   UserPromptSubmitHookInput,
 } from "@anthropic-ai/claude-agent-sdk";
-import { SKILL_RULES, type Pattern } from "./skill-triggers";
+import { SKILL_RULES, type Pattern } from "./skill-triggers.ts";
 
 /**
  * Create a matcher function for a specific prompt

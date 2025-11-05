@@ -22,7 +22,7 @@
     "UserPromptSubmit": [{
       "hooks": [{
         "type": "command",
-        "command": "/Users/Uberto.Rapizzi/dev/agents/hooks/skill-reminder/node_modules/.bin/tsx /Users/Uberto.Rapizzi/dev/agents/hooks/skill-reminder/prompt-hook.ts"
+        "command": "/Users/Uberto.Rapizzi/dev/agents/hooks/skill-reminder/prompt-hook.ts"
       }]
     }]
   }
