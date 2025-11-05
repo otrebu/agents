@@ -1,13 +1,10 @@
 {
   "name": "claude-code-tts-readback",
-  "version": "1.0.0",
-  "description": "Text-to-speech readback hook for Claude Code using Cartesia",
+  "version": "2.0.0",
+  "description": "Text-to-speech readback hook for Claude Code using Kokoro.js (local TTS)",
   "type": "module",
-  "scripts": {
-    "test": "tsx stop-hook.ts < test-input.json"
-  },
   "dependencies": {
-    "@cartesia/cartesia-js": "^1.0.0"
+    "kokoro-js": "^1.2.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

@@ -1,5 +1,0 @@
-{"type":"user","message":{"role":"user","content":[{"type":"text","text":"Hello, can you help me with a task?"}]},"timestamp":"2025-01-05T10:00:00Z"}
-{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Of course! I'd be happy to help you with your task. What do you need assistance with?"}]},"timestamp":"2025-01-05T10:00:05Z"}
-{"type":"user","message":{"role":"user","content":[{"type":"text","text":"I need to write a function"}]},"timestamp":"2025-01-05T10:00:10Z"}
-{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tool1","name":"Write","input":{"file_path":"/test/file.ts","content":"function test() {}"}}]},"timestamp":"2025-01-05T10:00:12Z"}
-{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"I've created the function for you. The file has been written successfully."}]},"timestamp":"2025-01-05T10:00:15Z"}
