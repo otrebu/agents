@@ -1,0 +1,8 @@
+{
+  "session_id": "test-session",
+  "transcript_path": "/Users/Uberto.Rapizzi/dev/agents/hooks/tts-readback/test-transcript.jsonl",
+  "cwd": "/Users/Uberto.Rapizzi/dev/agents",
+  "permission_mode": "default",
+  "hook_event_name": "Stop",
+  "stop_hook_active": false
+}
