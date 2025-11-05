@@ -199,8 +199,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/hooks/tts-readback/node_modules/.bin/tsx \"$CLAUDE_PROJECT_DIR\"/hooks/tts-readback/stop-hook.ts",
-            "timeout": 30
+            "command": "afplay /System/Library/Sounds/Glass.aiff"
           }
         ]
       }
@@ -225,5 +224,5 @@
     "development-lifecycle@otrebu-dev-tools": true,
     "typescript-coding@otrebu-dev-tools": true
   },
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": false
 }

@@ -5,7 +5,7 @@ import { spawn } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import Cartesia from "@cartesia/cartesia-js";
+import { KokoroTTS } from "kokoro-js";
 
 // Get script directory for relative paths
 const __filename = fileURLToPath(import.meta.url);
@@ -47,12 +47,27 @@ interface TranscriptEntry {
   };
 }
 
+// Singleton for Kokoro TTS (expensive initialization)
+let ttsInstance: KokoroTTS | null = null;
+
+async function getKokoroTTS(): Promise<KokoroTTS> {
+  if (!ttsInstance) {
+    log("Initializing Kokoro TTS (first call only)...");
+    ttsInstance = await KokoroTTS.from_pretrained(
+      "onnx-community/Kokoro-82M-ONNX",
+      { dtype: "q8", device: "cpu" }
+    );
+    log("Kokoro TTS initialized");
+  }
+  return ttsInstance;
+}
+
 async function extractRecentAssistantText(
   transcriptPath: string
 ): Promise<string> {
   log(`Extracting text from: ${transcriptPath}`);
   try {
-    // Read last 20 lines efficiently (pattern from research)
+    // Read last 20 lines efficiently
     const tailCmd = spawn("tail", ["-n", "20", transcriptPath]);
 
     let output = "";
@@ -95,48 +110,69 @@ async function extractRecentAssistantText(
   }
 }
 
-async function textToSpeech(text: string): Promise<void> {
-  const apiKey = process.env.CARTESIA_API_KEY;
-
-  if (!apiKey) {
-    log("CARTESIA_API_KEY not set, falling back to silent mode");
-    console.error("CARTESIA_API_KEY not set, falling back to silent mode");
-    return;
-  }
-
+// Cartesia TTS implementation (preserved for future use)
+// Requires: npm install @cartesia/cartesia-js
+// Requires: CARTESIA_API_KEY environment variable
+async function cartesiaTTS(text: string, apiKey: string): Promise<void> {
   log("Calling Cartesia TTS API...");
   try {
-    const client = new Cartesia({ apiKey });
+    // Uncomment when ready to use:
+    // const Cartesia = (await import("@cartesia/cartesia-js")).default;
+    // const client = new Cartesia({ apiKey });
+    //
+    // const response = await client.tts.bytes({
+    //   model_id: "sonic-3",
+    //   voice: {
+    //     mode: "id",
+    //     id: "1463a4e1-56a1-4b41-b257-728d56e93605",
+    //   },
+    //   output_format: {
+    //     container: "wav",
+    //     encoding: "pcm_s16le",
+    //     sample_rate: 44100,
+    //   },
+    //   transcript: text,
+    // });
+    //
+    // const audioPath = "/tmp/claude-response.wav";
+    // const audioBytes = new Uint8Array(response);
+    // writeFileSync(audioPath, audioBytes);
+    // log(`Audio saved to ${audioPath} (${audioBytes.length} bytes)`);
+    //
+    // spawn("afplay", [audioPath], { stdio: "inherit" });
+  } catch (error) {
+    log(`Cartesia TTS error: ${error}`);
+    console.error("Cartesia TTS error:", error);
+  }
+}
 
-    // Generate speech using Cartesia
-    const response = await client.tts.bytes({
-      model_id: "sonic-3",
-      voice: {
-        mode: "id",
-        id: "1463a4e1-56a1-4b41-b257-728d56e93605", // Default voice
-      },
-      output_format: {
-        container: "wav",
-        encoding: "pcm_s16le",
-        sample_rate: 44100,
-      },
-      transcript: text,
+async function kokoroTTS(text: string): Promise<void> {
+  log("Calling Kokoro TTS (local)...");
+  try {
+    const tts = await getKokoroTTS();
+
+    // Generate audio
+    const audio = await tts.generate(text, {
+      voice: "af_heart",
+      speed: 1.0
     });
 
     // Save to temp file
     const audioPath = "/tmp/claude-response.wav";
-    const audioBytes = new Uint8Array(response);
-    writeFileSync(audioPath, audioBytes);
-    log(`Audio saved to ${audioPath} (${audioBytes.length} bytes)`);
+    audio.save(audioPath);
+    log(`Audio saved to ${audioPath}`);
 
     // Play with afplay (macOS)
     log("Playing audio with afplay...");
     spawn("afplay", [audioPath], { stdio: "inherit" });
   } catch (error) {
-    log(`TTS error: ${error}`);
-    console.error("TTS error:", error);
-    // Non-fatal - don't block Claude
+    log(`Kokoro TTS error: ${error}`);
+    console.error("Kokoro TTS error:", error);
   }
+}
+
+async function textToSpeech(text: string): Promise<void> {
+  await kokoroTTS(text);
 }
 
 async function main() {
@@ -146,12 +182,7 @@ async function main() {
   }
 
   log("=== TTS Hook Started ===");
-  log(`CARTESIA_API_KEY present: ${!!process.env.CARTESIA_API_KEY}`);
-  log(
-    `Available env vars: ${Object.keys(process.env)
-      .filter((k) => k.includes("CARTESIA"))
-      .join(", ")}`
-  );
+  log("Using Kokoro TTS (local)");
   try {
     // Read hook input from stdin
     const stdinBuffer = readFileSync(0, "utf-8");
