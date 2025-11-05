@@ -57,6 +57,8 @@ All configuration can be linked to your global Claude config (`~/.claude`) or in
 │       ├── TESTING.md
 │       └── LOGGING.md
 ├── hooks/                        # Claude Code hooks
+│   ├── skill-reminder/          # Contextual skill reminder hook
+│   │   └── prompt-hook.sh       # UserPromptSubmit hook
 │   └── tts-readback/            # Text-to-speech readback hook
 │       ├── stop-hook.ts         # Hook implementation
 │       ├── package.json         # Dependencies
@@ -212,15 +214,29 @@ See [Available Plugins](#available-plugins) section below for detailed informati
 ### Hooks (`/hooks`)
 Custom Claude Code hooks for enhanced functionality:
 
+#### Skill Reminder (`/hooks/skill-reminder`)
+Smart contextual reminders about available skills:
+- **Trigger**: UserPromptSubmit (before each message is processed)
+- **Features**:
+  - Pattern-matches user input against skill trigger words
+  - Shows specific skill names only when relevant
+  - Silent when no skills match (reduces noise)
+  - Covers high-priority skills (git-commit, fix-eslint, code-review, etc.)
+- **Usage**: Automatically fires on every user prompt
+- **Configuration**: Edit `prompt-hook.sh` to add/modify skill patterns
+
+This hook makes skill usage more discoverable without being annoying.
+
 #### TTS Readback (`/hooks/tts-readback`)
-Text-to-speech hook that reads Claude's responses aloud using Cartesia AI:
+Text-to-speech hook that reads Claude's responses aloud using Kokoro.js (local TTS):
 - **Trigger**: Stop hook (when Claude finishes responding)
 - **Features**:
-  - Parses recent transcript messages efficiently (tail + jq pattern)
-  - Extracts Claude's text responses (skips tool calls)
-  - High-quality TTS via Cartesia Sonic-3
-  - Graceful fallback if API key not set
-- **Setup**: Requires `CARTESIA_API_KEY` environment variable
+  - 100% local - no API keys or cloud services required
+  - Pure TypeScript using Kokoro.js (ONNX + WASM)
+  - Parses recent transcript messages efficiently
+  - High-quality 82M parameter model
+  - Privacy-first audio generation
+- **Setup**: Run `pnpm install` in hooks/tts-readback (downloads ~350MB model on first run)
 - **Usage**: Automatically fires on task completion
 - **Docs**: See `hooks/tts-readback/README.md` for full setup
 
