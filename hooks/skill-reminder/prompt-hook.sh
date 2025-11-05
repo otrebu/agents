@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 # UserPromptSubmit hook - remind about relevant skills based on user input
 
-# Read user message from stdin (passed by Claude Code)
-USER_MESSAGE=$(cat)
+# Read JSON input from stdin
+INPUT=$(cat)
+
+# Extract the prompt field from JSON using jq
+USER_MESSAGE=$(echo "$INPUT" | jq -r '.prompt // empty')
 
 # Convert to lowercase for case-insensitive matching
 USER_MESSAGE_LOWER=$(echo "$USER_MESSAGE" | tr '[:upper:]' '[:lower:]')
