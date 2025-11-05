@@ -1,6 +1,7 @@
 ---
 name: plugin-creator
 description: Create Claude Code plugins with proper structure. Use when user requests "create a plugin" or needs to scaffold a new plugin with metadata, directories, and marketplace registration.
+allowed-tools: Read, Write, Edit, Bash(tsx:*)
 ---
 
 # Plugin Creator

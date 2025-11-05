@@ -1,6 +1,7 @@
 ---
 name: dev-work-summary
 description: Scan ~/dev recursively for git repos and report today's work with commits, branches, stats, and detailed change analysis. Use when user asks "what did I work on", "show my work", "daily summary", "what repos did I touch".
+allowed-tools: Bash
 ---
 
 # Dev Work Summary
