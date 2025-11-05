@@ -199,7 +199,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "tsx \"$CLAUDE_PROJECT_DIR\"/hooks/tts-readback/stop-hook.ts",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/hooks/tts-readback/node_modules/.bin/tsx \"$CLAUDE_PROJECT_DIR\"/hooks/tts-readback/stop-hook.ts",
             "timeout": 30
           }
         ]
@@ -225,5 +225,5 @@
     "development-lifecycle@otrebu-dev-tools": true,
     "typescript-coding@otrebu-dev-tools": true
   },
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": false
 }

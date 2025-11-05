@@ -46,13 +46,15 @@ The hook is already configured in `settings.json`:
     "Stop": [{
       "hooks": [{
         "type": "command",
-        "command": "tsx \"$CLAUDE_PROJECT_DIR\"/hooks/tts-readback/stop-hook.ts",
+        "command": "\"$CLAUDE_PROJECT_DIR\"/hooks/tts-readback/node_modules/.bin/tsx \"$CLAUDE_PROJECT_DIR\"/hooks/tts-readback/stop-hook.ts",
         "timeout": 30
       }]
     }]
   }
 }
 ```
+
+Note: Uses local tsx from node_modules (not global installation required).
 
 ### 4. Test
 
