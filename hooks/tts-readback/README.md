@@ -108,8 +108,16 @@ const tailCmd = spawn("tail", ["-n", "20", transcriptPath]); // Adjust -n value
 
 ## Troubleshooting
 
+**Check logs first:**
+```bash
+cat hooks/tts-readback/logs/tts-hook.log
+# or watch in real-time:
+tail -f hooks/tts-readback/logs/tts-hook.log
+```
+
 **No audio plays:**
-- Check `CARTESIA_API_KEY` is set: `echo $CARTESIA_API_KEY`
+- Check logs for "CARTESIA_API_KEY not set"
+- Verify: `echo $CARTESIA_API_KEY`
 - Check API key is valid
 - Check network connectivity
 
@@ -122,6 +130,7 @@ const tailCmd = spawn("tail", ["-n", "20", transcriptPath]); // Adjust -n value
 - Check stderr output
 
 **Wrong text read:**
+- Check logs for "Extracted text" line
 - Increase tail lines to capture more context
 - Check transcript format with: `tail -5 /path/to/transcript.jsonl | jq`
 

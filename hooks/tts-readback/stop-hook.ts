@@ -1,15 +1,33 @@
 #!/usr/bin/env tsx
 
-import { readFileSync, appendFileSync } from "node:fs";
+import { readFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { spawn } from "node:child_process";
 import { writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import Cartesia from "@cartesia/cartesia-js";
 
-const LOG_FILE = "/tmp/claude-tts-hook.log";
+// Get script directory for relative paths
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const LOG_DIR = join(__dirname, "logs");
+const LOG_FILE = join(LOG_DIR, "tts-hook.log");
+
+// Ensure logs directory exists
+try {
+  mkdirSync(LOG_DIR, { recursive: true });
+} catch (err) {
+  // Directory already exists or can't create - non-fatal
+}
 
 function log(message: string) {
   const timestamp = new Date().toISOString();
-  appendFileSync(LOG_FILE, `[${timestamp}] ${message}\n`);
+  try {
+    appendFileSync(LOG_FILE, `[${timestamp}] ${message}\n`);
+  } catch (err) {
+    // Logging failure shouldn't break hook
+    console.error("Failed to write log:", err);
+  }
 }
 
 interface StopHookInput {
