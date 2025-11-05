@@ -6,152 +6,89 @@ allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*), Bash(git
 
 # Finish Feature
 
-## Overview
-
-Completes the feature development workflow by merging the feature branch back into the main branch. Ensures working directory is clean, updates main branch, performs merge, and pushes changes to remote.
-
 ## Process
 
 ### 1. Verify Current Branch
 
-Check the current branch to confirm it's a feature branch:
+Run `git branch --show-current`:
+- If main/master: Ask which feature branch to merge
+- If feature branch: Confirm this branch
 
-```bash
-git branch --show-current
-```
+### 2. Check Working Directory
 
-**If on main/master:** Ask user which feature branch to merge.
+Run `git status`:
+- Uncommitted changes? Ask: commit or stash?
+- Clean? Proceed
 
-**If on feature branch:** Confirm this is the branch to finish.
-
-### 2. Check Working Directory Status
-
-Verify there are no uncommitted changes:
-
-```bash
-git status
-```
-
-**If uncommitted changes exist:**
-- Option A: Ask user if they want to commit changes first
-- Option B: Stash changes: `git stash`
-- User decides which approach
-
-### 3. Get Feature Branch Name
-
-Store the current feature branch name for later merge:
+### 3. Store Feature Branch Name
 
 ```bash
 FEATURE_BRANCH=$(git branch --show-current)
 ```
 
-### 4. Switch to Main Branch
+### 4. Switch to Main
 
-Determine main branch name (usually `main` or `master`):
-
-```bash
-git branch --list main master
-```
-
-Switch to main branch:
+Determine main branch (`git branch --list main master`), then:
 
 ```bash
 git checkout main  # or master
 ```
 
-### 5. Pull Latest Changes
-
-Update main branch with latest remote changes:
+### 5. Pull Latest
 
 ```bash
 git pull origin main  # or master
 ```
 
-**If pull fails:** User needs to resolve upstream issues before proceeding.
-
 ### 6. Merge Feature Branch
-
-Merge the feature branch into main:
 
 ```bash
 git merge $FEATURE_BRANCH
 ```
 
-Uses fast-forward merge when possible for cleaner history.
+Conflicts? List files via `git status`, wait for user resolution: `git add .` + `git commit`
 
-**If merge conflicts occur:**
-- Notify user of conflicts
-- List conflicting files: `git status`
-- User must resolve conflicts manually
-- After resolution: `git add .` and `git commit`
-
-### 7. Push to Remote
-
-Push merged changes to remote:
+### 7. Push
 
 ```bash
 git push origin main  # or master
 ```
 
-### 8. Optional: Delete Feature Branch
+### 8. Delete Feature Branch?
 
-Ask user if they want to delete the feature branch:
+Ask user:
 
-**Local delete:**
+**Local:**
 ```bash
 git branch -d $FEATURE_BRANCH
 ```
 
-**Remote delete:**
+**Remote:**
 ```bash
 git push origin --delete $FEATURE_BRANCH
 ```
 
 ### 9. Confirm Completion
 
-Output summary:
-- Feature branch merged: `<feature-branch-name>`
-- Main branch updated and pushed
-- Branch deletion status (if applicable)
+Output:
+- Merged branch: `<feature-branch-name>`
+- Push status
+- Deletion status (if applicable)
 
 ## Constraints
 
-- **Never** merge directly without pulling latest main first
-- **Always** verify working directory is clean before switching branches
-- **Never** force push to main branch
-- If conflicts arise, **always** let user resolve them
-- **Always** confirm branch deletion with user before proceeding
+- Pull main before merge
+- Verify clean working dir before branch switch
+- Never force push to main
+- User resolves conflicts
+- Always ask before deleting branches
 
-## Example Usage
+## Example
 
-**User request:** "Finish the user-auth feature"
+User: "Finish user-auth feature"
 
-**Process:**
-1. Verify: currently on `feature/user-auth`
-2. Check: `git status` → clean
-3. Switch: `git checkout main`
-4. Pull: `git pull origin main`
-5. Merge: `git merge feature/user-auth --no-ff`
-6. Push: `git push origin main`
-7. Ask: "Delete feature/user-auth branch? (y/n)"
-8. Confirm: "Feature 'user-auth' merged to main and pushed. Feature branch deleted."
-
-## Error Handling
-
-**Uncommitted changes:**
-- Offer to commit or stash
-- Never proceed without resolving
-
-**Pull conflicts:**
-- User must resolve remote conflicts first
-- May need to fetch and rebase
-
-**Merge conflicts:**
-- List conflicting files
-- Wait for user to resolve
-- Guide through `git add` + `git commit` after resolution
-
-**Push failures:**
-- Check remote permissions
-- Verify branch protection rules
-- May need pull request instead of direct merge
+1. On `feature/user-auth`, `git status` clean
+2. `git checkout main && git pull origin main`
+3. `git merge feature/user-auth && git push origin main`
+4. Ask: Delete branch? → User confirms
+5. Output: "Feature 'user-auth' merged to main, pushed, branch deleted"
