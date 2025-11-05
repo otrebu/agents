@@ -47,7 +47,9 @@ interface TranscriptEntry {
   };
 }
 
-async function extractRecentAssistantText(transcriptPath: string): Promise<string> {
+async function extractRecentAssistantText(
+  transcriptPath: string
+): Promise<string> {
   log(`Extracting text from: ${transcriptPath}`);
   try {
     // Read last 20 lines efficiently (pattern from research)
@@ -82,7 +84,9 @@ async function extractRecentAssistantText(transcriptPath: string): Promise<strin
     }
 
     const result = textParts.join(" ").trim();
-    log(`Extracted text (${result.length} chars): ${result.substring(0, 100)}...`);
+    log(
+      `Extracted text (${result.length} chars): ${result.substring(0, 100)}...`
+    );
     return result;
   } catch (error) {
     log(`Error extracting transcript: ${error}`);
@@ -106,22 +110,22 @@ async function textToSpeech(text: string): Promise<void> {
 
     // Generate speech using Cartesia
     const response = await client.tts.bytes({
-      modelId: "sonic-3",
+      model_id: "sonic-3",
       voice: {
         mode: "id",
-        id: "694f9389-aac1-45b6-b726-9d9369183238", // Default voice
+        id: "1463a4e1-56a1-4b41-b257-728d56e93605", // Default voice
       },
-      outputFormat: {
+      output_format: {
         container: "wav",
         encoding: "pcm_s16le",
-        sampleRate: 44100,
+        sample_rate: 44100,
       },
       transcript: text,
     });
 
     // Save to temp file
     const audioPath = "/tmp/claude-response.wav";
-    const audioBytes = await new Response(response).bytes();
+    const audioBytes = new Uint8Array(response);
     writeFileSync(audioPath, audioBytes);
     log(`Audio saved to ${audioPath} (${audioBytes.length} bytes)`);
 
@@ -137,6 +141,12 @@ async function textToSpeech(text: string): Promise<void> {
 
 async function main() {
   log("=== TTS Hook Started ===");
+  log(`CARTESIA_API_KEY present: ${!!process.env.CARTESIA_API_KEY}`);
+  log(
+    `Available env vars: ${Object.keys(process.env)
+      .filter((k) => k.includes("CARTESIA"))
+      .join(", ")}`
+  );
   try {
     // Read hook input from stdin
     const stdinBuffer = readFileSync(0, "utf-8");
@@ -153,18 +163,8 @@ async function main() {
       process.exit(0);
     }
 
-    // Truncate very long responses (optional)
-    const maxLength = 500;
-    const truncatedText = text.length > maxLength
-      ? text.substring(0, maxLength) + "... and more."
-      : text;
-
-    if (truncatedText !== text) {
-      log(`Truncated to ${maxLength} chars`);
-    }
-
     // Generate and play TTS
-    await textToSpeech(truncatedText);
+    await textToSpeech(text);
 
     log("=== TTS Hook Completed ===");
     // Exit 0 = success, don't block Claude

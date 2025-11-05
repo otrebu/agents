@@ -116,9 +116,7 @@ tail -f hooks/tts-readback/logs/tts-hook.log
 ```
 
 **No audio plays:**
-- Check logs for "CARTESIA_API_KEY not set"
-- Verify: `echo $CARTESIA_API_KEY`
-- Check API key is valid
+- Check logs for errors
 - Check network connectivity
 
 **Hook times out:**
