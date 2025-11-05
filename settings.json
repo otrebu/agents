@@ -225,5 +225,5 @@
     "development-lifecycle@otrebu-dev-tools": true,
     "typescript-coding@otrebu-dev-tools": true
   },
-  "alwaysThinkingEnabled": false
+  "alwaysThinkingEnabled": true
 }
