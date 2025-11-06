@@ -57,37 +57,15 @@ fi
 # Parse and transform settings.json using jq
 echo "📝 Generating settings.json from template..."
 
-# Build the new settings JSON
+# Simple: just replace relative paths with absolute paths
 NEW_SETTINGS=$(jq --arg agents_dir "$AGENTS_DIR" '
-{
-  "$schema": ."$schema",
-  "plugins": [
-    .plugins[] |
-    if startswith("/") then .
-    else ($agents_dir + "/" + .)
-    end
-  ],
-  "hooks": {
-    "Stop": [
-      .hooks.Stop[] |
-      .hooks |= map(
-        if .type == "command" then
-          .command |= gsub("afplay [^\"]+"; "afplay /System/Library/Sounds/Ping.aiff")
-        else . end
-      )
-    ],
-    "UserPromptSubmit": [
-      .hooks.UserPromptSubmit[] |
-      .hooks |= map(
-        if .type == "command" then
-          .command = ("pnpm dlx tsx " + $agents_dir + "/hooks/skill-reminder/prompt-hook.ts")
-        else . end
-      )
-    ]
-  },
-  "enabledPlugins": .enabledPlugins,
-  "alwaysThinkingEnabled": .alwaysThinkingEnabled
-}
+walk(
+  if type == "string" and (startswith("plugins/") or startswith("hooks/")) then
+    $agents_dir + "/" + .
+  else
+    .
+  end
+)
 ' "$SETTINGS_TEMPLATE")
 
 # Write the generated settings

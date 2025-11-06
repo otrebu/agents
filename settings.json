@@ -204,7 +204,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/Uberto.Rapizzi/dev/agents/hooks/skill-reminder/prompt-hook.ts"
+            "command": "hooks/skill-reminder/prompt-hook.ts"
           }
         ]
       }
@@ -223,10 +223,10 @@
   },
   "alwaysThinkingEnabled": true,
   "plugins": [
-    "/Users/Uberto.Rapizzi/dev/agents/plugins/meta-work",
-    "/Users/Uberto.Rapizzi/dev/agents/plugins/development-lifecycle",
-    "/Users/Uberto.Rapizzi/dev/agents/plugins/typescript-coding",
-    "/Users/Uberto.Rapizzi/dev/agents/plugins/knowledge-work",
-    "/Users/Uberto.Rapizzi/dev/agents/plugins/basic-skills"
+    "plugins/meta-work",
+    "plugins/development-lifecycle",
+    "plugins/typescript-coding",
+    "plugins/knowledge-work",
+    "plugins/basic-skills"
   ]
 }
