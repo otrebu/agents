@@ -52,7 +52,7 @@ pnpm search "your query here"
 3. Ranks by quality (stars, recency, code structure)
 4. Fetches top 10 files in parallel
 5. Extracts factual data (imports, syntax patterns, metrics)
-6. Returns clean markdown with code + metadata
+6. Returns clean markdown with code + metadata + **GitHub URLs for all files**
 
 **The script is a single-query tool.** Claude orchestrates multiple invocations.
 
@@ -68,11 +68,11 @@ pnpm search "your query here"
 
 2. **Sequential Search Execution:** Run tool multiple times, adapting queries based on intermediate results
 
-3. **Result Aggregation:** Combine all code files, deduplicate by repo+path
+3. **Result Aggregation:** Combine all code files, deduplicate by repo+path, preserve GitHub URLs
 
 4. **Pattern Analysis:** Extract common imports, architectural styles, implementation patterns
 
-5. **Comprehensive Summary:** Synthesize findings with trade-offs, recommendations, key code highlights
+5. **Comprehensive Summary:** Synthesize findings with trade-offs, recommendations, key code highlights, and **GitHub URLs for ALL meaningful files**
 
 ---
 
@@ -142,14 +142,15 @@ pnpm search "query text here"
 
 **Combine all code files from all searches:**
 
-1. **Collect files** from each search output
+1. **Collect files** from each search output with their GitHub URLs
 2. **Deduplicate** by `repository.full_name + file_path`
    - Keep highest-scored version if duplicates exist
    - Note which queries found the same file (indicates strong relevance)
 3. **Maintain diversity** - Ensure multiple repositories represented (avoid 10 files from one repo)
 4. **Track provenance** - Remember which query found each file (useful for analysis)
+5. **Preserve GitHub URLs** - Maintain full GitHub URLs for every file to include in summary
 
-**Result:** Unified list of 15-30 unique, high-quality code files
+**Result:** Unified list of 15-30 unique, high-quality code files with GitHub URLs
 
 ---
 
@@ -226,7 +227,7 @@ Ran [N] targeted queries:
 - [Key trait 1]
 - [Key trait 2]
 
-**Example snippet:** [file_path:line_number]
+**Example:** [repo/file_path:line_number](github_url)
 ```language
 [relevant code snippet - NOT just first 40 lines]
 ```
@@ -252,31 +253,46 @@ Ran [N] targeted queries:
 1. **Primary recommendation:** [Approach name]
    - **Why:** [Rationale based on analysis]
    - **Implementation:** [High-level steps]
-   - **References:** [file_path:line_number]
+   - **References:** [repo/file_path:line_number](github_url)
 
 2. **Alternative:** [Another approach]
    - **When to use:** [Scenarios where this is better]
+   - **References:** [repo/file_path:line_number](github_url)
 
 ---
 
 ## Key Code Sections
 
-### [Concept 1]: [file_path:line_range]
+### [Concept 1]
+**Source:** [repo/file_path:line_range](github_url)
 ```language
 [Specific relevant code - imports, key function, not arbitrary truncation]
 ```
 **Why this matters:** [Brief explanation]
 
-### [Concept 2]: [file_path:line_range]
-[Similar structure]
+### [Concept 2]
+**Source:** [repo/file_path:line_range](github_url)
+```language
+[Specific relevant code]
+```
+**Why this matters:** [Brief explanation]
 
 ---
 
-## Repository References
+## All GitHub Files Analyzed
 
-Full files available at:
-- [repo/path](github_url) - [stars] stars, [language]
-- [repo/path](github_url) - [stars] stars, [language]
+**IMPORTANT: Include GitHub URLs for ALL meaningful files found across all searches.**
+
+List every unique file analyzed (15-30 files), grouped by repository:
+
+### [repo-owner/repo-name] ([stars]⭐)
+- [file_path](github_url) - [language] - [brief description of what this file demonstrates]
+- [file_path](github_url) - [language] - [brief description]
+
+### [repo-owner/repo-name2] ([stars]⭐)
+- [file_path](github_url) - [language] - [brief description]
+
+**Format:** Direct GitHub blob URLs with line numbers where relevant (e.g., `https://github.com/owner/repo/blob/main/path/file.ts#L10-L50`)
 ```
 
 **Summary characteristics:**
@@ -285,6 +301,7 @@ Full files available at:
 - **Contextualized** - References specific code locations with line numbers
 - **Balanced** - Shows trade-offs, not just "best practice"
 - **Comprehensive** - Covers patterns, approaches, trade-offs, recommendations
+- **Accessible** - GitHub URLs for ALL meaningful files so users can explore full source code
 
 ---
 
