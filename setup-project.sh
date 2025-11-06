@@ -68,6 +68,14 @@ walk(
 )
 ' "$SETTINGS_TEMPLATE")
 
+# Validate that plugin directories exist
+echo "$NEW_SETTINGS" | jq -r '.plugins[]' | while read -r plugin; do
+    if [[ ! -d "$plugin" ]]; then
+        echo -e "${RED}✗${NC} Plugin directory not found: $plugin"
+        exit 1
+    fi
+done
+
 # Write the generated settings
 if [[ "$DRY_RUN" == true ]]; then
     echo -e "${YELLOW}[DRY RUN]${NC} Would write to $PROJECT_DIR/.claude/settings.json:"
