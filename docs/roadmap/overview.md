@@ -38,10 +38,13 @@ Build an end-to-end AI development infrastructure that handles the complete soft
 
 **Deliverables:**
 1. **GitHub Code Search Skill**
-   - Search repositories via `gh` CLI for real-world implementations
-   - Filter by language, stars, recency
-   - Extract and summarize relevant patterns
-   - Location: `skills/github-code-search/`
+   - Fetch real-world code examples from GitHub for Claude to analyze
+   - Smart search via Octokit API (stars, recency, text-match)
+   - Parallel file fetching with context extraction
+   - Extract factual data (imports, syntax patterns, metrics)
+   - Returns clean markdown with code + metadata
+   - Claude performs pattern recognition, synthesis, recommendations
+   - Location: `.claude/skills/gh-code-search/`
 
 2. **Gemini CLI Integration**
    - Alternative to expensive research APIs
@@ -60,9 +63,10 @@ Build an end-to-end AI development infrastructure that handles the complete soft
    - Enhancement to: `plugins/development-lifecycle/agents/deep-context-gatherer.md`
 
 **Success Criteria:**
-- Can find real-world code examples for any common pattern
+- Claude can analyze real-world code examples from GitHub for any common pattern
 - Research cost reduced by 70%+ vs Perplexity
 - Context quality improved (practical examples vs theoretical essays)
+- Script provides clean, factual data for Claude to interpret
 
 ---
 

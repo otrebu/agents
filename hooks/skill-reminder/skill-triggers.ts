@@ -106,6 +106,8 @@ export const SKILL_RULES: SkillRule[] = [
   // TypeScript/JavaScript work (broader pattern)
   {
     patterns: [
+      "typescript",
+      "javascript",
       /typescript.*project/,
       /setup.*typescript/,
       /configure.*build/,
