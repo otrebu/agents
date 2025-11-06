@@ -100,7 +100,10 @@ async function main() {
       log.dim(error.message + '\n')
     } else {
       log.error('\nUnexpected error')
-      log.dim(error)
+      log.dim(error.message || String(error))
+      if (error.stack) {
+        log.dim('\n' + error.stack)
+      }
     }
     process.exit(1)
   }
@@ -168,7 +171,8 @@ function formatMarkdownReport(
   return sections.join('\n')
 }
 
-function formatStars(stars: number): string {
+function formatStars(stars: number | undefined): string {
+  if (!stars && stars !== 0) return '0'
   if (stars >= 1000) {
     return `${(stars / 1000).toFixed(1)}k`
   }

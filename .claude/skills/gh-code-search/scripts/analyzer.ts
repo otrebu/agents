@@ -12,7 +12,7 @@ export function extractFactualData(files: CodeFile[]): FactualAnalysis {
     fileStructure: {
       avgLinesPerFile: Math.round(totalLines / files.length),
       avgStarsPerFile: Math.round(
-        files.reduce((sum, f) => sum + f.stars, 0) / files.length
+        files.reduce((sum, f) => sum + (f.stars || 0), 0) / files.length
       ),
       repoDistribution: countRepoDistribution(files)
     }
