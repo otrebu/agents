@@ -118,22 +118,30 @@ If you prefer manual configuration, create `.claude/settings.json` in your proje
 }
 ```
 
-**Note:** Adjust paths if your `agents` directory is in a different location.
+**Note:** The paths above are example absolute paths. Replace `/Users/Uberto.Rapizzi/dev/agents` with the actual path to your cloned agents directory. We recommend using `setup-project.sh` instead, which handles path resolution automatically.
 
 ### Verifying Setup
 
-Check that plugins are loaded correctly:
+Check that plugins are loaded correctly from your project's configuration:
 
 ```bash
-# List available skills (should show namespaced skills)
-claude --help | grep -A 20 "Skills:"
+# Navigate to your project directory
+cd /path/to/your-project
 
-# Should see entries like:
+# Verify plugins loaded from project settings
+claude /skills
+
+# Should show skills from all configured plugins:
 # - knowledge-work:brainwriting
 # - knowledge-work:readwise-api
 # - basic-skills:timestamp
 # - development-lifecycle:analyze-size
+# - development-lifecycle:git-commit
+# - meta-work:skill-creator
 # etc.
+
+# Alternative: check if a specific plugin command is available
+claude /meta-work:create-command --help
 ```
 
 ## What's Included
