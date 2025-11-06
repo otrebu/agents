@@ -46,11 +46,13 @@ Build an end-to-end AI development infrastructure that handles the complete soft
    - Claude performs pattern recognition, synthesis, recommendations
    - Location: `.claude/skills/gh-code-search/`
 
-2. **Gemini CLI Integration**
+2. **Gemini CLI Integration** ✅
    - Alternative to expensive research APIs
    - Focus on practical code examples (not essays)
    - Integration with existing research workflows
-   - Location: `skills/gemini-research/` or integrated into deep-research
+   - Three modes: quick, deep, code
+   - Structured JSON output with citations
+   - Location: `plugins/knowledge-work/skills/gemini-research/`
 
 3. **Research Orchestrator Enhancement**
    - Unified research combining:
@@ -64,9 +66,9 @@ Build an end-to-end AI development infrastructure that handles the complete soft
 
 **Success Criteria:**
 - Claude can analyze real-world code examples from GitHub for any common pattern
-- Research cost reduced by 70%+ vs Perplexity
-- Context quality improved (practical examples vs theoretical essays)
-- Script provides clean, factual data for Claude to interpret
+- ✅ Research cost reduced by 70%+ vs Perplexity (Gemini CLI: free tier 1000 req/day)
+- ✅ Context quality improved (practical examples via code mode)
+- ✅ Script provides clean JSON data with citations for Claude to interpret
 
 ---
 
