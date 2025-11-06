@@ -6,8 +6,7 @@ import { getGitHubToken } from './github.js'
 import { searchGitHubCode, fetchCodeFiles } from './github.js'
 import { buildQueryIntent } from './query.js'
 import { rankResults } from './ranker.js'
-import { extractFactualData } from './analyzer.js'
-import type { SearchStats, FactualAnalysis, CodeFile } from './types.js'
+import type { CodeFile } from './types.js'
 import {
   AuthError,
   SearchError,
@@ -65,21 +64,12 @@ async function main() {
     })
     fetchSpinner.succeed(`Fetched ${files.length} files`)
 
-    // Extract factual data
-    const analyzeSpinner = ora('Extracting factual data...').start()
-    const analysis = extractFactualData(files)
-    analyzeSpinner.succeed('Data extracted')
-
-    // Stats
-    const stats: SearchStats = {
+    // Output clean markdown for Claude
+    const report = formatMarkdownReport(files, {
       query: userQuery,
       totalResults: results.length,
-      analyzedFiles: files.length,
       executionTimeMs: Date.now() - startTime
-    }
-
-    // Output clean markdown for Claude
-    const report = formatMarkdownReport(analysis, files, stats)
+    })
 
     log.success('\nSearch complete!')
     log.plain('\n' + report)
@@ -110,63 +100,35 @@ async function main() {
 }
 
 function formatMarkdownReport(
-  analysis: FactualAnalysis,
   files: CodeFile[],
-  stats: SearchStats
+  stats: { query: string; totalResults: number; executionTimeMs: number }
 ): string {
   const sections: string[] = []
 
   // Header
   sections.push(`# GitHub Code Search Results\n`)
   sections.push(`**Query:** \`${stats.query}\``)
-  sections.push(`**Found:** ${stats.totalResults} results, analyzed top ${stats.analyzedFiles}`)
+  sections.push(`**Found:** ${stats.totalResults} results, showing top ${files.length}`)
   sections.push(`**Execution:** ${(stats.executionTimeMs / 1000).toFixed(1)}s\n`)
   sections.push('---\n')
 
-  // Factual data
-  sections.push('## 📊 Factual Data\n')
-  sections.push(`**Files:** ${analysis.totalFiles}`)
-  sections.push(`**Total Lines:** ${analysis.totalLines.toLocaleString()}`)
-  sections.push(`**Languages:** ${Object.entries(analysis.languages).map(([lang, count]) => `${lang} (${count})`).join(', ')}`)
-  sections.push(`**Avg Lines/File:** ${analysis.fileStructure.avgLinesPerFile}`)
-  sections.push(`**Avg Stars/File:** ${analysis.fileStructure.avgStarsPerFile}\n`)
+  // Code files with lightweight structured format
+  for (const file of files) {
+    const repoUrl = file.url.split('/blob/')[0] || file.url
 
-  if (analysis.commonImports.length > 0) {
-    sections.push('**Common Imports:**')
-    analysis.commonImports.slice(0, 10).forEach((imp) => {
-      sections.push(`- \`${imp.import}\` (${imp.count} files)`)
-    })
-    sections.push('')
-  }
+    sections.push(`### ${file.rank}. [${file.repository}](${repoUrl}) ⭐ ${formatStars(file.stars)}\n`)
+    sections.push(`**Path:** \`${file.path}\``)
+    sections.push(`**Language:** ${file.language} | **Lines:** ${file.lines}`)
+    sections.push(`**Link:** ${file.url}\n`)
 
-  if (Object.keys(analysis.syntaxOccurrences).length > 0) {
-    sections.push('**Syntax Patterns:**')
-    Object.entries(analysis.syntaxOccurrences)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 10)
-      .forEach(([pattern, count]) => {
-        sections.push(`- ${pattern}: ${count} occurrences`)
-      })
-    sections.push('')
-  }
-
-  sections.push('---\n')
-
-  // Code files
-  sections.push('## 📂 Top Files\n')
-  for (const file of files.slice(0, 5)) {
-    sections.push(`### ${file.rank}. [${file.repository}](${file.url}) ⭐ ${formatStars(file.stars)}`)
-    sections.push(`**${file.path}** (${file.lines} lines, ${file.language})\n`)
-
-    const snippet = file.content.split('\n').slice(0, 30).join('\n')
+    // Show code snippet (first 40 lines)
+    const snippet = file.content.split('\n').slice(0, 40).join('\n')
     sections.push('```' + file.language)
     sections.push(snippet)
-    if (file.lines > 30) sections.push('// ... more code ...')
+    if (file.lines > 40) sections.push('// ... truncated ...')
     sections.push('```\n')
+    sections.push('---\n')
   }
-
-  sections.push('---\n')
-  sections.push(`*Fetched ${analysis.totalFiles} files from ${Object.keys(analysis.fileStructure.repoDistribution).length} repositories*\n`)
 
   return sections.join('\n')
 }

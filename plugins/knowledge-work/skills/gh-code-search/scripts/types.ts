@@ -57,29 +57,6 @@ export interface CodeFile {
   rank: number
 }
 
-// ===== FACTUAL ANALYSIS DATA =====
-// Script extracts, Claude interprets
-
-export interface FactualAnalysis {
-  totalFiles: number
-  totalLines: number
-  languages: Record<string, number> // language: count
-  commonImports: Array<{ import: string; count: number }>
-  syntaxOccurrences: Record<string, number> // pattern: count
-  fileStructure: {
-    avgLinesPerFile: number
-    avgStarsPerFile: number
-    repoDistribution: Record<string, number> // repo: fileCount
-  }
-}
-
-export interface SearchStats {
-  query: string
-  totalResults: number
-  analyzedFiles: number
-  executionTimeMs: number
-}
-
 // ===== ERROR CLASSES =====
 
 export class AuthError extends Error {

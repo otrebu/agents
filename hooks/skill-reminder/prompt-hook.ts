@@ -1,4 +1,4 @@
-#!/usr/bin/env -S node --experimental-transform-types
+#!/usr/bin/env node
 /**
  * UserPromptSubmit hook - suggest relevant skills based on user input
  *

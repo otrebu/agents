@@ -43,3 +43,5 @@ docs/scratchpad/
 docs/web-captures/
 
 ./claude/settings.local.json
+
+.pnpm-store/
