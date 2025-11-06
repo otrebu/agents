@@ -103,11 +103,11 @@ Your task: Implement the commit plan at {IMPL_DIR}/{NN-type-scope-slug}.md
 
 Read the plan file, follow all implementation steps, run the pre-commit checklist, and create the commit.
 
-See @plugins/feature-development/agents/commit-executor.md for your full instructions.
+See @plugins/development-lifecycle/agents/commit-executor.md for your full instructions.
 
 Report back with success/failure status and details."
 
-subagent_type: "feature-development:commit-executor"
+subagent_type: "development-lifecycle:commit-executor"
 description: "Execute commit {NN}"
 ```
 

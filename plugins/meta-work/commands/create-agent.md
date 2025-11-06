@@ -13,7 +13,7 @@ Create Claude Code agents following @plugins/meta-work/docs/HOW_TO_PROMPT_ENGINE
 Parse `$ARGUMENTS` to determine creation mode:
 
 - **Plugin scope**: If contains "for plugin {name}"
-  - Example: `/create-agent for plugin feature-development analyzes deployment logs`
+  - Example: `/create-agent for plugin development-lifecycle analyzes deployment logs`
   - Extract plugin name and validate it exists
 - **With doc**: If contains "with doc"
   - Example: `/create-agent with doc security scan for vulnerabilities`
@@ -215,10 +215,10 @@ Location: plugins/{plugin}/agents/{name}.md
 - Invocation: `@security-scan`
 
 ### Example 4: Plugin Inline Mode
-**Input:** `/create-agent for plugin feature-development analyzes deployment logs`
+**Input:** `/create-agent for plugin development-lifecycle analyzes deployment logs`
 **Output:**
 - Agent name: `analyze-logs`
-- File: `plugins/feature-development/agents/analyze-logs.md`
+- File: `plugins/development-lifecycle/agents/analyze-logs.md`
 - Inline instructions
 - Plugin namespace
 

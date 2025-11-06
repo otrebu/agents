@@ -32,7 +32,7 @@ Create or extract HOW_TO documentation from existing commands/agents.
 /create-doc from command analyze-size
 
 # Extract from plugin agent
-/create-doc from agent validate-specs for plugin feature-development
+/create-doc from agent validate-specs for plugin development-lifecycle
 ```
 
 **What it does:**
@@ -87,7 +87,7 @@ Create slash commands with optional documentation.
 /create-command for doc CODE_REVIEW
 
 # Plugin-scoped
-/create-command for plugin feature-development analyzes deployment logs
+/create-command for plugin development-lifecycle analyzes deployment logs
 ```
 
 **What it does:**
@@ -312,14 +312,14 @@ Here are recommended workflows for different scenarios:
 /create-plugin manages feature development workflow
 
 # 2. Add plugin commands
-/create-command for plugin feature-development analyzes feature specs
-/create-command for plugin feature-development generates acceptance tests
+/create-command for plugin development-lifecycle analyzes feature specs
+/create-command for plugin development-lifecycle generates acceptance tests
 
 # 3. Add shared documentation
 /create-doc FEATURE_VALIDATION validates feature specifications and requirements
 
 # 4. Create plugin agent that uses shared doc
-/create-agent for plugin feature-development for doc FEATURE_VALIDATION
+/create-agent for plugin development-lifecycle for doc FEATURE_VALIDATION
 
 # Result: Plugin with multiple commands/agents sharing project-level docs
 ```

@@ -17,7 +17,7 @@ Parse `$ARGUMENTS` to determine creation mode:
   - Example: `/create-doc from command code-review for plugin meta-work`
 - **Extract from agent**: If `$ARGUMENTS` starts with "from agent"
   - Example: `/create-doc from agent security-scanner`
-  - Example: `/create-doc from agent validate-specs for plugin feature-development`
+  - Example: `/create-doc from agent validate-specs for plugin development-lifecycle`
 - **Create mode**: Otherwise
   - Example: `/create-doc CODE_REVIEW comprehensive code review process`
   - Name must be SCREAMING_SNAKE_CASE
@@ -213,9 +213,9 @@ You can now reference this doc in commands and agents with:
 5. Offer to refactor agent to reference doc
 
 ### Example 3: Extract from Plugin Command
-**Input:** `/create-doc from command validate-specs for plugin feature-development`
+**Input:** `/create-doc from command validate-specs for plugin development-lifecycle`
 **Process:**
-1. Read `plugins/feature-development/commands/validate-specs.md`
+1. Read `plugins/development-lifecycle/commands/validate-specs.md`
 2. Extract and generalize instructions
 3. Create `docs/HOW_TO_VALIDATE_SPECS.md` (in project root)
 4. Offer to refactor plugin command

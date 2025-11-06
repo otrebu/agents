@@ -13,7 +13,7 @@ Create slash commands following @plugins/meta-work/docs/HOW_TO_PROMPT_ENGINEERIN
 Parse `$ARGUMENTS` to determine creation mode:
 
 - **Pattern C** (plugin command): If `$ARGUMENTS` contains "for plugin" followed by plugin name
-  - Example: `/create-command analyzes deployment logs for plugin feature-development`
+  - Example: `/create-command analyzes deployment logs for plugin development-lifecycle`
   - Extract plugin name and validate it exists
   - Can be combined with Pattern D: `/create-command for plugin meta-work for doc VALIDATE_REFERENCES`
 - **Pattern D** (reference doc): If `$ARGUMENTS` contains "for doc {name}"
@@ -204,10 +204,10 @@ This command can be invoked with:
 - Invocation: `/code-review`
 
 ### Example 3: Pattern A + Plugin
-**Input:** `/create-command analyzes deployment logs for plugin feature-development`
+**Input:** `/create-command analyzes deployment logs for plugin development-lifecycle`
 **Output:**
 - Command name: `analyze-logs`
-- File: `plugins/feature-development/commands/analyze-logs.md`
+- File: `plugins/development-lifecycle/commands/analyze-logs.md`
 - Inline instructions for log analysis
 - Plugin namespace
 

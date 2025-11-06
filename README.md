@@ -12,12 +12,24 @@ A centralized configuration repository for Claude Code featuring:
 
 All configuration can be referenced from your project `.claude` folders using the bootstrap script.
 
+## Philosophy
+
+This configuration embodies several key principles:
+
+1. **Plugin-First Architecture** - Modular, composable extensions over monolithic configs
+2. **Absolute Paths** - Reference plugins from single source of truth (`~/dev/agents`)
+3. **Skills Over Agents** - Reusable skill blocks for common patterns
+4. **Documentation as Code** - Coding standards travel with config
+5. **Meta-Tooling** - Tools to create tools (`create-command`, `create-skill`, etc.)
+6. **DRY Configuration** - One place to maintain, many places to reference
+
 ## Repository Structure
 
 ```
 .
 ├── .claude/                      # Project config (references plugins via absolute paths)
-│   └── settings.json             # Simplified plugin-based config
+│   ├── settings.json             # Simplified plugin-based config
+│   └── settings.local.json       # Local overrides (not tracked)
 ├── .claude-plugin/               # Plugin marketplace definition
 │   └── marketplace.json          # Marketplace configuration
 ├── plugins/                      # All skills organized in plugins
@@ -29,12 +41,18 @@ All configuration can be referenced from your project `.claude` folders using th
 │   ├── development-lifecycle/    # Dev workflow: git, code review, planning
 │   │   ├── .claude-plugin/
 │   │   ├── commands/             # /execute-implementation
-│   │   ├── agents/               # deep-research, deep-context-gatherer, high-level-planner, etc.
+│   │   ├── agents/               # deep-research, deep-context-gatherer
 │   │   ├── skills/               # analyze-size, git-commit, code-review, start-feature, finish-feature, fix-eslint, dev-work-summary
 │   │   └── README.md
 │   ├── typescript-coding/        # TypeScript/JavaScript development guidance
 │   │   ├── .claude-plugin/
-│   │   ├── skills/               # typescript-coding
+│   │   ├── skills/
+│   │   │   └── typescript-coding/
+│   │   │       ├── SKILL.md
+│   │   │       ├── STACK.md     # Tech stack overview
+│   │   │       ├── TOOLING.md   # Tool usage patterns
+│   │   │       ├── TESTING.md   # Testing patterns
+│   │   │       └── LOGGING.md   # Logging strategies
 │   │   └── README.md
 │   ├── knowledge-work/           # Knowledge capture, web research, ideation
 │   │   ├── .claude-plugin/
@@ -47,21 +65,20 @@ All configuration can be referenced from your project `.claude` folders using th
 ├── docs/                         # Project documentation and coding standards
 │   ├── CODING_STYLE.md
 │   ├── DEVELOPMENT_WORKFLOW.md
-│   └── typescript/
-│       ├── STACK.md
-│       ├── TOOLING.md
-│       ├── TESTING.md
-│       └── LOGGING.md
+│   ├── roadmap/                  # Development roadmap and planning
+│   │   └── overview.md
+│   ├── scratchpad/               # Web fetched content cache
+│   └── web-captures/             # Playwright web-to-markdown captures
 ├── hooks/                        # Claude Code hooks
-│   ├── skill-reminder/          # Contextual skill reminder hook
-│   │   └── prompt-hook.sh       # UserPromptSubmit hook
-│   └── tts-readback/            # Text-to-speech readback hook
-│       ├── stop-hook.ts         # Hook implementation
-│       ├── package.json         # Dependencies
-│       └── README.md            # Hook documentation
+│   ├── skill-reminder/           # Contextual skill reminder hook
+│   │   └── prompt-hook.ts        # UserPromptSubmit hook (TypeScript)
+│   └── tts-readback/             # Text-to-speech readback hook
+│       ├── stop-hook.ts          # Hook implementation
+│       ├── package.json          # Dependencies
+│       └── README.md             # Hook documentation
 ├── CLAUDE.md                     # Global Claude instructions
 ├── settings.json                 # Claude Code settings
-├── setup.sh                      # Automated setup script
+├── setup-project.sh              # Automated project bootstrap script
 └── README.md
 ```
 
@@ -111,38 +128,64 @@ If you prefer manual configuration, create `.claude/settings.json` in your proje
     "UserPromptSubmit": [{
       "hooks": [{
         "type": "command",
-        "command": "/Users/Uberto.Rapizzi/dev/agents/hooks/skill-reminder/prompt-hook.sh"
+        "command": "node --experimental-strip-types /Users/Uberto.Rapizzi/dev/agents/hooks/skill-reminder/prompt-hook.ts",
+        "timeout": 5
       }]
     }]
   }
 }
 ```
 
-**Note:** The paths above are example absolute paths. Replace `/Users/Uberto.Rapizzi/dev/agents` with the actual path to your cloned agents directory. We recommend using `setup-project.sh` instead, which handles path resolution automatically.
+**Note:** The paths above are example absolute paths. Replace `/Users/Uberto.Rapizzi/dev/agents` with the actual path to your cloned agents directory. The `setup-project.sh` script automatically resolves these paths for you.
+
+**Hook Details:**
+- **prompt-hook.ts**: Uses Node.js native type stripping (Node 22.6+), no build step required
+- **stop-hook.ts**: Requires tsx for Kokoro.js TTS library compatibility
 
 ### Verifying Setup
 
-Check that plugins are loaded correctly from your project's configuration:
+After running `setup-project.sh`, verify your configuration:
 
+**1. Plugin Loading:**
 ```bash
-# Navigate to your project directory
 cd /path/to/your-project
-
-# Verify plugins loaded from project settings
 claude /skills
 
-# Should show skills from all configured plugins:
-# - knowledge-work:brainwriting
-# - knowledge-work:readwise-api
-# - basic-skills:timestamp
-# - development-lifecycle:analyze-size
-# - development-lifecycle:git-commit
-# - meta-work:skill-creator
-# etc.
-
-# Alternative: check if a specific plugin command is available
-claude /meta-work:create-command --help
+# Expected: 17 skills from 5 plugins
+# - meta-work (4 skills)
+# - development-lifecycle (7 skills)
+# - typescript-coding (1 skill)
+# - knowledge-work (4 skills)
+# - basic-skills (1 skill)
 ```
+
+**2. Commands Available:**
+```bash
+claude /meta-work:create-command --help
+
+# Should show usage info, not "command not found"
+```
+
+**3. Hooks Configured:**
+```bash
+# Check hooks in your project settings
+cat .claude/settings.json | grep -A 5 hooks
+
+# Should show Stop hook (TTS) and UserPromptSubmit hook (skill-reminder)
+```
+
+**4. Documentation Referenced:**
+```bash
+# Verify CLAUDE.md references global docs
+cat .claude/CLAUDE.md 2>/dev/null || cat CLAUDE.md
+
+# Should reference @docs/CODING_STYLE.md and @docs/DEVELOPMENT_WORKFLOW.md
+```
+
+**Troubleshooting:**
+- If skills don't appear: Check plugin paths are absolute, not relative
+- If hooks don't fire: Verify hook script is executable and paths are correct
+- If commands fail: Ensure you're in a project with `.claude/settings.json` configured
 
 ## What's Included
 
@@ -162,6 +205,28 @@ claude /meta-work:create-command --help
 - Complex multi-step tasks, parallel execution
 
 **Migration**: Commands/agents → skills architecture
+
+### File Organization Principles
+
+**Commands** (`*/commands/*.md`):
+- Direct instructions, minimal reasoning
+- Format: `/command-name [args]`
+- Inline docs OR reference shared docs
+
+**Skills** (`*/skills/*/SKILL.md`):
+- Self-contained modules with frontmatter
+- Complex reasoning, reusable patterns
+- Invoke: `Skill(name)` or `Skill(plugin:name)`
+
+**Agents** (`*/agents/*.md`):
+- Specialized autonomous agents
+- Multi-step tasks, parallel execution
+- Format: `@plugin:agent-name`
+
+**Docs** (`*/skills/*/docs/HOW_TO_*.md`):
+- Shared reference documentation
+- Used by multiple commands/skills
+- Single source of truth for domain knowledge
 
 ### All Skills (Organized by Plugin)
 
@@ -199,12 +264,24 @@ Skills are now organized into semantic plugins for better discoverability and co
 See [Available Plugins](#available-plugins) section below for detailed information about each plugin.
 
 ### Documentation (`/docs`)
+
+**Core Workflow Docs:**
 - **CODING_STYLE.md** - Universal coding principles (FP patterns, naming, testing, logging)
 - **DEVELOPMENT_WORKFLOW.md** - Testing, commits, branching, documentation guidelines
-- **typescript/STACK.md** - TypeScript/JavaScript tech stack overview
-- **typescript/TOOLING.md** - Tool usage patterns and configurations
-- **typescript/TESTING.md** - Testing patterns with Vitest
-- **typescript/LOGGING.md** - Logging strategies (CLI vs services)
+
+**Planning & Strategy:**
+- **roadmap/overview.md** - Development roadmap, planned phases, and future enhancements
+
+**Auto-Generated Content:**
+- **scratchpad/** - Timestamped web content aggregated by scratchpad-fetch skill
+- **web-captures/** - HTML-to-markdown conversions from web-to-markdown skill
+
+**TypeScript-Specific Docs:**
+See `plugins/typescript-coding/skills/typescript-coding/` for:
+- **STACK.md** - Tech stack overview
+- **TOOLING.md** - Tool usage patterns
+- **TESTING.md** - Testing patterns with Vitest
+- **LOGGING.md** - Logging strategies (CLI vs services)
 
 ### Hooks (`/hooks`)
 Custom Claude Code hooks for enhanced functionality:
@@ -263,6 +340,25 @@ See the meta-work plugin documentation at `plugins/meta-work/README.md` for deta
 ### Feature Branch Workflow
 The `/start-feature` command creates feature branches following your project's naming conventions and development workflow guidelines.
 
+## Known Limitations
+
+- **Archived Components**: Some planning agents (high-level-planner, commit-planner, plan-refiner, commit-executor) are archived pending skill-based redesign
+- **In-Flux Architecture**: Development-lifecycle plugin transitioning from agent-based to skill-based planning
+- **Local Dependencies**: TTS hook requires ~350MB model download on first use
+- **Path Assumptions**: Setup script assumes standard Unix-like environment
+
+## Migration Notes
+
+**Recent Changes:**
+- **2024-Q4**: TypeScript documentation moved from `docs/typescript/` to `plugins/typescript-coding/skills/typescript-coding/`
+- **2024-Q4**: Planning agents archived, transitioning to skill-based architecture
+- **2024-Q4**: Hooks updated to use Node.js native type stripping where possible
+
+**If Upgrading from Earlier Versions:**
+1. Re-run `setup-project.sh` to get latest hook configurations
+2. Update any manual references to `docs/typescript/*.md` to point to plugin location
+3. Remove references to archived planning agents from custom workflows
+
 ## Plugin System
 
 ### Overview
@@ -316,30 +412,31 @@ Tools for managing and creating Claude Code configurations:
 **Usage**: `/create-command <description>` or `Skill(meta-work:prompting)`
 
 #### Development Lifecycle (`plugins/development-lifecycle/`)
-Software feature development tools with research, planning, implementation, and git workflows:
-- **Command**: `/execute-implementation` - Orchestrate wave-based execution of implementation plans
-- **Agents**:
-  - `deep-research` - Parallel web research with optional report generation
-  - `deep-context-gatherer` - Web + codebase analysis for comprehensive context (outputs to `docs/reports/`)
-  - `high-level-planner` - Generates 3-5 diverse implementation approaches with trade-off analysis (outputs to `docs/plans/`)
-  - `plan-refiner` - Refines existing plans based on feedback, generates variants and hybrids
-  - `commit-planner` - Atomic commit-level planning with dependency tracking and wave-based parallelization (outputs to `docs/implementation/`)
-  - `commit-executor` - Implements individual commits following detailed plans
+Software feature development tools with git workflows, code review, and research:
 
-**Key workflow**:
-1. `deep-context-gatherer` → research topic
-2. `high-level-planner` → generate implementation options with comparison matrix
-3. (Optional) `plan-refiner` → refine or create variants/hybrids
-4. `commit-planner` → create commit-level plans with dependency tracking
-5. `/execute-implementation` → wave-based execution with parallel commits
+**Commands:**
+- `/execute-implementation` - Wave-based execution orchestrator
 
-The workflow automatically chains outputs: architect detects and reuses context reports, planner detects and uses architect plans.
+**Active Agents:**
+- `deep-research` - Parallel web research with optional report generation
+- `deep-context-gatherer` - Web + codebase analysis (outputs to `docs/reports/`)
 
-**Usage**:
+**Skills:**
+- `analyze-size` - Codebase size/language analysis using cloc
+- `git-commit` - Conventional commits from git diff
+- `code-review` - Expert code review with quality checks
+- `start-feature` - Create/switch to feature branches
+- `finish-feature` - Complete and merge feature work
+- `fix-eslint` - Auto-fix ESLint errors (parallel for >20 errors)
+- `dev-work-summary` - Daily work summary across ~/dev repos
+
+**Note:** High-level planning, plan refinement, and commit planning agents are archived. The development workflow is transitioning to skill-based architecture. See [Development Roadmap](docs/roadmap/overview.md) for future plans.
+
+**Usage:**
+- `@development-lifecycle:deep-research <topic>`
 - `@development-lifecycle:deep-context-gatherer gather context for {topic}`
-- `@development-lifecycle:high-level-planner design solutions using docs/reports/{topic}.md`
-- `@development-lifecycle:commit-planner plan commits using docs/plans/{feature}/option-1.md`
-- `/execute-implementation docs/implementation/{feature-slug}`
+- `Skill(development-lifecycle:git-commit)` when ready to commit
+- `Skill(development-lifecycle:code-review)` after writing code
 
 #### TypeScript Coding (`plugins/typescript-coding/`)
 Expert TypeScript/JavaScript development guidance:
@@ -401,237 +498,12 @@ git pull origin main
 
 ## Development Roadmap
 
-This section outlines the planned enhancements to achieve a comprehensive, autonomous AI-powered development workflow.
+This repository follows an evolving roadmap to build comprehensive AI-powered development workflows. For detailed information about planned phases, current gaps, and future enhancements, see:
 
-### Vision
+**📍 [Development Roadmap](docs/roadmap/overview.md)**
 
-Build an end-to-end AI development infrastructure that handles the complete software lifecycle: research → plan → implement → test → review → document → deploy. The goal is autonomous feature development with human oversight at key decision points.
-
-### Current State Analysis
-
-**What Works Well:**
-- ✅ Brainstorming and ideation (brainwriting skill)
-- ✅ Web research with synthesis (deep-research agent)
-- ✅ Local codebase exploration (Explorer agent, deep-context-gatherer)
-- ✅ TypeScript/JavaScript development guidance
-- ✅ Feature branch workflow (start-feature, finish-feature)
-- ✅ Code quality enforcement (fix-eslint with parallel agents)
-- ✅ Code review (technical quality + intent alignment)
-- ✅ Git workflow (conventional commits, work summaries)
-- ✅ Meta-tooling (create skills/commands/agents/plugins)
-
-**Critical Gaps Identified:**
-- 🔴 GitHub code search for real-world examples
-- 🔴 Cost-effective external research alternatives
-- 🔴 Automated linting/formatting hooks
-- 🔴 Test generation and verification
-- 🔴 Documentation discrepancy detection
-- 🔴 Project scaffolding
-- 🔴 Iterative error-fix loops
-- 🔴 End-to-end autonomous feature development
-- 🔴 Multi-perspective code review (security, performance, etc.)
-
-### Implementation Phases
-
-#### Phase 1: Research Enhancement 🔍
-
-**Goal**: Improve context gathering with practical code examples and cost-effective research.
-
-**Deliverables:**
-1. **GitHub Code Search Skill**
-   - Search repositories via `gh` CLI for real-world implementations
-   - Filter by language, stars, recency
-   - Extract and summarize relevant patterns
-   - Location: `skills/github-code-search/`
-
-2. **Gemini CLI Integration**
-   - Alternative to expensive research APIs
-   - Focus on practical code examples (not essays)
-   - Integration with existing research workflows
-   - Location: `skills/gemini-research/` or integrated into deep-research
-
-3. **Research Orchestrator Enhancement**
-   - Unified research combining:
-     - Web search (existing)
-     - GitHub code search (new)
-     - Gemini research (new)
-     - Local codebase analysis (existing)
-   - Parallel execution across all sources
-   - Synthesized, actionable output
-   - Enhancement to: `plugins/development-lifecycle/agents/deep-context-gatherer.md`
-
-**Success Criteria:**
-- Can find real-world code examples for any common pattern
-- Research cost reduced by 70%+ vs Perplexity
-- Context quality improved (practical examples vs theoretical essays)
-
----
-
-#### Phase 2: Foundation (Hooks + Testing) 🧪
-
-**Goal**: Complete the development lifecycle with automated quality gates and testing.
-
-**Deliverables:**
-1. **Pre-Commit Hooks**
-   - Auto-run linting and formatting
-   - Leverage existing fix-eslint skill
-   - Block commits with unfixable issues
-   - Location: `.claude/hooks/pre-commit-lint-format.ts`
-
-2. **Pre-Push Hooks**
-   - Run test suite before push
-   - Prevent broken code from reaching remote
-   - Location: `.claude/hooks/pre-push-test.ts`
-
-3. **Test-Writer Agent**
-   - Generate tests for implementations
-   - Identify test scenarios (happy path, edge cases, errors)
-   - Follow TESTING.md standards
-   - Verify tests pass
-   - Location: `plugins/development-lifecycle/skills/test-writer/`
-
-4. **Documentation Reviewer Agent**
-   - Run at end of implementation
-   - Compare code changes to docs
-   - Identify outdated sections
-   - Suggest specific updates
-   - Location: `plugins/development-lifecycle/agents/doc-reviewer.md`
-
-5. **Project Scaffolding Command**
-   - Bootstrap new projects with best practices
-   - Create CLAUDE.md with coding standards
-   - Set up docs/ and .claude/ structure
-   - Template selection by project type
-   - Location: `/commands/scaffold-project.md`
-
-**Success Criteria:**
-- No commits with linting errors
-- No pushes with failing tests
-- All implementations have corresponding tests
-- Documentation stays in sync with code
-
----
-
-#### Phase 3: Autonomous Workflows 🤖
-
-**Goal**: Build orchestrators that handle end-to-end development with minimal human intervention.
-
-**Deliverables:**
-1. **Skill-Based Planning**
-   - Replace archived agents with composable skills
-   - **High-level planning skill**: Feature → implementation approaches
-   - **Low-level planning skill**: Approaches → commit waves
-   - Leverage Phase 1 research improvements
-   - Location: `plugins/development-lifecycle/skills/plan-feature/` and `plan-commits/`
-
-2. **Iterative Error-Fix Loop**
-   - Run tests/build → analyze errors → fix → retry
-   - Like fix-eslint but for any error type
-   - Configurable max retries
-   - Detailed fix reports
-   - Integration with execute-implementation
-   - Location: `plugins/development-lifecycle/skills/fix-until-green/`
-
-3. **Multi-Perspective Code Review**
-   - Parallel review agents with specialized focuses:
-     - Security (OWASP, injection, auth)
-     - Performance (complexity, bottlenecks)
-     - Accessibility (WCAG if applicable)
-     - Architecture (patterns, coupling)
-   - Aggregate findings by priority
-   - Enhancement to existing code-review skill
-   - Location: `plugins/development-lifecycle/skills/code-review/` (with perspective modes)
-
-4. **Autonomous Feature Development Orchestrator**
-   - End-to-end workflow combining all skills:
-     1. Research orchestrator (gather context)
-     2. High-level planner (feature breakdown)
-     3. Low-level planner (commit waves)
-     4. Execute-implementation (coding)
-     5. Test-writer (generate tests)
-     6. Fix-until-green (error loop)
-     7. Multi-perspective review (quality)
-     8. Doc-reviewer (documentation)
-     9. Git-commit (conventional commits)
-   - Checkpoints at each phase for approval
-   - Detailed progress tracking
-   - Location: `/commands/develop-feature.md`
-
-**Success Criteria:**
-- Can develop complete features from description to merge
-- All tests pass, no linting errors
-- Code reviewed from multiple perspectives
-- Documentation automatically updated
-- Human intervention only at decision points
-
----
-
-#### Phase 4: Expansion (Future) 🚀
-
-**Lower priority enhancements for specialized use cases:**
-
-1. **Refactoring Workflows**
-   - Detect refactoring opportunities
-   - Safe automated refactoring
-   - Preserve behavior with tests
-
-2. **Tech Debt Management**
-   - Identify outdated patterns
-   - Modernization suggestions
-   - Dependency updates
-
-3. **Infrastructure as Code**
-   - Terraform/CloudFormation/Pulumi support
-   - IaC best practices
-   - Security scanning
-
-4. **Browser Automation**
-   - Interactive web testing
-   - Screenshot comparisons
-   - E2E test generation
-
-5. **Changelog Generation**
-   - Parse conventional commits
-   - Generate comprehensive changelogs
-   - Version bump recommendations
-
----
-
-### Execution Timeline
-
-**Phase 1 (Research)**: 1-2 weeks
-- Foundation for all subsequent work
-- Research quality directly impacts planning/implementation
-
-**Phase 2 (Foundation)**: 2-3 weeks
-- Complete the dev lifecycle
-- Enable reliable autonomous execution
-
-**Phase 3 (Autonomous Workflows)**: 3-4 weeks
-- Requires Phases 1-2 to be solid
-- Most complex integration work
-
-**Phase 4 (Expansion)**: As needed
-- Evaluate after Phase 3 completion
-- Prioritize based on real usage patterns
-
----
-
-### Design Principles
-
-1. **Research First**: Quality context → quality code
-2. **Skills Over Agents**: Composable, reusable components
-3. **Parallel Execution**: Leverage Claude Code's multi-agent capabilities
-4. **Human Oversight**: Autonomous execution with decision checkpoints
-5. **Testing in the Loop**: Generate tests, verify, fix errors automatically
-6. **Multi-Modal Review**: Comprehensive quality checks from multiple angles
-7. **Documentation as Code**: Keep docs in sync automatically
-
----
-
-### References
-
-- Vision Document: `~/Documents/uby_knowledge_vault/🏞️ spaces/💼 work at JT/areas/Move towards AI/How AI at JT.md`
-- Inspiration: [Anthropic feature-dev plugin](https://github.com/anthropics/claude-code/tree/main/plugins/feature-dev)
-- Inspiration: [Microsoft Amplifier Vision](https://github.com/microsoft/amplifier/blob/main/AMPLIFIER_VISION.md)
-- Inspiration: [Personal AI Infrastructure](https://github.com/danielmiessler/Personal_AI_Infrastructure)
+**Current Focus:**
+- ✅ Phase 0: Core infrastructure (skills, plugins, meta-tooling) - **COMPLETE**
+- 🔄 Phase 1: Research enhancement (GitHub code search, cost-effective alternatives)
+- 📋 Phase 2: Foundation (hooks, testing, documentation automation)
+- 📋 Phase 3: Autonomous workflows (planning skills, error-fix loops, orchestration)
