@@ -117,4 +117,31 @@ export const SKILL_RULES: SkillRule[] = [
     skill: "typescript-coding:typescript-coding",
     priority: 8,
   },
+
+  // Web research via Google Search
+  {
+    patterns: [
+      /google.*search/,
+      /search.*google/,
+      /research.*google/,
+      /find.*real-time/,
+      /latest.*info/,
+      /current.*examples/,
+    ],
+    skill: "knowledge-work:gemini-research",
+    priority: 9,
+  },
+
+  // GitHub code search
+  {
+    patterns: [
+      /github.*code/,
+      /code.*examples.*github/,
+      /find.*repos/,
+      /how.*people.*implement/,
+      /real-world.*examples/,
+    ],
+    skill: "knowledge-work:gh-code-search",
+    priority: 10,
+  },
 ];
