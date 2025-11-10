@@ -37,13 +37,9 @@ fi
 read -r -d '' QUICK_TEMPLATE <<'EOF' || true
 Use google_web_search to research: %QUERY%
 
-Requirements:
-1. Execute 2-3 diverse search queries
-2. Fetch 5-8 high-quality sources
-3. Extract key points with quotes
-4. Cite every source with URL
+Execute 2-3 diverse queries. Fetch 5-8 high-quality sources with direct quotes. Include URLs for every source and quote.
 
-Return strict JSON format:
+Return JSON:
 {
   "queries_used": ["query1", "query2"],
   "sources": [
@@ -58,22 +54,14 @@ Return strict JSON format:
   ],
   "summary": "3-5 sentence overview synthesizing findings"
 }
-
-IMPORTANT: Use google_web_search tool. Include URLs for every source and quote.
 EOF
 
 read -r -d '' DEEP_TEMPLATE <<'EOF' || true
 Use google_web_search to deeply research: %QUERY%
 
-Requirements:
-1. Execute 4-6 diverse search queries (broad + specific)
-2. Fetch 10-15 high-quality sources
-3. Extract key points with detailed quotes
-4. Identify contradictions between sources
-5. Note consensus views and information gaps
-6. Cite every source with URL
+Execute 4-6 diverse queries (broad + specific). Fetch 10-15 sources. Extract detailed quotes. Identify contradictions, consensus, and gaps. Include URLs for all sources and quotes.
 
-Return strict JSON format:
+Return JSON:
 {
   "queries_used": ["query1", "query2", "query3"],
   "sources": [
@@ -97,23 +85,14 @@ Return strict JSON format:
   ],
   "summary": "5-7 sentence comprehensive overview synthesizing all findings"
 }
-
-IMPORTANT: Use google_web_search tool. Include URLs for every source and quote.
 EOF
 
 read -r -d '' CODE_TEMPLATE <<'EOF' || true
 Use google_web_search to find practical code examples for: %QUERY%
 
-Requirements:
-1. Execute 3-4 code-focused queries (GitHub, Stack Overflow, official docs)
-2. Fetch 6-10 sources with working code examples
-3. Extract actual code snippets with explanations
-4. Identify common patterns and anti-patterns
-5. List recommended libraries/tools
-6. Document known gotchas with solutions
-7. Cite every source with URL
+Execute 3-4 code-focused queries (GitHub, Stack Overflow, official docs). Fetch 6-10 sources with working examples. Extract actual code snippets. Identify patterns, anti-patterns, libraries, and gotchas. Include URLs for all sources.
 
-Return strict JSON format:
+Return JSON:
 {
   "queries_used": ["query1", "query2"],
   "sources": [
@@ -142,8 +121,6 @@ Return strict JSON format:
   ],
   "summary": "3-5 sentence overview of implementation approach"
 }
-
-IMPORTANT: Use google_web_search tool. Include actual code snippets and URLs.
 EOF
 
 # Select template based on mode
@@ -185,34 +162,39 @@ if ! RESULT=$(gemini -p "$PROMPT" --output-format json 2>&1); then
   exit 1
 fi
 
-# Validate JSON output
-if ! echo "$RESULT" | jq . > /dev/null 2>&1; then
-  # Sometimes Gemini wraps JSON in markdown code blocks
-  # Try extracting JSON from markdown
-  if echo "$RESULT" | grep -q '```json'; then
-    RESULT=$(echo "$RESULT" | sed -n '/```json/,/```/p' | sed '1d;$d')
-  elif echo "$RESULT" | grep -q '```'; then
-    RESULT=$(echo "$RESULT" | sed -n '/```/,/```/p' | sed '1d;$d')
-  fi
+# Extract response from Gemini CLI wrapper
+# Gemini returns: {"response": "...", "stats": {...}}
+if ! RESPONSE=$(echo "$RESULT" | jq -r '.response' 2>/dev/null); then
+  echo "❌ Failed to extract .response field from Gemini output" >&2
+  echo "Raw output:" >&2
+  echo "$RESULT" >&2
+  exit 1
+fi
 
-  # Validate again
-  if ! echo "$RESULT" | jq . > /dev/null 2>&1; then
-    echo "❌ Invalid JSON response from Gemini" >&2
-    echo "Raw output:" >&2
-    echo "$RESULT" >&2
-    exit 1
-  fi
+# Strip markdown code blocks if present
+if echo "$RESPONSE" | grep -q '```json'; then
+  RESPONSE=$(echo "$RESPONSE" | sed -n '/```json/,/```/p' | sed '1d;$d')
+elif echo "$RESPONSE" | grep -q '```'; then
+  RESPONSE=$(echo "$RESPONSE" | sed -n '/```/,/```/p' | sed '1d;$d')
+fi
+
+# Validate final JSON
+if ! echo "$RESPONSE" | jq . > /dev/null 2>&1; then
+  echo "❌ Invalid JSON after extraction" >&2
+  echo "Extracted content:" >&2
+  echo "$RESPONSE" >&2
+  exit 1
 fi
 
 # Save to file
-echo "$RESULT" | jq . > "$OUTPUT_FILE"
+echo "$RESPONSE" | jq . > "$OUTPUT_FILE"
 
 echo "✅ Research complete! Results saved to: $OUTPUT_FILE" >&2
 echo "" >&2
 
 # Show summary
-SOURCES_COUNT=$(echo "$RESULT" | jq '.sources | length' 2>/dev/null || echo "0")
-QUERIES_COUNT=$(echo "$RESULT" | jq '.queries_used | length' 2>/dev/null || echo "0")
+SOURCES_COUNT=$(echo "$RESPONSE" | jq '.sources | length' 2>/dev/null || echo "0")
+QUERIES_COUNT=$(echo "$RESPONSE" | jq '.queries_used | length' 2>/dev/null || echo "0")
 
 echo "📊 Summary:" >&2
 echo "   Queries executed: $QUERIES_COUNT" >&2
@@ -221,7 +203,7 @@ echo "   Sources found: $SOURCES_COUNT" >&2
 # Show first few sources
 echo "" >&2
 echo "🔗 Top sources:" >&2
-echo "$RESULT" | jq -r '.sources[:3][] | "   • \(.title)\n     \(.url)"' 2>/dev/null || true
+echo "$RESPONSE" | jq -r '.sources[:3][] | "   • \(.title)\n     \(.url)"' 2>/dev/null || true
 
 echo "" >&2
 echo "📄 Full results in: $OUTPUT_FILE" >&2

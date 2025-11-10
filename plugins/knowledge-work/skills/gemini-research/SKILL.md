@@ -1,7 +1,7 @@
 ---
 name: gemini-research
-description: Deep web research using Gemini CLI with Google Search grounding. Returns structured JSON with sources, quotes, and citations. Use when you need cost-effective web research with real-time data (news, docs, code examples). Free tier: 60 rpm, 1000 req/day, 1M-token context.
-allowed-tools: Bash(bash:*/gemini-research/*), Bash(gemini:*), Read
+description: Web research via Gemini CLI with Google Search grounding. Returns structured JSON with sources, quotes, and citations. Use for real-time data: news, docs, code examples, fact verification.
+allowed-tools: Bash(plugins/knowledge-work/skills/gemini-research/scripts/*), Bash(gemini:*), Read
 ---
 
 # Gemini Research
