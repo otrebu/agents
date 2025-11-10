@@ -35,7 +35,7 @@ fi
 
 # Prompt templates
 read -r -d '' QUICK_TEMPLATE <<'EOF' || true
-Use google_web_search to research: %QUERY%
+Use GoogleSearch to research: %QUERY%
 
 Execute 2-3 diverse queries. Fetch 5-8 high-quality sources with direct quotes. Include URLs for every source and quote.
 
@@ -57,7 +57,7 @@ Return JSON:
 EOF
 
 read -r -d '' DEEP_TEMPLATE <<'EOF' || true
-Use google_web_search to deeply research: %QUERY%
+Use GoogleSearch to deeply research: %QUERY%
 
 Execute 4-6 diverse queries (broad + specific). Fetch 10-15 sources. Extract detailed quotes. Identify contradictions, consensus, and gaps. Include URLs for all sources and quotes.
 
@@ -88,7 +88,7 @@ Return JSON:
 EOF
 
 read -r -d '' CODE_TEMPLATE <<'EOF' || true
-Use google_web_search to find practical code examples for: %QUERY%
+Use GoogleSearch to find practical code examples for: %QUERY%
 
 Execute 3-4 code-focused queries (GitHub, Stack Overflow, official docs). Fetch 6-10 sources with working examples. Extract actual code snippets. Identify patterns, anti-patterns, libraries, and gotchas. Include URLs for all sources.
 
@@ -149,7 +149,7 @@ echo "🔍 Running Gemini research ($MODE mode): $QUERY" >&2
 echo "⏳ This may take 5-20 seconds..." >&2
 
 # Execute with error handling
-if ! RESULT=$(gemini -p "$PROMPT" --output-format json 2>&1); then
+if ! RESULT=$(gemini --model gemini-2.5-pro -p "$PROMPT" --output-format json 2>&1); then
   echo "❌ Gemini CLI error:" >&2
   echo "$RESULT" >&2
 

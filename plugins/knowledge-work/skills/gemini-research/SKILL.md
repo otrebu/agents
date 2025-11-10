@@ -1,23 +1,23 @@
 ---
 name: gemini-research
-description: Web research via Gemini CLI with Google Search grounding. Returns structured JSON with sources, quotes, and citations. Use for real-time data: news, docs, code examples, fact verification.
+description: Google Search-powered research via Gemini CLI. Use when user asks to "google search", "search google", "research using google", or needs real-time web data with citations. Returns structured JSON with sources, quotes, and code examples.
 allowed-tools: Bash(plugins/knowledge-work/skills/gemini-research/scripts/*), Bash(gemini:*), Read
 ---
 
 # Gemini Research
 
-Deep web research using Gemini CLI with Google Search grounding. Cost-effective alternative to expensive research APIs.
+Google Search via Gemini CLI. Free, fast, cited web research.
 
 ## Overview
 
-Leverage Gemini CLI's built-in Google Search grounding (`google_web_search`) to fetch real-time information with citations. Returns structured JSON for Claude to analyze and synthesize.
+Gemini CLI's `google_web_search` tool fetches real-time info with citations. Returns structured JSON.
 
 **Key advantages:**
-- Free tier: 60 requests/min, 1000/day
-- 1M-token context window (Gemini 2.5 Pro)
-- Built-in Google Search grounding
-- Structured JSON output with citations
-- Real-time data (news, docs, tutorials)
+- Free: 60 req/min, 1000/day
+- 1M-token context (Gemini 2.5 Pro)
+- Google Search grounding built-in
+- JSON output with URLs + quotes
+- Real-time data: news, docs, code
 
 ## Prerequisites
 
@@ -40,13 +40,15 @@ gemini --version
 
 ## Usage
 
-When user asks to:
-- "Research X using Google Search"
-- "Find real-world examples of X"
-- "Get latest information about X"
-- "Deep research on X with sources"
+Activate when user says:
+- "Google search X"
+- "Search Google for X"
+- "Google X"
+- "Research X using Google"
+- "Find real-time/latest info on X"
+- "Get current examples of X"
 
-Run the skill wrapper with appropriate mode.
+Run skill wrapper with appropriate mode.
 
 ## Research Modes
 
