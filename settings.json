@@ -221,7 +221,7 @@
     "development-lifecycle@otrebu-dev-tools": true,
     "typescript-coding@otrebu-dev-tools": true
   },
-  "alwaysThinkingEnabled": true,
+  "alwaysThinkingEnabled": false,
   "plugins": [
     "plugins/meta-work",
     "plugins/development-lifecycle",
