@@ -56,7 +56,7 @@ This configuration embodies several key principles:
 │   │   └── README.md
 │   ├── knowledge-work/           # Knowledge capture, web research, ideation
 │   │   ├── .claude-plugin/
-│   │   ├── skills/               # brainwriting, readwise-api, scratchpad-fetch, web-to-markdown
+│   │   ├── skills/               # gemini-research, gh-code-search, brainwriting, readwise-api, scratchpad-fetch, web-to-markdown
 │   │   └── README.md
 │   └── basic-skills/             # Foundational utilities
 │       ├── .claude-plugin/
@@ -151,11 +151,11 @@ After running `setup-project.sh`, verify your configuration:
 cd /path/to/your-project
 claude /skills
 
-# Expected: 17 skills from 5 plugins
+# Expected: 19 skills from 5 plugins
 # - meta-work (4 skills)
 # - development-lifecycle (7 skills)
 # - typescript-coding (1 skill)
-# - knowledge-work (4 skills)
+# - knowledge-work (6 skills)
 # - basic-skills (1 skill)
 ```
 
@@ -241,7 +241,9 @@ Skills are now organized into semantic plugins for better discoverability and co
 - `fix-eslint` - Auto-fix ESLint errors (parallel agents for >20 errors)
 - `dev-work-summary` - Scan ~/dev for today's work across all repos
 
-**knowledge-work** (4 skills):
+**knowledge-work** (6 skills):
+- `gemini-research` - Google Search-powered research via Gemini CLI with structured JSON output
+- `gh-code-search` - Search GitHub for real-world code examples and implementation patterns
 - `brainwriting` - Structured brainstorming with parallel sub-agents
 - `readwise-api` - Fetch and analyze Readwise reading activity
 - `scratchpad-fetch` - Download and aggregate web pages/docs
@@ -452,14 +454,18 @@ Expert TypeScript/JavaScript development guidance:
 #### Knowledge Work (`plugins/knowledge-work/`)
 Knowledge capture, web research, and ideation workflows:
 - **Skills**:
+  - `gemini-research` - Google Search-powered research via Gemini CLI with citations, quotes, and structured JSON
+  - `gh-code-search` - Search GitHub for real-world code examples with smart ranking (stars, recency, language)
   - `brainwriting` - Structured brainstorming using parallel sub-agents (5 rounds of exploration)
   - `readwise-api` - Fetch and analyze Readwise reading activity for any date range
   - `scratchpad-fetch` - Download and aggregate web pages/docs into timestamped scratchpad files
   - `web-to-markdown` - Batch-process web pages via Playwright, convert HTML to markdown
 - Designed for gathering external knowledge and creative ideas into structured formats
-- All web fetching skills output to timestamped files for easy reference
+- Research skills return structured data; web fetching skills output to timestamped files for easy reference
 
 **Usage**:
+- `Skill(knowledge-work:gemini-research)` for web research with Google Search
+- `Skill(knowledge-work:gh-code-search)` to find code examples on GitHub
 - `Skill(knowledge-work:brainwriting)` for ideation and concept exploration
 - `Skill(knowledge-work:web-to-markdown)` to capture web content as markdown
 - `Skill(knowledge-work:readwise-api)` to analyze reading habits
