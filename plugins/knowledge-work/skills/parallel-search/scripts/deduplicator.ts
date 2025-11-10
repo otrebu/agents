@@ -21,27 +21,24 @@ export interface DiversityAnalysis {
 /**
  * Deduplicate results from multiple searches by URL
  * @param resultsMap Map of search ID to results and query
- * @returns Deduplicated results sorted by relevance
+ * @returns Deduplicated results sorted by relevance (source count, then rank)
  */
 export function deduplicateResults(
   resultsMap: Map<string, { results: SearchResult[]; query: string }>
 ): DeduplicatedResult[] {
   const urlMap = new Map<string, DeduplicatedResult>()
 
-  // Aggregate by URL
   for (const [, { results, query }] of resultsMap) {
     for (const result of results) {
       if (urlMap.has(result.url)) {
-        // URL already seen - update metadata
         const existing = urlMap.get(result.url)!
-        existing.foundInSearches.push(query)
-        existing.sourceCount++
-        // Keep the higher rank (lower number = better)
-        if (result.rank < existing.rank) {
-          existing.rank = result.rank
-        }
+        urlMap.set(result.url, {
+          ...existing,
+          foundInSearches: [...existing.foundInSearches, query],
+          sourceCount: existing.sourceCount + 1,
+          rank: Math.min(result.rank, existing.rank),
+        })
       } else {
-        // New URL - add to map
         urlMap.set(result.url, {
           ...result,
           foundInSearches: [query],
@@ -51,8 +48,6 @@ export function deduplicateResults(
     }
   }
 
-  // Sort by source count (found in multiple searches = more relevant)
-  // Then by rank as tiebreaker
   return Array.from(urlMap.values()).sort((a, b) => {
     if (b.sourceCount !== a.sourceCount) {
       return b.sourceCount - a.sourceCount
@@ -64,7 +59,7 @@ export function deduplicateResults(
 /**
  * Check source diversity across results
  * @param results Deduplicated search results
- * @returns Diversity analysis
+ * @returns Diversity analysis with 40% threshold for diversity
  */
 export function checkSourceDiversity(
   results: DeduplicatedResult[]
@@ -80,13 +75,11 @@ export function checkSourceDiversity(
 
   const domainCounts = new Map<string, number>()
 
-  // Count results per domain
   for (const result of results) {
     const count = domainCounts.get(result.domain) || 0
     domainCounts.set(result.domain, count + 1)
   }
 
-  // Find most common domain
   const sortedDomains = Array.from(domainCounts.entries()).sort(
     (a, b) => b[1] - a[1]
   )
@@ -96,7 +89,7 @@ export function checkSourceDiversity(
 
   return {
     domainCounts,
-    isDiverse: topDomainPercentage < 40, // No single domain > 40%
+    isDiverse: topDomainPercentage < 40,
     topDomain: topDomain[0],
     topDomainPercentage,
   }

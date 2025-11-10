@@ -10,44 +10,47 @@ export function formatResults(
   results: SearchResult[],
   metadata: SearchMetadata
 ): string {
-  const sections: string[] = []
+  const header = [
+    '# Parallel Search Results\n',
+    `**Query:** ${metadata.objective}`,
+    `**Results:** ${metadata.resultCount}`,
+    `**Execution:** ${(metadata.executionTimeMs / 1000).toFixed(1)}s\n`,
+  ]
 
-  // Header with metadata
-  sections.push(`# Parallel Search Results\n`)
-  sections.push(`**Query:** ${metadata.objective}`)
-  sections.push(`**Results:** ${metadata.resultCount}`)
-  sections.push(
-    `**Execution:** ${(metadata.executionTimeMs / 1000).toFixed(1)}s\n`
-  )
+  const domainSummary =
+    results.length > 0
+      ? formatDomainSummary(results)
+      : []
 
-  // Domain distribution summary
-  if (results.length > 0) {
-    const domainCounts = getDomainCounts(results)
-    const topDomains = Array.from(domainCounts.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5)
+  const resultSections = results.flatMap((result) => [
+    `## ${result.rank}. [${result.title}](${result.url})\n`,
+    `**URL:** ${result.url}`,
+    `**Domain:** ${result.domain}\n`,
+    `**Excerpt:**\n`,
+    result.excerpt,
+    '\n---\n',
+  ])
 
-    sections.push(`**Top Domains:**`)
-    for (const [domain, count] of topDomains) {
-      const percentage = ((count / results.length) * 100).toFixed(0)
-      sections.push(`- ${domain}: ${count} results (${percentage}%)`)
-    }
-    sections.push('')
-  }
+  return [...header, ...domainSummary, '---\n', ...resultSections].join('\n')
+}
 
-  sections.push('---\n')
+/**
+ * Format domain distribution summary
+ * @param results Array of search results
+ * @returns Array of formatted domain summary lines
+ */
+function formatDomainSummary(results: SearchResult[]): string[] {
+  const domainCounts = getDomainCounts(results)
+  const topDomains = Array.from(domainCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
 
-  // Individual results
-  for (const result of results) {
-    sections.push(`## ${result.rank}. [${result.title}](${result.url})\n`)
-    sections.push(`**URL:** ${result.url}`)
-    sections.push(`**Domain:** ${result.domain}\n`)
-    sections.push(`**Excerpt:**\n`)
-    sections.push(result.excerpt)
-    sections.push('\n---\n')
-  }
+  const domainLines = topDomains.map(([domain, count]) => {
+    const percentage = ((count / results.length) * 100).toFixed(0)
+    return `- ${domain}: ${count} results (${percentage}%)`
+  })
 
-  return sections.join('\n')
+  return ['**Top Domains:**', ...domainLines, '']
 }
 
 /**
@@ -74,9 +77,9 @@ function getDomainCounts(results: SearchResult[]): Map<string, number> {
 export function sanitizeForFilename(query: string): string {
   return query
     .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '') // Remove special chars
+    .replace(/[^a-z0-9\s-]/g, '')
     .trim()
-    .replace(/\s+/g, '-') // Spaces to hyphens
-    .replace(/-+/g, '-') // Multiple hyphens to single
-    .substring(0, 50) // Max 50 chars
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .substring(0, 50)
 }

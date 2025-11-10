@@ -16,10 +16,8 @@ import type { SearchOptions, SearchResult } from './types.js'
 export async function executeSearch(
   options: SearchOptions
 ): Promise<SearchResult[]> {
-  // Validate inputs
   validateSearchOptions(options)
 
-  // Validate API key
   const apiKey = process.env.PARALLEL_API_KEY
   if (!apiKey) {
     throw new AuthError(
@@ -27,23 +25,19 @@ export async function executeSearch(
     )
   }
 
-  // Initialize client
   const client = new Parallel({ apiKey })
 
   try {
-    // Execute search with defaults optimized for research
     const response = await client.beta.search({
       objective: options.objective,
       search_queries: options.searchQueries,
-      processor: (options.processor || 'pro') as any, // Default to 'pro' for research quality
-      max_results: options.maxResults || 15, // More results for comprehensive research
-      max_chars_per_result: options.maxCharsPerResult || 5000, // Larger excerpts for deep research
+      processor: (options.processor || 'pro') as any,
+      max_results: options.maxResults || 15,
+      max_chars_per_result: options.maxCharsPerResult || 5000,
     })
 
-    // Transform response to our format
     return transformResults(response)
   } catch (error: any) {
-    // Handle specific error types
     if (error.status === 401 || error.status === 403) {
       throw new AuthError(
         'Invalid API key or unauthorized access. Check your PARALLEL_API_KEY.'
@@ -72,7 +66,6 @@ export async function executeSearch(
       )
     }
 
-    // Generic error
     throw new ParallelSearchError(
       `Search failed: ${error.message || 'Unknown error'}`,
       error
@@ -83,16 +76,15 @@ export async function executeSearch(
 /**
  * Validate search options
  * @param options Search options to validate
+ * @throws ValidationError if options are invalid
  */
 function validateSearchOptions(options: SearchOptions): void {
-  // At least one of objective or searchQueries is required
   if (!options.objective && (!options.searchQueries || options.searchQueries.length === 0)) {
     throw new ValidationError(
       'Either objective or searchQueries (or both) must be provided'
     )
   }
 
-  // Validate searchQueries constraints
   if (options.searchQueries) {
     if (options.searchQueries.length > 5) {
       throw new ValidationError(
@@ -109,7 +101,6 @@ function validateSearchOptions(options: SearchOptions): void {
     }
   }
 
-  // Validate maxCharsPerResult
   if (
     options.maxCharsPerResult !== undefined &&
     options.maxCharsPerResult < 100
@@ -119,7 +110,6 @@ function validateSearchOptions(options: SearchOptions): void {
     )
   }
 
-  // Validate processor
   if (options.processor) {
     const validProcessors = ['lite', 'base', 'pro', 'ultra']
     if (!validProcessors.includes(options.processor)) {
@@ -136,17 +126,16 @@ function validateSearchOptions(options: SearchOptions): void {
  * @returns Array of formatted search results
  */
 function transformResults(response: any): SearchResult[] {
-  // Handle empty or malformed responses
   if (!response || !response.results || !Array.isArray(response.results)) {
     return []
   }
 
-  return response.results.map((r: any, idx: number) => ({
-    url: r.url || '',
-    title: r.title || 'Untitled',
-    excerpt: r.excerpt || '',
-    domain: extractDomain(r.url || ''),
-    rank: idx + 1,
+  return response.results.map((rawResult: any, index: number) => ({
+    url: rawResult.url || '',
+    title: rawResult.title || 'Untitled',
+    excerpt: rawResult.excerpt || '',
+    domain: extractDomain(rawResult.url || ''),
+    rank: index + 1,
   }))
 }
 

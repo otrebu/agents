@@ -18,7 +18,6 @@ async function main() {
   log.header('\n🔍 Parallel Search\n')
 
   try {
-    // Parse command-line arguments
     const { values } = parseArgs({
       options: {
         objective: { type: 'string' },
@@ -31,13 +30,11 @@ async function main() {
       allowPositionals: false,
     })
 
-    // Show help if requested
     if (values.help) {
       showHelp()
       process.exit(0)
     }
 
-    // Validate input
     if (!values.objective) {
       log.error('No search objective provided')
       log.dim('\nUsage: pnpm tsx scripts/search.ts --objective "your query"')
@@ -45,7 +42,6 @@ async function main() {
       process.exit(1)
     }
 
-    // Parse numeric options
     const maxResults = values['max-results']
       ? parseInt(values['max-results'])
       : undefined
@@ -53,7 +49,6 @@ async function main() {
       ? parseInt(values['max-chars'])
       : undefined
 
-    // Validate processor
     const processor = values.processor as
       | 'lite'
       | 'base'
@@ -61,18 +56,16 @@ async function main() {
       | 'ultra'
       | undefined
 
-    // Show search configuration
     log.dim('Search Configuration:')
     log.dim(`  Objective: "${values.objective}"`)
     if (values.queries && values.queries.length > 0) {
       log.dim(`  Queries: ${values.queries.length}`)
-      values.queries.forEach((q, i) => log.dim(`    ${i + 1}. "${q}"`))
+      values.queries.forEach((query, index) => log.dim(`    ${index + 1}. "${query}"`))
     }
     log.dim(`  Processor: ${processor || 'pro (default)'}`)
     log.dim(`  Max Results: ${maxResults || '15 (default)'}`)
     log.dim(`  Max Chars: ${maxChars || '5000 (default)'}\n`)
 
-    // Execute search with spinner
     const spinner = ora('Searching...').start()
 
     const results = await executeSearch({
