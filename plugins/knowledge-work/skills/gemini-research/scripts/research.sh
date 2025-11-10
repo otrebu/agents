@@ -164,8 +164,19 @@ case "$MODE" in
     ;;
 esac
 
-# Inject query into prompt
-PROMPT="${PROMPT//%QUERY%/$QUERY}"
+# Inject query into prompt safely
+# First, validate that query doesn't contain newlines (would break template structure)
+if [[ "$QUERY" == *$'\n'* ]]; then
+  echo "Error: Query cannot contain newlines" >&2
+  exit 1
+fi
+
+# Escape special characters for safe sed substitution
+# Escape backslashes first, then forward slashes, then ampersands
+QUERY_ESCAPED=$(printf '%s\n' "$QUERY" | sed -e 's/\\/\\\\/g' -e 's/\//\\\//g' -e 's/&/\\&/g')
+
+# Use sed with safe delimiter to perform substitution
+PROMPT=$(printf '%s\n' "$PROMPT" | sed "s/%QUERY%/$QUERY_ESCAPED/g")
 
 # Run Gemini CLI
 echo "🔍 Running Gemini research ($MODE mode): $QUERY" >&2
