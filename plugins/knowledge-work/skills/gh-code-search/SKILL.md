@@ -305,6 +305,41 @@ List every unique file analyzed (15-30 files), grouped by repository:
 
 ---
 
+### Step 6: Save Results to File
+
+**After generating comprehensive summary, persist for future reference:**
+
+1. **Generate timestamp:**
+   - Invoke `timestamp` skill to get deterministic YYYYMMDDHHMMSS format
+   - Example: `20250110143052`
+
+2. **Sanitize query for filename:**
+   - Convert user's original query to kebab-case slug
+   - Rules: lowercase, spaces → hyphens, remove special chars, max 50 chars
+   - Example: "React hooks useState" → "react-hooks-usestate"
+
+3. **Construct file path:**
+   - Directory: `docs/research/github/`
+   - Format: `<timestamp>-<sanitized-query>.md`
+   - Full path: `docs/research/github/20250110143052-react-hooks-usestate.md`
+
+4. **Save using Write tool:**
+   - Content: Full comprehensive summary from Step 5
+   - Ensures persistence across sessions
+   - User can reference past research
+
+5. **Log saved location:**
+   - Inform user where file was saved
+   - Example: "Research saved to docs/research/github/20250110143052-react-hooks-usestate.md"
+
+**Why save:**
+- Comprehensive summaries represent significant analysis work (30-150s of API calls)
+- Users may want to reference patterns/trade-offs later
+- Builds searchable knowledge base of GitHub research
+- Avoids re-running expensive queries for same topics
+
+---
+
 ## Error Handling
 
 **Common issues:**
