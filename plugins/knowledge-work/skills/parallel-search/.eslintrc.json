@@ -1,0 +1,6 @@
+{
+  "extends": ["uba-eslint-config"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  }
+}
