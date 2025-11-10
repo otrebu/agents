@@ -55,6 +55,40 @@ export function isAuthenticated(): boolean {
 
 // ===== SEARCH =====
 
+// WHY: Code Search API doesn't return star counts, so we batch fetch repo details
+async function fetchRepoStars(
+  octokit: Octokit,
+  results: RawSearchResult[]
+): Promise<Map<string, number>> {
+  // Extract unique repo names
+  const uniqueRepos = [...new Set(results.map(r => r.repository.full_name))]
+  const starsMap = new Map<string, number>()
+
+  // Batch fetch repo details (10 at a time to avoid rate limits)
+  const batchSize = 10
+  for (let i = 0; i < uniqueRepos.length; i += batchSize) {
+    const batch = uniqueRepos.slice(i, i + batchSize)
+
+    const promises = batch.map(async (fullName) => {
+      const [owner, repo] = fullName.split('/')
+      try {
+        const response = await octokit.rest.repos.get({ owner, repo })
+        return { fullName, stars: response.data.stargazers_count }
+      } catch (error) {
+        // If repo fetch fails (deleted, private, etc), default to 0 stars
+        return { fullName, stars: 0 }
+      }
+    })
+
+    const batchResults = await Promise.all(promises)
+    batchResults.forEach(({ fullName, stars }) => {
+      starsMap.set(fullName, stars)
+    })
+  }
+
+  return starsMap
+}
+
 export async function searchGitHubCode(
   token: string,
   query: string,
@@ -112,12 +146,15 @@ export async function searchGitHubCode(
     }
   }
 
+  // Batch fetch repo details to get star counts (Code Search API doesn't include stars)
+  const repoStars = await fetchRepoStars(octokit, allResults)
+
   return allResults.map(item => ({
     repository: item.repository.full_name,
     path: item.path,
     url: item.html_url,
     score: item.score,
-    stars: item.repository.stargazers_count,
+    stars: repoStars.get(item.repository.full_name) || 0,
     lastPushed: item.repository.pushed_at,
     textMatches: item.text_matches || []
   }))
