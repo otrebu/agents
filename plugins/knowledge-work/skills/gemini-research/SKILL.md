@@ -1,7 +1,7 @@
 ---
 name: gemini-research
-description: Web research via Gemini CLI with Google Search grounding. Returns structured JSON with sources, quotes, and citations. Use for real-time data: news, docs, code examples, fact verification.
-allowed-tools: Bash(plugins/knowledge-work/skills/gemini-research/scripts/*), Bash(gemini:*), Read
+description: Web research via Gemini CLI with Google Search grounding. Generates markdown report. Claude MUST append analysis section after. Use for real-time data: news, docs, code examples, fact verification.
+allowed-tools: Bash(plugins/knowledge-work/skills/gemini-research/scripts/*), Bash(gemini:*), Read, Edit
 ---
 
 # Gemini Research
@@ -48,6 +48,56 @@ When user asks to:
 
 Run the skill wrapper with appropriate mode.
 
+## ⚠️ CRITICAL WORKFLOW STEP
+
+**EVERY TIME this skill runs, Claude MUST complete these steps:**
+
+1. **Wait for research to complete** - Script outputs markdown file path
+2. **Read the generated markdown file** - Use Read tool on the path shown
+3. **Analyze the research findings** - Extract key learnings, patterns, recommendations
+4. **Append Claude's Analysis section** - Use Edit tool to replace the placeholder
+5. **Present findings to user** - Summarize the analysis in chat
+
+**This is NOT optional.** The markdown file contains a placeholder section that MUST be populated. Skipping this step leaves incomplete documentation.
+
+### Example Analysis Format
+
+Your analysis should include:
+- **Key Learnings**: 3-5 main takeaways from the research
+- **Recommendations**: Practical advice based on findings
+- **Next Steps**: Suggested actions or areas for further investigation
+- **Relevance**: How findings apply to the specific context
+
+### Concrete Example
+
+After research completes and you read the markdown file at `docs/research/google/20250111123456-topic.md`:
+
+**Use Edit tool to replace placeholder:**
+```markdown
+old_string: ## Claude's Analysis
+
+_This section will be populated by Claude after analyzing the research findings._
+
+
+new_string: ## Claude's Analysis
+
+### Key Learnings
+- Main finding 1 with context and implications
+- Main finding 2 showing clear patterns across sources
+- Main finding 3 connecting to broader best practices
+
+### Recommendations
+- Actionable advice based on finding 1
+- Practical suggestion derived from finding 2
+- Trade-off to consider from contradictory sources
+
+### Next Steps
+- Specific area to investigate further if needed
+- Potential application to current project/context
+```
+
+**Then present summary to user in chat response.**
+
 ## Research Modes
 
 ### 1. Quick Research (default)
@@ -58,7 +108,11 @@ Fast overview with 5-8 sources.
 bash plugins/knowledge-work/skills/gemini-research/scripts/research.sh "your query here"
 ```
 
-**Output**: `gemini-research-output.json` with:
+**Output**:
+- **JSON**: `gemini-research-output.json` (for backward compatibility)
+- **Markdown**: `docs/research/google/<timestamp>-<topic>.md` (human-readable)
+
+**JSON structure**:
 - `queries_used`: Search queries executed
 - `sources`: Array of `{title, url}`
 - `key_points`: Main findings (5-8 bullets)
@@ -110,18 +164,6 @@ bash plugins/knowledge-work/skills/gemini-research/scripts/research.sh "Playwrig
 ```
 
 ## Workflow
-
-### Single Research Task
-
-```bash
-# 1. Run research
-bash plugins/knowledge-work/skills/gemini-research/scripts/research.sh "Vitest snapshot testing patterns"
-
-# 2. Read output
-# Script saves to: gemini-research-output.json
-
-# 3. Claude analyzes JSON and synthesizes findings
-```
 
 ### Integration with Deep-Research Agent
 
@@ -226,9 +268,10 @@ Edit templates in `scripts/research.sh`:
 - `CODE_TEMPLATE`
 
 **Change output location:**
-Default: `gemini-research-output.json` (current directory)
+- JSON (temp): `gemini-research-output.json` (current directory)
+- Markdown (permanent): `docs/research/google/<timestamp>-<topic>.md`
 
-Customize via `OUTPUT_FILE` variable in script.
+Customize via `OUTPUT_FILE` and `RESEARCH_DIR` variables in script.
 
 ## Performance
 
@@ -323,5 +366,9 @@ Gemini occasionally returns markdown-wrapped JSON. Script uses `jq` to extract.
 - Free tier may train on data (check Google's terms)
 - Personal Google account sufficient (no paid plan needed)
 - For production/high-volume: consider Perplexity/Tavily MCP
-- Output saved to `gemini-research-output.json` for Claude analysis
+- Outputs:
+  - JSON: `gemini-research-output.json` (temp, for backward compatibility)
+  - Markdown: `docs/research/google/<timestamp>-<topic>.md` (permanent, human-readable)
 - Script uses `--output-format json` for structured data
+- Markdown includes placeholder for Claude's analysis section
+- Claude must read markdown and append synthesis after research completes
