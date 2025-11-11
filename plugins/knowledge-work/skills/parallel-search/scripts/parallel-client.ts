@@ -133,7 +133,7 @@ function transformResults(response: any): SearchResult[] {
   return response.results.map((rawResult: any, index: number) => ({
     url: rawResult.url || '',
     title: rawResult.title || 'Untitled',
-    excerpt: rawResult.excerpt || '',
+    excerpts: rawResult.excerpts || [],
     domain: extractDomain(rawResult.url || ''),
     rank: index + 1,
   }))

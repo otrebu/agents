@@ -27,7 +27,7 @@ export function formatResults(
     `**URL:** ${result.url}`,
     `**Domain:** ${result.domain}\n`,
     `**Excerpt:**\n`,
-    result.excerpt,
+    result.excerpts.join('\n\n'),
     '\n---\n',
   ])
 

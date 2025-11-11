@@ -15,7 +15,7 @@ export interface SearchOptions {
 export interface SearchResult {
   url: string
   title: string
-  excerpt: string
+  excerpts: string[]
   domain: string
   rank: number
 }
