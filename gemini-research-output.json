@@ -1,0 +1,89 @@
+{
+  "queries_used": [
+    "TypeScript CLI logging best practices with chalk and console examples",
+    "github typescript cli logging chalk example site:github.com",
+    "advanced typescript cli logging patterns chalk site:stackoverflow.com",
+    "using chalk with typescript for beautiful cli logging site:blog.logrocket.com"
+  ],
+  "sources": [
+    {
+      "title": "Chalk Official GitHub Repository",
+      "url": "https://github.com/chalk/chalk"
+    },
+    {
+      "title": "Chalk on npm",
+      "url": "https://www.npmjs.com/package/chalk"
+    },
+    {
+      "title": "How to Style a Node.js CLI with Chalk",
+      "url": "https://blog.logrocket.com/using-chalk-and-term-size-to-style-a-nodejs-cli/"
+    },
+    {
+      "title": "TypeScript Logging Best Practices - BetterStack",
+      "url": "https://betterstack.com/community/guides/logging/typescript-logging-best-practices/"
+    },
+    {
+      "title": "How to use Chalk 5 with TypeScript and Jest (ESM issue)",
+      "url": "https://stackoverflow.com/questions/61753528/how-to-use-chalk-5-with-typescript-and-jest-with-es-modules"
+    },
+    {
+      "title": "Building a CLI in TypeScript using Chalk - Luispa",
+      "url": "https://luispa.dev/building-a-cli-in-typescript-using-chalk-and-commander-js-229b6f7a8a2a"
+    },
+    {
+      "title": "Style Terminal Output with Chalk - Egghead.io",
+      "url": "https://egghead.io/lessons/javascript-style-terminal-output-with-chalk"
+    }
+  ],
+  "code_snippets": [
+    {
+      "language": "typescript",
+      "code": "import chalk from 'chalk';\n\n// Create a logger module for consistent styling\nexport const logger = {\n  info: (message: string) => console.log(chalk.blue(message)),\n  success: (message: string) => console.log(chalk.green(message)),\n  warn: (message: string) => console.warn(chalk.yellow(message)),\n  error: (message: string) => console.error(chalk.red.bold(message)),\n  debug: (message: string) => console.debug(chalk.gray(message))\n};\n\n// Example Usage\nlogger.info('Starting the application...');\nlogger.success('Data loaded successfully.');\nlogger.warn('Optional configuration file not found.');\nlogger.error('Failed to connect to the database!');",
+      "source_url": "https://github.com/chalk/chalk",
+      "description": "A common pattern is to create a dedicated logger module that wraps `console` calls with `chalk` styling. This ensures consistent color-coding for different log levels (info, success, warn, error) across the application."
+    },
+    {
+      "language": "typescript",
+      "code": "import chalk from 'chalk';\n\nconst file = 'important-document.txt';\nconst user = 'Alice';\n\n// Nesting styles to highlight specific parts of a message\nconsole.log(\n  chalk.red(\n    'Error: User ' + \n    chalk.cyan.underline(user) + \n    ' does not have permission to read ' + \n    chalk.yellow.bold(file) + \n    '.'\n  )\n);",
+      "source_url": "https://www.npmjs.com/package/chalk",
+      "description": "Demonstrates composing and nesting `chalk` styles. This allows for complex formatting within a single log message, making it easier to draw attention to key pieces of information like usernames or filenames."
+    },
+    {
+      "language": "typescript",
+      "code": "import chalk from 'chalk';\n\nconst cpu = 87;\nconst memory = 55;\nconst disk = 92;\n\n// Use template literals for easy embedding of styled variables\nconsole.log(`System Status:`);\nconsole.log(`  CPU: ${chalk.yellow(cpu + '%')} | Memory: ${chalk.green(memory + '%')} | Disk: ${chalk.red(disk + '%')}`);",
+      "source_url": "https://blog.logrocket.com/using-chalk-and-term-size-to-style-a-nodejs-cli/",
+      "description": "This snippet shows the use of ES6 template literals to cleanly embed styled variables directly into strings, which is a modern and readable way to construct dynamic log messages."
+    },
+    {
+      "language": "typescript",
+      "code": "import chalk from 'chalk';\n\n// Use semantic console methods for better structure and output stream handling\nconsole.group(chalk.cyan('File Processing Task'));\nconsole.time(chalk.magenta('Processing Time'));\n\nconsole.info(chalk.blue('Reading file list...'));\n// ... some operations ...\nconsole.warn(chalk.yellow('Skipping optional file: temp.log'));\n// ... more operations ...\nconsole.error(chalk.red('Failed to process file: data.csv'));\n\nconsole.timeEnd(chalk.magenta('Processing Time'));\nconsole.groupEnd();",
+      "source_url": "https://betterstack.com/community/guides/logging/typescript-logging-best-practices/",
+      "description": "This example utilizes `console.group`, `console.time`, and `console.timeEnd` along with `chalk` to create structured, timed, and visually organized log blocks. It also uses the semantic `console.info`, `console.warn`, and `console.error` methods, which can direct output to stdout or stderr appropriately."
+    }
+  ],
+  "patterns": [
+    "Semantic Coloring: Consistently using specific colors for different log levels (e.g., red for errors, green for success, yellow for warnings, blue/cyan for info).",
+    "Logger Abstraction: Creating a dedicated `logger.ts` module to centralize logging logic and ensure consistent formatting throughout the CLI.",
+    "Style Composition & Nesting: Chaining styles (e.g., `chalk.red.bold`) and nesting `chalk` calls to highlight specific parts of a log message.",
+    "Leveraging Full Console API: Using methods beyond `console.log`, such as `console.error`, `console.warn`, `console.group`, and `console.time`, for their semantic value and to control output streams (stdout vs. stderr)."
+  ],
+  "libraries": [
+    "chalk (The primary library for adding color and styles to terminal output).",
+    "winston, pino, tslog (More advanced, feature-rich logging libraries for complex needs like file transports, log rotation, and structured JSON logging)."
+  ],
+  "gotchas": [
+    {
+      "issue": "ESM vs. CommonJS Compatibility",
+      "solution": "Chalk v5+ is ESM-only, which can cause import issues in traditional CommonJS-based TypeScript projects. The recommended solution for maximum compatibility is to install v4: `npm install chalk@4.1.2`."
+    },
+    {
+      "issue": "Missing Type Definitions",
+      "solution": "When using TypeScript, you must install the type definitions for Chalk separately to get proper type checking and autocompletion: `npm install --save-dev @types/chalk`."
+    },
+    {
+      "issue": "Variable Color Support in Terminals",
+      "solution": "Chalk automatically detects the level of color support in the terminal where the CLI is run. While most modern terminals have good support, be aware that in some environments (like CI/CD logs), colors may be disabled or rendered as plain text."
+    }
+  ],
+  "summary": "For effective TypeScript CLI logging, the best practice is to use `chalk` to apply semantic colors to your output via the standard `console` object. Abstracting this logic into a dedicated logger module ensures consistency for different levels like error (red), success (green), and info (blue). While `console` and `chalk` cover most use cases, for advanced features like file logging or structured JSON output, consider integrating a more robust library like Winston or Pino."
+}

@@ -19,6 +19,13 @@ OUTPUT_FILE="gemini-research-output.json"
 QUERY="${1:-}"
 MODE="${2:-quick}"
 
+# Markdown config
+TIMESTAMP=$(date '+%Y%m%d%H%M%S')
+RESEARCH_DIR="docs/research/google"
+SANITIZED_TOPIC=$(echo "$QUERY" | tr '[:upper:]' '[:lower:]' | tr -cs '[:alnum:]' '-' | sed 's/^-//;s/-$//')
+MARKDOWN_FILE="$RESEARCH_DIR/$TIMESTAMP-$SANITIZED_TOPIC.md"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # Validate input
 if [[ -z "$QUERY" ]]; then
   echo "Error: Query required" >&2
@@ -189,7 +196,15 @@ fi
 # Save to file
 echo "$RESPONSE" | jq . > "$OUTPUT_FILE"
 
-echo "✅ Research complete! Results saved to: $OUTPUT_FILE" >&2
+# Generate markdown
+mkdir -p "$RESEARCH_DIR"
+if bash "$SCRIPT_DIR/format-markdown.sh" "$OUTPUT_FILE" "$QUERY" "$MODE" > "$MARKDOWN_FILE"; then
+  echo "✅ Research complete!" >&2
+  echo "   JSON: $OUTPUT_FILE" >&2
+  echo "   Markdown: $MARKDOWN_FILE" >&2
+else
+  echo "⚠️  Markdown generation failed, but JSON saved to: $OUTPUT_FILE" >&2
+fi
 echo "" >&2
 
 # Show summary
@@ -206,4 +221,9 @@ echo "🔗 Top sources:" >&2
 echo "$RESPONSE" | jq -r '.sources[:3][] | "   • \(.title)\n     \(.url)"' 2>/dev/null || true
 
 echo "" >&2
-echo "📄 Full results in: $OUTPUT_FILE" >&2
+echo "📄 Full results:" >&2
+echo "   JSON: $OUTPUT_FILE" >&2
+echo "   Markdown: $MARKDOWN_FILE" >&2
+echo "" >&2
+echo "⚠️  REQUIRED: Claude MUST now append analysis section to markdown file" >&2
+echo "   See SKILL.md 'CRITICAL WORKFLOW STEP' section for detailed instructions" >&2
