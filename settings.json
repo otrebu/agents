@@ -111,7 +111,19 @@
       "Skill(timestamp)",
       "Skill(typescript-coding)",
       "Skill(meta-work:*)",
-      "Skill(development-lifecycle:*)"
+      "Skill(development-lifecycle:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:registry.npmjs.org)",
+      "Skill(knowledge-work:gh-code-search)",
+      "Bash(pnpm search:*)",
+      "Bash(npx tsx:*)",
+      "Bash(node --version)",
+      "Bash(./node_modules/.bin/tsx:*)",
+      "Bash(bash:*)",
+      "Skill(knowledge-work:parallel-search)",
+      "Bash(pnpm tsx:*)",
+      "Skill(basic-skills:timestamp)",
+      "Skill(knowledge-work:gemini-research)"
     ],
     "deny": [
       "Read(.env*)",
@@ -228,5 +240,10 @@
     "plugins/typescript-coding",
     "plugins/knowledge-work",
     "plugins/basic-skills"
-  ]
+  ],
+  "outputStyle": "default",
+  "sandbox": {
+    "autoAllowBashIfSandboxed": false,
+    "enabled": false
+  }
 }

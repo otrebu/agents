@@ -53,14 +53,16 @@ if [[ -f "$PROJECT_DIR/CLAUDE.md" ]]; then
     SKIP_CLAUDE_MD=true
 fi
 
-# Discover all docs files (excluding roadmap, scratchpad, web-captures)
+# Discover all docs files (excluding roadmap, scratchpad, web-captures, research, plan)
 DOCS_FILES=()
 while IFS= read -r file; do
     DOCS_FILES+=("$file")
 done < <(cd "$AGENTS_DIR" && find docs -type f \
     -not -path "docs/roadmap/*" \
     -not -path "docs/scratchpad/*" \
-    -not -path "docs/web-captures/*")
+    -not -path "docs/web-captures/*" \
+    -not -path "docs/research/*" \
+    -not -path "docs/plan/*")
 
 # Report files that already exist
 for doc_file in "${DOCS_FILES[@]}"; do
