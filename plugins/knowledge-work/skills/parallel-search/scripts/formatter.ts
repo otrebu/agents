@@ -1,43 +1,68 @@
 import type { SearchResult, SearchMetadata } from './types.js'
+import { extractDomain } from '@knowledge-work/shared'
+import type { SourceReference } from '@knowledge-work/shared'
 
 /**
- * Format search results as clean markdown for Claude to read
+ * Format search results as standardized markdown
+ * Follows unified template structure for cross-skill consistency
+ *
  * @param results Array of search results
  * @param metadata Search execution metadata
+ * @param query Original user query
+ * @param timestamp Timestamp string (YYYYMMDDHHMMSS)
  * @returns Formatted markdown string
  */
 export function formatResults(
   results: SearchResult[],
-  metadata: SearchMetadata
+  metadata: SearchMetadata,
+  query: string,
+  timestamp: string
 ): string {
+  const durationSec = Math.round(metadata.executionTimeMs / 1000)
+
   const header = [
-    '# Parallel Search Results\n',
-    `**Query:** ${metadata.objective}`,
-    `**Results:** ${metadata.resultCount}`,
-    `**Execution:** ${(metadata.executionTimeMs / 1000).toFixed(1)}s\n`,
+    `# Research: ${query}\n`,
+    `**Metadata:** parallel-search • ${timestamp} • ${durationSec}s • ${results.length} sources\n`,
   ]
 
-  const domainSummary =
-    results.length > 0
-      ? formatDomainSummary(results)
-      : []
+  const summary = [
+    '## Summary\n',
+    `Found ${results.length} results across ${getUniqueDomainCount(results)} domains via Parallel Search API. Results include extended excerpts for deep content analysis.\n`,
+  ]
+
+  const findings = [
+    '## Findings\n',
+    ...formatFindings(results),
+  ]
+
+  const sources = [
+    '\n## Sources\n',
+    formatSourceReferences(results),
+  ]
+
+  return [...header, ...summary, ...findings, ...sources].join('\n')
+}
+
+/**
+ * Format findings section with ranked results
+ */
+function formatFindings(results: SearchResult[]): string[] {
+  const domainSummary = formatDomainSummary(results)
 
   const resultSections = results.flatMap((result) => [
-    `## ${result.rank}. [${result.title}](${result.url})\n`,
-    `**URL:** ${result.url}`,
-    `**Domain:** ${result.domain}\n`,
+    `### ${result.rank}. [${result.title}](${result.url})\n`,
+    `**Domain:** ${result.domain}`,
+    `**URL:** ${result.url}\n`,
     `**Excerpt:**\n`,
     result.excerpts.join('\n\n'),
     '\n---\n',
   ])
 
-  return [...header, ...domainSummary, '---\n', ...resultSections].join('\n')
+  return [...domainSummary, '\n', ...resultSections]
 }
 
 /**
  * Format domain distribution summary
- * @param results Array of search results
- * @returns Array of formatted domain summary lines
  */
 function formatDomainSummary(results: SearchResult[]): string[] {
   const domainCounts = getDomainCounts(results)
@@ -50,13 +75,11 @@ function formatDomainSummary(results: SearchResult[]): string[] {
     return `- ${domain}: ${count} results (${percentage}%)`
   })
 
-  return ['**Top Domains:**', ...domainLines, '']
+  return ['**Top Domains:**', ...domainLines]
 }
 
 /**
  * Count results per domain
- * @param results Array of search results
- * @returns Map of domain to count
  */
 function getDomainCounts(results: SearchResult[]): Map<string, number> {
   const counts = new Map<string, number>()
@@ -70,16 +93,21 @@ function getDomainCounts(results: SearchResult[]): Map<string, number> {
 }
 
 /**
- * Sanitize a query string for use in filenames
- * @param query Original query string
- * @returns Kebab-cased slug (max 50 chars)
+ * Get unique domain count
  */
-export function sanitizeForFilename(query: string): string {
-  return query
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .substring(0, 50)
+function getUniqueDomainCount(results: SearchResult[]): number {
+  return new Set(results.map(r => r.domain)).size
+}
+
+/**
+ * Format sources section following unified template
+ */
+function formatSourceReferences(results: SearchResult[]): string {
+  const lines: string[] = ['### Web\n']
+
+  results.forEach(result => {
+    lines.push(`- [${result.title}](${result.url}) • ${result.domain}`)
+  })
+
+  return lines.join('\n')
 }

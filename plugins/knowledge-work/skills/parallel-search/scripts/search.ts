@@ -11,6 +11,7 @@ import {
   NetworkError,
   ValidationError,
 } from './types.js'
+import { generateTimestamp, saveResearchReport } from '@knowledge-work/shared'
 
 async function main() {
   const startTime = Date.now()
@@ -88,18 +89,34 @@ async function main() {
 
     spinner.succeed(`Found ${results.length} results`)
 
+    // Generate timestamp for consistent file naming
+    const timestamp = generateTimestamp()
+
     // Format and output results
-    const report = formatResults(results, {
-      objective: values.objective,
-      executionTimeMs,
-      resultCount: results.length,
-    })
+    const report = formatResults(
+      results,
+      {
+        objective: values.objective,
+        executionTimeMs,
+        resultCount: results.length,
+      },
+      values.objective,
+      timestamp
+    )
 
     log.plain('\n' + report)
 
-    log.success(
-      `\nSearch completed in ${(executionTimeMs / 1000).toFixed(1)}s`
-    )
+    // Auto-save research report
+    try {
+      const filepath = saveResearchReport(report, 'parallel', values.objective)
+      log.success(
+        `\nSearch completed in ${(executionTimeMs / 1000).toFixed(1)}s`
+      )
+      log.dim(`Saved to: ${filepath}`)
+    } catch (saveError: any) {
+      log.warn(`\nSearch completed but failed to save: ${saveError.message}`)
+      log.dim('Results displayed above can be copied manually if needed.')
+    }
   } catch (error: any) {
     // Handle specific error types with helpful messages
     if (error instanceof AuthError) {

@@ -1,7 +1,7 @@
 ---
 name: gemini-research
-description: Web research via Gemini CLI with Google Search grounding. Generates markdown report. Claude MUST append analysis section after. Use for real-time data: news, docs, code examples, fact verification.
-allowed-tools: Bash(plugins/knowledge-work/skills/gemini-research/scripts/*), Bash(gemini:*), Read, Edit
+description: Web research via Gemini CLI with Google Search grounding. Generates complete markdown report with optional analysis parameter. Use for real-time data: news, docs, code examples, fact verification.
+allowed-tools: Bash(plugins/knowledge-work/skills/gemini-research/scripts/*), Bash(gemini:*), Read
 ---
 
 # Gemini Research
@@ -48,55 +48,49 @@ When user asks to:
 
 Run the skill wrapper with appropriate mode.
 
-## ⚠️ CRITICAL WORKFLOW STEP
+## Workflow
 
-**EVERY TIME this skill runs, Claude MUST complete these steps:**
+**Recommended approach for rich analysis:**
 
-1. **Wait for research to complete** - Script outputs markdown file path
-2. **Read the generated markdown file** - Use Read tool on the path shown
-3. **Analyze the research findings** - Extract key learnings, patterns, recommendations
-4. **Append Claude's Analysis section** - Use Edit tool to replace the placeholder
-5. **Present findings to user** - Summarize the analysis in chat
+1. **Analyze user's request** - Determine research objectives and what insights are needed
+2. **Generate preliminary analysis framework** - Prepare key questions and synthesis approach
+3. **Execute research with analysis** - Pass analysis to script as 3rd parameter (after mode)
+4. **Present findings to user** - Summarize key learnings from complete markdown
 
-**This is NOT optional.** The markdown file contains a placeholder section that MUST be populated. Skipping this step leaves incomplete documentation.
+### Analysis Format
 
-### Example Analysis Format
+When providing analysis parameter, structure as markdown:
 
-Your analysis should include:
-- **Key Learnings**: 3-5 main takeaways from the research
-- **Recommendations**: Practical advice based on findings
-- **Next Steps**: Suggested actions or areas for further investigation
-- **Relevance**: How findings apply to the specific context
-
-### Concrete Example
-
-After research completes and you read the markdown file at `docs/research/google/20250111123456-topic.md`:
-
-**Use Edit tool to replace placeholder:**
 ```markdown
-old_string: ## Claude's Analysis
+**Patterns:**
+- Common theme 1 across multiple sources
+- Pattern 2 showing consensus
+- Divergence or contradiction noted
 
-_This section will be populated by Claude after analyzing the research findings._
-
-
-new_string: ## Claude's Analysis
-
-### Key Learnings
-- Main finding 1 with context and implications
-- Main finding 2 showing clear patterns across sources
-- Main finding 3 connecting to broader best practices
-
-### Recommendations
-- Actionable advice based on finding 1
-- Practical suggestion derived from finding 2
-- Trade-off to consider from contradictory sources
-
-### Next Steps
-- Specific area to investigate further if needed
-- Potential application to current project/context
+**Recommendations:**
+- Actionable advice ranked by confidence
+- Trade-offs to consider
+- Next steps for implementation
 ```
 
-**Then present summary to user in chat response.**
+### Example Usage with Analysis
+
+```bash
+bash plugins/knowledge-work/skills/gemini-research/scripts/research.sh \
+  "TypeScript error handling 2025" \
+  quick \
+  "**Patterns:**
+- Result types (Either, Option) gaining adoption over exceptions
+- Zod for runtime validation is standard practice
+- Error boundaries at module edges
+
+**Recommendations:**
+- Use discriminated unions for expected errors
+- Reserve exceptions for truly exceptional cases
+- Validate external data at boundaries"
+```
+
+**Result**: Complete markdown report with integrated analysis, no post-processing needed.
 
 ## Research Modes
 
@@ -370,5 +364,100 @@ Gemini occasionally returns markdown-wrapped JSON. Script uses `jq` to extract.
   - JSON: `gemini-research-output.json` (temp, for backward compatibility)
   - Markdown: `docs/research/google/<timestamp>-<topic>.md` (permanent, human-readable)
 - Script uses `--output-format json` for structured data
-- Markdown includes placeholder for Claude's analysis section
-- Claude must read markdown and append synthesis after research completes
+- Pass analysis as 3rd parameter for complete markdown (recommended)
+- Analysis parameter optional but creates richer, more useful reports
+
+---
+
+## Output Schema
+
+Research outputs follow standardized format for cross-skill consistency:
+
+```markdown
+# Research: [Topic]
+
+**Metadata:** gemini-research • [Timestamp] • [Mode] • [N] sources
+
+## Summary
+
+[2-3 sentences from Gemini's synthesis of search results]
+
+## Findings
+
+### Key Findings (Quick/Deep mode)
+- Fact 1 with context
+- Fact 2 with context
+
+### Code Examples (Code mode)
+```language
+// Working implementation
+```
+
+### Patterns & Best Practices (Code mode)
+- Pattern 1
+- Pattern 2
+
+### Deep Analysis (Deep mode only)
+**Contradictions:** Conflicting information found
+**Consensus:** Widely-agreed points
+**Knowledge Gaps:** Areas needing more research
+
+### Detailed Quotes
+> "Direct quote from source"
+> — [source.com](url)
+
+## Analysis
+
+**Patterns:** [Claude's synthesis of common themes]
+**Recommendations:** [Actionable advice ranked by confidence]
+**Trade-offs:** [If comparing approaches]
+
+## Sources
+
+### Web
+- [Title](url)
+```
+
+**Metadata fields:**
+- skill: gemini-research
+- timestamp: YYYYMMDDHHMMSS format
+- mode: quick/deep/code
+- sources: Total sources from Google Search
+
+Reports automatically saved to `docs/research/google/TIMESTAMP-topic.md`
+
+---
+
+## Shared Utilities
+
+This skill uses standardized utilities from `@knowledge-work/shared` (planned integration):
+
+- `generateTimestamp()` - Consistent timestamp format (currently uses bash `date`)
+- `sanitizeForFilename()` - Unified filename rules (currently uses bash `tr`)
+- Future: Migrate bash timestamp/sanitization to shared TypeScript utilities
+
+**Current implementation:**
+```bash
+TIMESTAMP=$(date '+%Y%m%d%H%M%S')
+SANITIZED=$(echo "$QUERY" | tr '[:upper:]' '[:lower:]' | tr -cs '[:alnum:]' '-')
+```
+
+---
+
+## Cross-Skill Integration
+
+This skill can be orchestrated with others via the `web-research-specialist` agent:
+
+**Example: Current Events Research**
+```
+User: "What's the latest on Anthropic's Claude 3.7?"
+Agent: Launches gemini-research (Google-grounded news) + parallel-search (broader coverage) in parallel
+Result: Unified report with recent announcements, benchmarks, community reactions, and official sources
+```
+
+**When to combine:**
+- **gemini-research + gh-code-search**: Documentation + real code implementations
+- **gemini-research + parallel-search**: Google results + broader web coverage
+- **All three**: Maximum coverage with code, docs, and diverse perspectives
+
+The agent handles deduplication, source ranking, and synthesis across all results.

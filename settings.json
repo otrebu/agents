@@ -234,16 +234,5 @@
     "typescript-coding@otrebu-dev-tools": true
   },
   "alwaysThinkingEnabled": false,
-  "plugins": [
-    "plugins/meta-work",
-    "plugins/development-lifecycle",
-    "plugins/typescript-coding",
-    "plugins/knowledge-work",
-    "plugins/basic-skills"
-  ],
-  "outputStyle": "default",
-  "sandbox": {
-    "autoAllowBashIfSandboxed": false,
-    "enabled": false
-  }
+  "outputStyle": "default"
 }

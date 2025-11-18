@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm type-check:*)",
+      "Skill(gh-code-search)",
+      "Skill(gemini-research)",
+      "Skill(parallel-search)",
+      "Bash(bash scripts/research.sh:*)",
+      "Bash(gh search:*)",
+      "Skill(basic-skills:timestamp)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

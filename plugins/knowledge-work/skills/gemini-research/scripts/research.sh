@@ -18,6 +18,7 @@ set -euo pipefail
 OUTPUT_FILE="gemini-research-output.json"
 QUERY="${1:-}"
 MODE="${2:-quick}"
+ANALYSIS="${3:-}"
 
 # Markdown config
 TIMESTAMP=$(date '+%Y%m%d%H%M%S')
@@ -198,7 +199,7 @@ echo "$RESPONSE" | jq . > "$OUTPUT_FILE"
 
 # Generate markdown
 mkdir -p "$RESEARCH_DIR"
-if bash "$SCRIPT_DIR/format-markdown.sh" "$OUTPUT_FILE" "$QUERY" "$MODE" > "$MARKDOWN_FILE"; then
+if bash "$SCRIPT_DIR/format-markdown.sh" "$OUTPUT_FILE" "$QUERY" "$MODE" "$ANALYSIS" > "$MARKDOWN_FILE"; then
   echo "✅ Research complete!" >&2
   echo "   JSON: $OUTPUT_FILE" >&2
   echo "   Markdown: $MARKDOWN_FILE" >&2
@@ -225,5 +226,8 @@ echo "📄 Full results:" >&2
 echo "   JSON: $OUTPUT_FILE" >&2
 echo "   Markdown: $MARKDOWN_FILE" >&2
 echo "" >&2
-echo "⚠️  REQUIRED: Claude MUST now append analysis section to markdown file" >&2
-echo "   See SKILL.md 'CRITICAL WORKFLOW STEP' section for detailed instructions" >&2
+if [[ -z "$ANALYSIS" ]]; then
+  echo "ℹ️  Note: No analysis provided. Markdown file is complete but may lack synthesis." >&2
+  echo "   Consider providing analysis as 3rd argument for richer output." >&2
+  echo "" >&2
+fi

@@ -1,0 +1,26 @@
+{
+  "name": "@knowledge-work/shared",
+  "version": "1.0.0",
+  "description": "Shared utilities for knowledge-work research skills",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "test": "vitest",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": ["research", "utilities", "shared"],
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.0.4"
+  }
+}

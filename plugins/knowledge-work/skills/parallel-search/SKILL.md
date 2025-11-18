@@ -159,3 +159,75 @@ export PARALLEL_API_KEY="your-key-here"
 ```bash
 pnpm test
 ```
+
+---
+
+## Output Schema
+
+All research outputs follow standardized format for cross-skill consistency:
+
+```markdown
+# Research: [Topic]
+
+**Metadata:** parallel-search • [Timestamp] • [Duration]s • [N] sources
+
+## Summary
+
+[2-3 sentences describing what was found and key insights]
+
+## Findings
+
+### Top Domains
+- domain.com: N results (X%)
+
+### [Ranked Results]
+Detailed results with excerpts...
+
+## Sources
+
+### Web
+- [Title](url) • domain.com
+```
+
+**Metadata fields:**
+- skill: parallel-search
+- timestamp: YYYYMMDDHHMMSS format (e.g., 20251118143052)
+- duration: Execution time in seconds
+- sources: Total unique sources found
+
+Reports automatically saved to `docs/research/parallel/TIMESTAMP-topic.md`
+
+---
+
+## Shared Utilities
+
+This skill uses standardized utilities from `@knowledge-work/shared`:
+
+- `generateTimestamp()` - Consistent timestamp format across all research skills
+- `sanitizeForFilename()` - Unified filename sanitization rules
+- `saveResearchReport()` - Standardized file persistence and naming
+
+**Benefits:**
+- Consistent naming across all research outputs
+- No duplicate implementations
+- Single source of truth for common operations
+
+---
+
+## Cross-Skill Integration
+
+This skill can be orchestrated with others via the `web-research-specialist` agent:
+
+**Example: Comprehensive Research**
+```
+User: "Research RAG systems comprehensively"
+Agent: Launches parallel-search + gh-code-search + gemini-research in parallel
+Result: Unified report combining web search, code examples, and Google-grounded research
+```
+
+**When to combine:**
+- **parallel-search + gh-code-search**: Web overview + real code implementations
+- **parallel-search + gemini-research**: Broad search + deep Google-grounded analysis
+- **All three**: Maximum coverage for complex topics or comparative analysis
+
+The agent handles deduplication and synthesis across all sources.

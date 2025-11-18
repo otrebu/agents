@@ -3,7 +3,7 @@
 # Format Gemini Research JSON to Markdown
 #
 # Usage:
-#   bash format-markdown.sh <json-file> <topic> <mode>
+#   bash format-markdown.sh <json-file> <topic> <mode> [analysis]
 #
 # Output: Markdown to stdout
 
@@ -12,6 +12,7 @@ set -euo pipefail
 JSON_FILE="${1:-}"
 TOPIC="${2:-Research}"
 MODE="${3:-quick}"
+ANALYSIS="${4:-}"
 
 if [[ -z "$JSON_FILE" || ! -f "$JSON_FILE" ]]; then
   echo "Error: JSON file required" >&2
@@ -28,33 +29,19 @@ SOURCES_COUNT=$(echo "$JSON" | jq '.sources | length')
 SUMMARY=$(echo "$JSON" | jq -r '.summary // "No summary available"')
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 
-# Start markdown
+# Start markdown (unified template format)
 cat <<EOF
 # Research: $TOPIC
 
-**Date**: $TIMESTAMP
-**Mode**: $MODE
-**Queries**: $QUERIES_COUNT queries executed
-**Sources**: $SOURCES_COUNT sources found
-
----
+**Metadata:** gemini-research • $TIMESTAMP • $MODE • $SOURCES_COUNT sources
 
 ## Summary
 
 $SUMMARY
 
----
-
-## Sources
+## Findings
 
 EOF
-
-# List sources
-echo "$JSON" | jq -r '.sources[] | "1. **[\(.title)](\(.url))**"'
-
-echo ""
-echo "---"
-echo ""
 
 # Key points (if present)
 if echo "$JSON" | jq -e '.key_points' &>/dev/null; then
@@ -188,10 +175,27 @@ if echo "$JSON" | jq -e '.quotes' &>/dev/null; then
   fi
 fi
 
-# Placeholder for Claude's analysis
-cat <<'EOF'
-## Claude's Analysis
+# Claude's analysis (if provided)
+if [[ -n "$ANALYSIS" ]]; then
+  cat <<EOF
+## Analysis
 
-_This section will be populated by Claude after analyzing the research findings._
+$ANALYSIS
 
 EOF
+else
+  cat <<'EOF'
+## Analysis
+
+_Analysis not provided. Run with analysis parameter for comprehensive synthesis._
+
+EOF
+fi
+
+# Sources section (unified template - always at end)
+echo "## Sources"
+echo ""
+echo "### Web"
+echo ""
+echo "$JSON" | jq -r '.sources[] | "- [\(.title)](\(.url))"'
+echo ""

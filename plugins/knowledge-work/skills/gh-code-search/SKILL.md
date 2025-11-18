@@ -309,28 +309,24 @@ List every unique file analyzed (15-30 files), grouped by repository:
 
 **After generating comprehensive summary, persist for future reference:**
 
-1. **Generate timestamp:**
-   - Invoke `timestamp` skill to get deterministic YYYYMMDDHHMMSS format
-   - Example: `20250110143052`
+Use shared utilities from `@knowledge-work/shared` for consistent file naming:
 
-2. **Sanitize query for filename:**
-   - Convert user's original query to kebab-case slug
-   - Rules: lowercase, spaces → hyphens, remove special chars, max 50 chars
-   - Example: "React hooks useState" → "react-hooks-usestate"
+```typescript
+import { generateTimestamp, sanitizeForFilename, saveResearchReport } from '@knowledge-work/shared';
 
-3. **Construct file path:**
-   - Directory: `docs/research/github/`
-   - Format: `<timestamp>-<sanitized-query>.md`
-   - Full path: `docs/research/github/20250110143052-react-hooks-usestate.md`
+const timestamp = generateTimestamp(); // "20251118143052"
+const sanitized = sanitizeForFilename(userQuery); // "react-hooks-usestate"
+const filepath = saveResearchReport(markdownContent, 'github', userQuery);
+// Saves to: docs/research/github/20251118143052-react-hooks-usestate.md
+```
 
-4. **Save using Write tool:**
-   - Content: Full comprehensive summary from Step 5
-   - Ensures persistence across sessions
-   - User can reference past research
+**Alternative (if using Write tool directly):**
 
-5. **Log saved location:**
-   - Inform user where file was saved
-   - Example: "Research saved to docs/research/github/20250110143052-react-hooks-usestate.md"
+1. Generate timestamp using shared utility (YYYYMMDDHHMMSS format)
+2. Sanitize query: lowercase, spaces → hyphens, remove special chars, max 50 chars
+3. Construct path: `docs/research/github/<timestamp>-<sanitized>.md`
+4. Save comprehensive summary from Step 5
+5. Log saved location to user
 
 **Why save:**
 - Comprehensive summaries represent significant analysis work (30-150s of API calls)
@@ -414,3 +410,92 @@ pnpm search "gh api language:typescript path:skills"
 - Diverse repositories (not all from one repo)
 - Summary includes trade-offs and recommendations
 - Code snippets are relevant (not arbitrary truncations)
+
+---
+
+## Output Schema
+
+Research outputs follow standardized format for cross-skill consistency:
+
+```markdown
+# Research: [Topic]
+
+**Metadata:** gh-code-search • [Timestamp] • [Duration]s • [N] sources
+
+## Summary
+
+[2-3 sentences: What patterns were found, key insights, confidence level]
+
+## Findings
+
+### Pattern Analysis
+- Common approach 1 with examples
+- Pattern 2 seen across multiple repos
+
+### Key Code Examples
+```language
+// Representative implementation
+```
+
+### Implementation Approaches
+- Approach 1: pros/cons
+- Approach 2: trade-offs
+
+## Analysis
+
+**Patterns:** [What's common across codebases]
+
+**Recommendations:** [Actionable next steps ranked by confidence]
+
+**Trade-offs:** [Comparison table if multiple approaches]
+
+## Sources
+
+### GitHub
+- [repo/file:line](url)
+```
+
+**Metadata fields:**
+- skill: gh-code-search
+- timestamp: YYYYMMDDHHMMSS format
+- duration: Total execution time across all queries
+- sources: Total unique GitHub files found
+
+Reports saved to `docs/research/github/TIMESTAMP-topic.md` after Claude's synthesis in Step 6.
+
+---
+
+## Shared Utilities
+
+This skill uses standardized utilities from `@knowledge-work/shared`:
+
+- `generateTimestamp()` - Consistent timestamp format across all research skills
+- `sanitizeForFilename()` - Unified filename sanitization rules
+- `saveResearchReport()` - Standardized file persistence (used in Step 6)
+
+**Usage in Step 6:**
+```typescript
+import { generateTimestamp, saveResearchReport } from '@knowledge-work/shared';
+
+const filepath = saveResearchReport(comprehensiveSummary, 'github', userQuery);
+```
+
+---
+
+## Cross-Skill Integration
+
+This skill can be orchestrated with others via the `web-research-specialist` agent:
+
+**Example: Debugging with Context**
+```
+User: "Why am I getting 'Cannot find module' with TypeScript?"
+Agent: Launches gh-code-search (real-world fixes) + gemini-research (documentation/discussions) in parallel
+Result: Unified report with working code solutions + community explanations + root cause analysis
+```
+
+**When to combine:**
+- **gh-code-search + gemini-research**: Code examples + conceptual documentation
+- **gh-code-search + parallel-search**: GitHub implementations + broader web examples
+- **All three**: Maximum coverage for implementation + theory + current best practices
+
+The agent handles deduplication, source ranking, and synthesis across all results.

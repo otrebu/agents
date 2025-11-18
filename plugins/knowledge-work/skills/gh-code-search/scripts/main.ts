@@ -12,6 +12,7 @@ import {
   SearchError,
   RateLimitError
 } from './types.js'
+import { generateTimestamp, saveResearchReport } from '@knowledge-work/shared'
 
 async function main() {
   const startTime = Date.now()
@@ -64,15 +65,31 @@ async function main() {
     })
     fetchSpinner.succeed(`Fetched ${files.length} files`)
 
+    // Generate timestamp for consistent file naming
+    const timestamp = generateTimestamp()
+    const executionTimeMs = Date.now() - startTime
+
     // Output clean markdown for Claude
     const report = formatMarkdownReport(files, {
       query: userQuery,
       totalResults: results.length,
-      executionTimeMs: Date.now() - startTime
+      executionTimeMs,
+      timestamp
     })
 
-    log.success('\nSearch complete!')
     log.plain('\n' + report)
+
+    // Auto-save research report
+    try {
+      const filepath = saveResearchReport(report, 'github', userQuery)
+      log.success(
+        `\nSearch completed in ${(executionTimeMs / 1000).toFixed(1)}s`
+      )
+      log.dim(`Saved to: ${filepath}`)
+    } catch (saveError: any) {
+      log.warn(`\nSearch completed but failed to save: ${saveError.message}`)
+      log.dim('Results displayed above can be copied manually if needed.')
+    }
 
   } catch (error: any) {
     if (error instanceof AuthError) {
@@ -101,7 +118,7 @@ async function main() {
 
 function formatMarkdownReport(
   files: CodeFile[],
-  stats: { query: string; totalResults: number; executionTimeMs: number }
+  stats: { query: string; totalResults: number; executionTimeMs: number; timestamp: string }
 ): string {
   const sections: string[] = []
 
