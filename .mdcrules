@@ -1,5 +1,6 @@
-# TypeScript Rules (applies to *.ts and *.tsx files)
+# TypeScript Rules
 
+[*.ts, *.tsx]
 - Always declare explicit types for function parameters, return values, and variables
 - Use `interface` for object shapes and type definitions (prefer interfaces over type aliases for objects)
 - Avoid `any`; use `unknown` when type is truly unknown, then narrow with type guards
